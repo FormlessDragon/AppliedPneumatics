@@ -1,6 +1,7 @@
 package com.wintercogs.appliedpneumatics;
 
 import com.mojang.logging.LogUtils;
+import com.wintercogs.appliedpneumatics.common.me.AEPlugin;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -30,7 +31,7 @@ public class AppliedPneumatics
 
     private void commonSetup(FMLCommonSetupEvent event)
     {
-
+        AEPlugin.register();
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event)

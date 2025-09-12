@@ -22,13 +22,12 @@ import java.util.List;
  */
 public class AirKey extends AEKey
 {
-    public static final AirKey INSTANCE = new AirKey();
+    private static final ResourceLocation ID = ResourceLocation.tryBuild(AppliedPneumatics.MODID,"air_key");
 
+    public static final AirKey INSTANCE = new AirKey();
     // 没有实际数据要存储，AE会在外部帮忙写入类型
     public static final MapCodec<AirKey> MAP_CODEC = MapCodec.unit(() -> INSTANCE);
     public static final Codec<AirKey> CODEC = MAP_CODEC.codec();
-
-    private static final ResourceLocation ID = ResourceLocation.tryBuild(AppliedPneumatics.MODID,"air_key");
 
     private AirKey() {}
 

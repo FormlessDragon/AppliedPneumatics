@@ -1,5 +1,6 @@
 package com.wintercogs.appliedpneumatics;
 
+import com.wintercogs.appliedpneumatics.client.me.AEClientPlugin;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -21,6 +22,7 @@ public class AppliedPneumaticsClient
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event)
     {
+        AEClientPlugin.register();
         AppliedPneumatics.LOGGER.info("AppliedPneumatics client side setup");
     }
 }

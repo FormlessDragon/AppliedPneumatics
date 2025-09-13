@@ -8,9 +8,11 @@ import com.wintercogs.appliedpneumatics.common.network.ExpectedPressureChangePac
 import com.wintercogs.appliedpneumatics.util.GuiRenderHelper;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,22 +46,22 @@ public class MEPressureInterfaceGUI extends AbstractContainerScreen<MEPressureIn
         this.inventoryLabelX = 8;
         this.inventoryLabelY = 110;
 
-        addExpectedPressureButton = new AE2Button(this.leftPos + 168 - 24,this.topPos + 76,24,16,Component.literal("+1"),button -> {
+        addExpectedPressureButton = new AE2Button(this.leftPos + 168 - 26,this.topPos + 76,26,20,Component.literal("+1"),button -> {
             PacketDistributor.sendToServer(new ExpectedPressureChangePacket(1f));
         });
         addRenderableWidget(addExpectedPressureButton);
 
-        addExpectedPressureButtonLess = new AE2Button(this.leftPos + 168 - 24 - 32,this.topPos + 76,24,16,Component.literal("+0.1"),button -> {
+        addExpectedPressureButtonLess = new AE2Button(this.leftPos + 168 - 26 - 34,this.topPos + 76,26,20,Component.literal("+0.1"),button -> {
             PacketDistributor.sendToServer(new ExpectedPressureChangePacket(0.1f));
         });
         addRenderableWidget(addExpectedPressureButtonLess);
 
-        reduceExpectedPressureButtonLess = new AE2Button(this.leftPos + 40,this.topPos + 76,24,16,Component.literal("-0.1"),button -> {
+        reduceExpectedPressureButtonLess = new AE2Button(this.leftPos + 42,this.topPos + 76,26,20,Component.literal("-0.1"),button -> {
             PacketDistributor.sendToServer(new ExpectedPressureChangePacket(-0.1f));
         });
         addRenderableWidget(reduceExpectedPressureButtonLess);
 
-        reduceExpectedPressureButton = new AE2Button(this.leftPos + 8,this.topPos + 76,24,16,Component.literal("-1"),button -> {
+        reduceExpectedPressureButton = new AE2Button(this.leftPos + 8,this.topPos + 76,26,20,Component.literal("-1"),button -> {
             PacketDistributor.sendToServer(new ExpectedPressureChangePacket(-1f));
         });
         addRenderableWidget(reduceExpectedPressureButton);
@@ -97,8 +99,24 @@ public class MEPressureInterfaceGUI extends AbstractContainerScreen<MEPressureIn
         String pressureStr = String.format(Locale.ROOT, "%.1f", menu.latestExpectedPressure);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.air_amount",airStr, maxStr, currentPressureStr), 13, 148, 22, 4210752, false);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.max_pressure", menu.latestDangerPressure), 13, 148, 38, 4210752, false);
-        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.literal(pressureStr), 13, 168, 80, 4210752, false);
+        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.literal(pressureStr), 13, 168, 82, 4210752, false);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text"), 13, 168, 60, 4210752, false);
 
+    }
+
+    @Override
+    protected void renderSlotHighlight(@NotNull GuiGraphics guiGraphics, Slot slot, int mouseX, int mouseY, float partialTick)
+    {
+        if (slot.isHighlightable()) {
+            int x = slot.x;
+            int y = slot.y;
+            int w = 16, h = 16;
+
+            guiGraphics.hLine(x, x + w, y - 1, 0xFFdaffff);
+            guiGraphics.hLine(x - 1, x + w, y + h, 0xFFdaffff);
+            guiGraphics.vLine(x - 1, y - 2, y + h, 0xFFdaffff);
+            guiGraphics.vLine(x + w, y - 2, y + h, 0xFFdaffff);
+            guiGraphics.fillGradient(RenderType.guiOverlay(), x, y, x + w, y + h, 0x669cd3ff, 0x669cd3ff, 0);
+        }
     }
 }

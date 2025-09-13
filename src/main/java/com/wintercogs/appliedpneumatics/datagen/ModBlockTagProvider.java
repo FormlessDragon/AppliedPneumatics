@@ -1,8 +1,10 @@
 package com.wintercogs.appliedpneumatics.datagen;
 
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
+import com.wintercogs.appliedpneumatics.common.blocks.APBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.tags.BlockTags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +22,8 @@ public class ModBlockTagProvider extends BlockTagsProvider
     @Override
     protected void addTags(HolderLookup.Provider provider)
     {
-
+        // 标记以下方块使用镐子挖掘更快
+        tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                .add(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get());
     }
 }

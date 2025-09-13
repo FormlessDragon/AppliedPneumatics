@@ -13,5 +13,10 @@
   "item.appliedpneumatics.air_cell_4m": "4M-ME空气存储元件",
   "item.appliedpneumatics.air_cell_16m": "16M-ME空气存储元件",
   "item.appliedpneumatics.air_cell_64m": "64M-ME空气存储元件",
-  "item.appliedpneumatics.air_cell_256m": "256M-ME空气存储元件"
+  "item.appliedpneumatics.air_cell_256m": "256M-ME空气存储元件",
+  "block.appliedpneumatics.me_pressure_interface_block": "ME气压接口",
+
+  "menu.title.beyonddimensions.me_pressure_interface_menu": "ME气压接口",
+  "menu.label.appliedpneumatics.me_pressure_interface.air_amount": "当前容积使用:%s\\%sL",
+  "menu.label.appliedpneumatics.me_pressure_interface.max_pressure": "危险气压阈值:%sbar"
 }

@@ -9,18 +9,33 @@ import appeng.api.networking.storage.IStorageService;
 import appeng.api.storage.MEStorage;
 import com.wintercogs.appliedpneumatics.common.me.grid.SimpleBlockNodeListener;
 import com.wintercogs.appliedpneumatics.common.me.keys.AirKey;
+import com.wintercogs.appliedpneumatics.common.menu.MEPressureInterfaceMenu;
 import me.desht.pneumaticcraft.api.PNCCapabilities;
 import me.desht.pneumaticcraft.api.tileentity.IAirHandlerMachine;
+import me.desht.pneumaticcraft.api.tileentity.IAirListener;
 import me.desht.pneumaticcraft.common.pressure.AirHandlerMachineFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -28,7 +43,7 @@ import java.util.EnumSet;
 /**
  * ME气压接口，作为ME网络与气动工艺的最佳通道使用
  */
-public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActionHost
+public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActionHost, MenuProvider, IAirListener
 {
 
     // AE部分-------------------------------------------------------------------------------------------------------------------
@@ -54,6 +69,25 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
     private static final int baseVolume = 1000; // 基本容量
     private final IAirHandlerMachine airHandler =
             AirHandlerMachineFactory.getInstance().createTierTwoAirHandler(baseVolume); // 实际空气存储
+    private int lastAir = 0;
+
+    // 充气槽位--------------------------------------------------------------------------------
+    private final ItemStackHandler inventory = new ItemStackHandler(1)
+    {
+        // 只允许放入带气体物品
+        @Override
+        public boolean isItemValid(int slot, @NotNull ItemStack stack)
+        {
+            return stack.getCapability(PNCCapabilities.AIR_HANDLER_ITEM) != null;
+        }
+
+        @Override
+        protected void onContentsChanged(int slot)
+        {
+            super.onContentsChanged(slot);
+            setChanged(); // 保存方块实体
+        }
+    };
 
     public MEPressureInterfaceBlockEntity(BlockPos pos, BlockState state)
     {
@@ -74,8 +108,39 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
                 APBlockEntities.ME_PRESSURE_INTERFACE_BLOCK_ENTITY.get(),
                 (be, direction) -> be.airHandler
         );
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                APBlockEntities.ME_PRESSURE_INTERFACE_BLOCK_ENTITY.get(),
+                (be, direction) -> be.inventory
+        );
     }
 
+    public IItemHandler getInventory()
+    {
+        return inventory;
+    }
+
+    public IAirHandlerMachine getAirHandler()
+    {
+        return airHandler;
+    }
+
+    public int getMaxVolume()
+    {
+        return (int) (baseVolume * (double)airHandler.getDangerPressure());
+    }
+
+    public float getExpectedPressure()
+    {
+        return expectedPressure;
+    }
+
+    public void setExpectedPressure(float expectedPressure)
+    {
+        expectedPressure = Math.min(25f, expectedPressure);
+        expectedPressure = Math.max(-1f, expectedPressure);
+        this.expectedPressure = expectedPressure;
+    }
 
     @Override
     public void clearRemoved()
@@ -99,6 +164,8 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
         super.loadAdditional(tag, registries);
         node.loadFromNBT(tag);
         airHandler.deserializeNBT(tag.getCompound("air_handler"));
+        this.inventory.deserializeNBT(registries,tag.getCompound("inv"));
+        this.expectedPressure = tag.getFloat("expected_pressure");
     }
 
     @Override
@@ -107,6 +174,23 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
         super.saveAdditional(tag, registries);
         node.saveToNBT(tag);
         tag.put("air_handler", airHandler.serializeNBT());
+        tag.put("inv", inventory.serializeNBT(registries));
+        tag.putFloat("expected_pressure", expectedPressure);
+    }
+
+    // 提供基础的网络同步
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries)
+    {
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag,registries);
+        return tag;
+    }
+
+    @Override
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket()
+    {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     // === 5) 卸载/移除：销毁节点，断开连接 ===
@@ -182,5 +266,25 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
 
         // 空气交互
         be.airHandler.tick(be);
+
+        // airHandler的回调很难覆盖所有路径
+        // 这里直接使用tick比较，2个int比较极其轻量
+        if(be.lastAir != be.airHandler.getAir())
+        {
+            be.lastAir = be.airHandler.getAir();
+            be.setChanged();
+        }
+    }
+
+    @Override
+    public Component getDisplayName()
+    {
+        return Component.translatable("menu.title.beyonddimensions.me_pressure_interface_menu");
+    }
+
+    @Override
+    public @Nullable AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player player)
+    {
+        return new MEPressureInterfaceMenu(id, inventory, this);
     }
 }

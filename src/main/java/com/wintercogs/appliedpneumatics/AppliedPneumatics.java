@@ -5,6 +5,7 @@ import com.wintercogs.appliedpneumatics.common.blocks.APBlocks;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.APBlockEntities;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APCreativeModeTabs;
+import com.wintercogs.appliedpneumatics.common.init.APMenus;
 import com.wintercogs.appliedpneumatics.common.items.APItems;
 import com.wintercogs.appliedpneumatics.common.me.AEPlugin;
 import net.minecraft.core.registries.Registries;
@@ -44,6 +45,7 @@ public class AppliedPneumatics
                 AEPlugin.init();
         });
 
+        APMenus.registerMenus(modEventBus);
         APCreativeModeTabs.register(modEventBus);
         APItems.register(modEventBus);
         APBlocks.register(modEventBus);

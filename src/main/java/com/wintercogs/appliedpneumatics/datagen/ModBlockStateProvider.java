@@ -1,6 +1,7 @@
 package com.wintercogs.appliedpneumatics.datagen;
 
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
+import com.wintercogs.appliedpneumatics.common.blocks.APBlocks;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -17,7 +18,7 @@ public class ModBlockStateProvider extends BlockStateProvider
     @Override
     protected void registerStatesAndModels()
     {
-
+        blockWithItem(APBlocks.ME_PRESSURE_INTERFACE_BLOCK);
     }
 
     private void blockWithItem(DeferredBlock<?> deferredBlock)

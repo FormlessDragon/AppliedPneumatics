@@ -3,6 +3,7 @@ package com.wintercogs.appliedpneumatics.datagen;
 import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
+import com.wintercogs.appliedpneumatics.common.blocks.APBlocks;
 import com.wintercogs.appliedpneumatics.common.items.APItems;
 import gripe._90.megacells.definition.MEGAItems;
 import me.desht.pneumaticcraft.common.registry.ModItems;
@@ -13,6 +14,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import org.jetbrains.annotations.NotNull;
@@ -152,6 +154,18 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                     .unlockedBy("unlock_air_cell_256m", has(MEGAItems.CELL_COMPONENT_256M))
                     .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
         }
+
+        // ME气压接口
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APBlocks.ME_PRESSURE_INTERFACE_BLOCK)
+                .pattern("ABA")
+                .pattern("C D")
+                .pattern("ABA")
+                .define('A', ModItems.COMPRESSED_IRON_INGOT)
+                .define('B', Tags.Items.GLASS_BLOCKS)
+                .define('C', AEItems.ANNIHILATION_CORE)
+                .define('D', AEItems.FORMATION_CORE)
+                .unlockedBy("unlock_me_pressure_interface_block", has(AEItems.CELL_COMPONENT_256K))
+                .save(recipeOutput);
 
     }
 }

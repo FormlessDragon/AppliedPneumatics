@@ -1,6 +1,9 @@
 package com.wintercogs.appliedpneumatics;
 
 import com.mojang.logging.LogUtils;
+import com.wintercogs.appliedpneumatics.common.blocks.APBlocks;
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.APBlockEntities;
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APCreativeModeTabs;
 import com.wintercogs.appliedpneumatics.common.items.APItems;
 import com.wintercogs.appliedpneumatics.common.me.AEPlugin;
@@ -43,6 +46,10 @@ public class AppliedPneumatics
 
         APCreativeModeTabs.register(modEventBus);
         APItems.register(modEventBus);
+        APBlocks.register(modEventBus);
+        APBlockEntities.register(modEventBus);
+
+        modEventBus.addListener(MEPressureInterfaceBlockEntity::onRegisterCaps);
     }
 
     private void constructMod(final FMLConstructModEvent event)

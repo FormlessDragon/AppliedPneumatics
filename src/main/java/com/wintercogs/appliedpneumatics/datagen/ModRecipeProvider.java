@@ -2,11 +2,9 @@ package com.wintercogs.appliedpneumatics.datagen;
 
 import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
-import com.mojang.datafixers.kinds.App;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.items.APItems;
 import gripe._90.megacells.definition.MEGAItems;
-import me.desht.pneumaticcraft.common.event.PneumaticArmorHandler;
 import me.desht.pneumaticcraft.common.registry.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;

@@ -27,11 +27,15 @@ public class APCreativeModeTabs
                         output.accept(APItems.AIR_CELL_16K.get());
                         output.accept(APItems.AIR_CELL_64K.get());
                         output.accept(APItems.AIR_CELL_256K.get());
-                        output.accept(APItems.AIR_CELL_1M.get());
-                        output.accept(APItems.AIR_CELL_4M.get());
-                        output.accept(APItems.AIR_CELL_16M.get());
-                        output.accept(APItems.AIR_CELL_64M.get());
-                        output.accept(APItems.AIR_CELL_256M.get());
+                        // 大宗存储仅在Mega元件加载时启用
+                        if(AppliedPneumatics.MEGA_CELL_LOADED)
+                        {
+                            output.accept(APItems.AIR_CELL_1M.get());
+                            output.accept(APItems.AIR_CELL_4M.get());
+                            output.accept(APItems.AIR_CELL_16M.get());
+                            output.accept(APItems.AIR_CELL_64M.get());
+                            output.accept(APItems.AIR_CELL_256M.get());
+                        }
                     })
                     .build());
 

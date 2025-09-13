@@ -136,6 +136,10 @@ dependencies {
     implementation "org.appliedenergistics:appliedenergistics2:${ae_version}"
     // 气动工艺
     implementation "curse.maven:pneumaticcraft-repressurized-281849:6817362"
+    // Mage存储元件
+    compileOnly "maven.modrinth:mega:4.10.1"
+    runtimeOnly "maven.modrinth:mega:4.10.1"
+
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"

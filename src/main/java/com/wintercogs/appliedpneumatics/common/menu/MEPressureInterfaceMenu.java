@@ -2,16 +2,20 @@ package com.wintercogs.appliedpneumatics.common.menu;
 
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APMenus;
+import com.wintercogs.appliedpneumatics.common.network.QuickMenuSyncPacket;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-public class MEPressureInterfaceMenu extends AbstractContainerMenu
+public class MEPressureInterfaceMenu extends AbstractContainerMenu implements QuickSyncable
 {
 
     private final Player player;
@@ -20,6 +24,11 @@ public class MEPressureInterfaceMenu extends AbstractContainerMenu
     private int invStartIndex = 0; // 用于for起始
     private int invEndIndex = 0; // 用于for结束判断
     private int beSlotIndex = 0; // 充气槽位 精确匹配槽位
+
+    public int latestAir = 0;
+    public int latestBaseVolume = 0;
+    public float latestExpectedPressure = 0;
+    public float latestDangerPressure = 0;
 
     /**
      * 客户端构造函数
@@ -65,33 +74,76 @@ public class MEPressureInterfaceMenu extends AbstractContainerMenu
     }
 
     @Override
-    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int slotIndex) {
+    public void broadcastChanges()
+    {
+        super.broadcastChanges();
+        boolean changed = false;
+        if(latestAir != be.getAirHandler().getAir())
+        {
+            latestAir = be.getAirHandler().getAir();
+            changed = true;
+        }
+        if(latestBaseVolume != be.getBaseVolume())
+        {
+            latestBaseVolume = be.getBaseVolume();
+            changed = true;
+        }
+        if(latestExpectedPressure != be.getExpectedPressure())
+        {
+            latestExpectedPressure = be.getExpectedPressure();
+            changed = true;
+        }
+        if(latestDangerPressure != be.getAirHandler().getDangerPressure())
+        {
+            latestDangerPressure = be.getAirHandler().getDangerPressure();
+            changed = true;
+        }
+        if(changed && player instanceof ServerPlayer serverPlayer)
+        {
+            PacketDistributor.sendToPlayer(serverPlayer, new QuickMenuSyncPacket(getQuickSyncTag()));
+        }
+    }
+
+    @Override
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int slotIndex)
+    {
         Slot slot = this.slots.get(slotIndex);
         if (!slot.hasItem()) return ItemStack.EMPTY;
 
         ItemStack stack = slot.getItem();
         ItemStack ret = stack.copy();
 
-        if (invStartIndex <= slotIndex && slotIndex < invEndIndex) {
+        if (invStartIndex <= slotIndex && slotIndex < invEndIndex)
+        {
             // 从玩家背包 → 方块槽位
-            if (!this.moveItemStackTo(stack, beSlotIndex, beSlotIndex + 1, false)) {
+            if (!this.moveItemStackTo(stack, beSlotIndex, beSlotIndex + 1, false))
+            {
                 return ItemStack.EMPTY;
             }
-        } else if (slotIndex == beSlotIndex) {
+        }
+        else if (slotIndex == beSlotIndex)
+        {
             // 从方块槽位 → 玩家背包
-            if (!this.moveItemStackTo(stack, invStartIndex, invEndIndex, false)) {
+            if (!this.moveItemStackTo(stack, invStartIndex, invEndIndex, false))
+            {
                 return ItemStack.EMPTY;
             }
-        } else {
+        }
+        else
+        {
             // 非预期范围，兜底丢回玩家背包
-            if (!this.moveItemStackTo(stack, invStartIndex, invEndIndex, false)) {
+            if (!this.moveItemStackTo(stack, invStartIndex, invEndIndex, false))
+            {
                 return ItemStack.EMPTY;
             }
         }
 
-        if (stack.isEmpty()) {
+        if (stack.isEmpty())
+        {
             slot.set(ItemStack.EMPTY);
-        } else {
+        }
+        else
+        {
             slot.setChanged();
         }
 
@@ -105,5 +157,26 @@ public class MEPressureInterfaceMenu extends AbstractContainerMenu
     public boolean stillValid(@NotNull Player player)
     {
         return be != null && !be.isRemoved();
+    }
+
+
+    @Override
+    public CompoundTag getQuickSyncTag()
+    {
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("air", latestAir);
+        tag.putInt("base_volume", latestBaseVolume);
+        tag.putFloat("expected_pressure", latestExpectedPressure);
+        tag.putFloat("last_danger_pressure", latestDangerPressure);
+        return tag;
+    }
+
+    @Override
+    public void loadQuickSync(CompoundTag tag)
+    {
+        this.latestAir = tag.getInt("air");
+        this.latestBaseVolume = tag.getInt("base_volume");
+        this.latestExpectedPressure = tag.getFloat("expected_pressure");
+        this.latestDangerPressure = tag.getFloat("last_danger_pressure");
     }
 }

@@ -2,6 +2,7 @@ package com.wintercogs.appliedpneumatics.common.init;
 
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.network.ExpectedPressureChangePacket;
+import com.wintercogs.appliedpneumatics.common.network.QuickMenuSyncPacket;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -24,6 +25,16 @@ public class APPackets
                 new DirectionalPayloadHandler<>(
                         ExpectedPressureChangePacket::handleClient,
                         ExpectedPressureChangePacket::handleServer
+                )
+
+        );
+
+        registrar.playBidirectional(
+                QuickMenuSyncPacket.TYPE,
+                QuickMenuSyncPacket.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        QuickMenuSyncPacket::handleClient,
+                        QuickMenuSyncPacket::handleServer
                 )
 
         );

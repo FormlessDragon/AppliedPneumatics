@@ -11,9 +11,11 @@ import com.wintercogs.appliedpneumatics.common.me.grid.SimpleBlockNodeListener;
 import com.wintercogs.appliedpneumatics.common.me.keys.AirKey;
 import com.wintercogs.appliedpneumatics.common.menu.MEPressureInterfaceMenu;
 import me.desht.pneumaticcraft.api.PNCCapabilities;
+import me.desht.pneumaticcraft.api.tileentity.IAirHandler;
 import me.desht.pneumaticcraft.api.tileentity.IAirHandlerMachine;
 import me.desht.pneumaticcraft.api.tileentity.IAirListener;
 import me.desht.pneumaticcraft.common.pressure.AirHandlerMachineFactory;
+import me.desht.pneumaticcraft.common.util.PneumaticCraftUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -123,6 +125,11 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
     public IAirHandlerMachine getAirHandler()
     {
         return airHandler;
+    }
+
+    public int getBaseVolume()
+    {
+        return baseVolume;
     }
 
     public int getMaxVolume()
@@ -264,7 +271,62 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
             }
         }
 
-        // 空气交互
+        // 内部物品槽交互
+        ItemStack containerItem = be.inventory.getStackInSlot(0);
+        if(!containerItem.isEmpty())
+        {
+            IAirHandler itemAirHandler = containerItem.getCapability(PNCCapabilities.AIR_HANDLER_ITEM);
+            if (itemAirHandler != null) {
+                float bePressure = be.airHandler.getPressure();
+                float itemPressure = itemAirHandler.getPressure();
+                float itemVolume = itemAirHandler.getVolume();
+                float delta = Math.abs(bePressure - itemPressure) / 2.0F; // 与充电站相同的“半差”限流
+                int airInItem = itemAirHandler.getAir();
+
+                // 基础传输率
+                int airPerTick = 1000;
+
+                // 充电器几乎为 0 压且差值很小：抽掉物品里的“最后一点点气”
+                if (PneumaticCraftUtils.epsilonEquals(bePressure, 0f) && delta < 0.1f)
+                {
+                    if (airInItem != 0)
+                    {
+                        itemAirHandler.addAir(-airInItem);
+                    }
+                }
+                // 物品气压更高：物品 -> 接口
+                else if (itemPressure > bePressure + 0.01F && itemPressure > 0F)
+                {
+                    int move = Math.min(Math.min(airPerTick, airInItem),
+                            (int) (delta * be.getMaxVolume())); // 还要受接口自身体积*半差限制
+                    if (move > 0)
+                    {
+                        itemAirHandler.addAir(-move);
+                        be.airHandler.addAir(move);
+                    }
+                }
+                // 物品气压更低且未达物品最大压：接口 -> 物品
+                else if (itemPressure < bePressure - 0.01F && itemPressure < itemAirHandler.maxPressure())
+                {
+                    int maxAirInItem = (int) (itemAirHandler.maxPressure() * itemVolume);
+                    // >15bar 时按充电站逻辑给一点加速
+                    float boost = bePressure < 15f ? 1f : 1f + (bePressure - 15f) / 5f;
+
+                    // 取速率、气体量、物品剩余空间的最小值
+                    int move = Math.min(Math.min((int) (airPerTick * boost), be.airHandler.getAir()), maxAirInItem - airInItem);
+                    // 加上半差限流
+                    move = Math.min(move, (int) (delta * itemVolume));
+
+                    if (move > 0)
+                    {
+                        itemAirHandler.addAir(move);
+                        be.airHandler.addAir(-move);
+                    }
+                }
+            }
+        }
+
+        // 与其他方块的空气交互
         be.airHandler.tick(be);
 
         // airHandler的回调很难覆盖所有路径

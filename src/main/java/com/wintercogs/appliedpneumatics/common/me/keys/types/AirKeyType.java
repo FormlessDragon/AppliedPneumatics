@@ -41,6 +41,12 @@ public class AirKeyType extends AEKeyType
         return 1000;
     }
 
+    @Override
+    public int getAmountPerUnit()
+    {
+        return 1000;
+    }
+
     // 每字节1000ml空气
     @Override
     public int getAmountPerByte()
@@ -51,6 +57,6 @@ public class AirKeyType extends AEKeyType
     @Override
     public @Nullable String getUnitSymbol()
     {
-        return "ml";
+        return "L";
     }
 }

@@ -1,6 +1,8 @@
 package com.wintercogs.appliedpneumatics;
 
 import com.mojang.logging.LogUtils;
+import com.wintercogs.appliedpneumatics.common.init.APCreativeModeTabs;
+import com.wintercogs.appliedpneumatics.common.items.APItems;
 import com.wintercogs.appliedpneumatics.common.me.AEPlugin;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.IEventBus;
@@ -10,7 +12,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.slf4j.Logger;
@@ -27,7 +28,6 @@ public class AppliedPneumatics
     {
         modEventBus.addListener(this::commonSetup);
         NeoForge.EVENT_BUS.register(this);
-        modEventBus.addListener(this::addCreative);
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
         modEventBus.addListener((RegisterEvent event) ->{
@@ -35,17 +35,15 @@ public class AppliedPneumatics
                 AEPlugin.init();
         });
 
+        APCreativeModeTabs.register(modEventBus);
+        APItems.register(modEventBus);
+
 
     }
 
     private void commonSetup(FMLCommonSetupEvent event)
     {
         AEPlugin.register();
-    }
-
-    private void addCreative(BuildCreativeModeTabContentsEvent event)
-    {
-
     }
 
     @SubscribeEvent

@@ -10,5 +10,6 @@ public class AEClientPlugin
     public static void register()
     {
         AEKeyRendering.register(AirKeyType.INSTANCE, AirKey.class, new AirKeyRenderHandler());
+        AirStroageModels.register();
     }
 }

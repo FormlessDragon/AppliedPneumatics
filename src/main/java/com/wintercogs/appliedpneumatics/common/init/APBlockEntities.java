@@ -1,7 +1,8 @@
-package com.wintercogs.appliedpneumatics.common.blocks.entitis;
+package com.wintercogs.appliedpneumatics.common.init;
 
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
-import com.wintercogs.appliedpneumatics.common.blocks.APBlocks;
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureChamberValveBlockEntity;
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
@@ -20,6 +21,15 @@ public class APBlockEntities
             () -> BlockEntityType.Builder.of(
                             MEPressureInterfaceBlockEntity::new,
                             APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get()
+                    )
+                    .build(null)
+    );
+
+    public static final Supplier<BlockEntityType<MEPressureChamberValveBlockEntity>> ME_PRESSURE_CHAMBER_VALVE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "me_pressure_chamber_valve_block_entity",
+            () -> BlockEntityType.Builder.of(
+                            MEPressureChamberValveBlockEntity::new,
+                            APBlocks.ME_PRESSURE_CHAMBER_VALVE.get()
                     )
                     .build(null)
     );

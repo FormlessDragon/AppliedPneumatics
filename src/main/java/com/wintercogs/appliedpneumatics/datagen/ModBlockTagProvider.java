@@ -1,7 +1,9 @@
 package com.wintercogs.appliedpneumatics.datagen;
 
+import appeng.core.definitions.AEBlocks;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
-import com.wintercogs.appliedpneumatics.common.blocks.APBlocks;
+import com.wintercogs.appliedpneumatics.common.init.APBlocks;
+import com.wintercogs.appliedpneumatics.common.tags.APBlockTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
@@ -24,6 +26,16 @@ public class ModBlockTagProvider extends BlockTagsProvider
     {
         // 标记以下方块使用镐子挖掘更快
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                .add(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get());
+                .add(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get())
+                .add(APBlocks.ME_PRESSURE_CHAMBER_VALVE.get())
+                .add(APBlocks.ME_PRESSURE_CHAMBER_WALL.get())
+                .add(APBlocks.ME_PRESSURE_CHAMBER_GLASS.get());
+
+        // 这些方块可以作为气压室的外壳
+        tag(APBlockTags.CHAMBER_FRAME_TAG)
+                .add(APBlocks.ME_PRESSURE_CHAMBER_GLASS.get())
+                .add(APBlocks.ME_PRESSURE_CHAMBER_WALL.get())
+                .add(APBlocks.ME_PRESSURE_CHAMBER_VALVE.get())
+                .add(AEBlocks.INTERFACE.block());
     }
 }

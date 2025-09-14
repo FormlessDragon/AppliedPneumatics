@@ -1,7 +1,6 @@
 package com.wintercogs.appliedpneumatics.common.init;
 
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
-import com.wintercogs.appliedpneumatics.common.blocks.APBlocks;
 import com.wintercogs.appliedpneumatics.common.items.APItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -38,6 +37,9 @@ public class APCreativeModeTabs
                             output.accept(APItems.AIR_CELL_256M.get());
                         }
                         output.accept(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get());
+                        output.accept(APBlocks.ME_PRESSURE_CHAMBER_VALVE.get());
+                        output.accept(APBlocks.ME_PRESSURE_CHAMBER_WALL.get());
+                        output.accept(APBlocks.ME_PRESSURE_CHAMBER_GLASS.get());
                     })
                     .build());
 

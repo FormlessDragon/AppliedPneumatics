@@ -3,16 +3,14 @@ package com.wintercogs.appliedpneumatics.datagen;
 import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
-import com.wintercogs.appliedpneumatics.common.blocks.APBlocks;
+import com.wintercogs.appliedpneumatics.common.init.APBlocks;
 import com.wintercogs.appliedpneumatics.common.items.APItems;
 import gripe._90.megacells.definition.MEGAItems;
+import me.desht.pneumaticcraft.common.registry.ModBlocks;
 import me.desht.pneumaticcraft.common.registry.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
@@ -167,5 +165,25 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("unlock_me_pressure_interface_block", has(AEItems.CELL_COMPONENT_256K))
                 .save(recipeOutput);
 
+        // ME气压室阀门
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APBlocks.ME_PRESSURE_CHAMBER_VALVE)
+                .requires(ModBlocks.PRESSURE_CHAMBER_VALVE)
+                .requires(AEBlocks.INTERFACE.block())
+                .unlockedBy("unlock_me_pressure_chamber_valve", has(ModBlocks.PRESSURE_CHAMBER_VALVE))
+                .save(recipeOutput);
+
+        // ME气压室墙壁
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APBlocks.ME_PRESSURE_CHAMBER_WALL)
+                .requires(ModBlocks.PRESSURE_CHAMBER_WALL)
+                .requires(AEBlocks.INTERFACE.block())
+                .unlockedBy("unlock_me_pressure_chamber_wall", has(ModBlocks.PRESSURE_CHAMBER_WALL))
+                .save(recipeOutput);
+
+        // ME气压室玻璃
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APBlocks.ME_PRESSURE_CHAMBER_GLASS)
+                .requires(ModBlocks.PRESSURE_CHAMBER_GLASS)
+                .requires(AEBlocks.INTERFACE.block())
+                .unlockedBy("unlock_me_pressure_chamber_glass", has(ModBlocks.PRESSURE_CHAMBER_GLASS))
+                .save(recipeOutput);
     }
 }

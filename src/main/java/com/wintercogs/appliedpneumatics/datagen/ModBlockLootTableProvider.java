@@ -1,6 +1,6 @@
 package com.wintercogs.appliedpneumatics.datagen;
 
-import com.wintercogs.appliedpneumatics.common.blocks.APBlocks;
+import com.wintercogs.appliedpneumatics.common.init.APBlocks;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -22,6 +22,9 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider
     protected void generate()
     {
         dropSelf(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get());
+        dropSelf(APBlocks.ME_PRESSURE_CHAMBER_VALVE.get());
+        dropSelf(APBlocks.ME_PRESSURE_CHAMBER_WALL.get());
+        dropSelf(APBlocks.ME_PRESSURE_CHAMBER_GLASS.get());
     }
 
     @Override

@@ -47,11 +47,11 @@ public class AirKeyType extends AEKeyType
         return 1000;
     }
 
-    // 每字节1000ml空气
+    // 每字节250ml空气
     @Override
     public int getAmountPerByte()
     {
-        return 1000;
+        return 250;
     }
 
     @Override

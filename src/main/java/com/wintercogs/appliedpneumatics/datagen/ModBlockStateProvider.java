@@ -9,12 +9,14 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -34,8 +36,7 @@ public class ModBlockStateProvider extends BlockStateProvider
     protected void registerStatesAndModels()
     {
         blockWithItem(APBlocks.ME_PRESSURE_INTERFACE_BLOCK);
-        blockWithItem(APBlocks.ME_PRESSURE_CHAMBER_VALVE);
-        blockWithItem(APBlocks.ME_PRESSURE_CHAMBER_GLASS);
+        genCubeAllWithFormedToggle(APBlocks.ME_PRESSURE_CHAMBER_VALVE);
         genWallLike13States(APBlocks.ME_PRESSURE_CHAMBER_WALL);
     }
 
@@ -73,6 +74,48 @@ public class ModBlockStateProvider extends BlockStateProvider
         String forItem = pickItemStateName(prop);
         simpleBlockItem(block.get(), models().getExistingFile(modLoc("block/" + baseName + "_" + forItem)));
     }
+
+    /**
+     * 若目标方块含有名为 "formed" 的 BooleanProperty：
+     *  - formed=true  使用 block/<registry_path>/formed 作为 cube_all 贴图
+     *  - formed=false 使用 block/<registry_path>/common 作为 cube_all 贴图
+     * 若不含该属性：
+     *  - 退化为使用 block/<registry_path>/common 的简单 cube_all
+     *
+     * 方块物品模型一律用 common 版本。
+     */
+    public void genCubeAllWithFormedToggle(DeferredBlock<?> block)
+    {
+        final ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block.get());
+        final String baseName = id.getPath();                 // <注册名>
+        final String texBase  = "block/" + baseName + "/";    // 纹理前缀，如 block/<registry_path>/
+
+        // 尝试在 Block 的 StateDefinition 里查找名为 "formed" 的布尔属性
+        @SuppressWarnings("unchecked")
+        final @Nullable BooleanProperty formedProp = (BooleanProperty)
+                block.get().getStateDefinition().getProperties().stream()
+                        .filter(p -> p.getName().equals("formed"))
+                        .filter(BooleanProperty.class::isInstance)
+                        .findFirst().orElse(null);
+
+        if (formedProp != null) {
+            // 两个模型：_formed / _common
+            ModelFile modelFormed = models().cubeAll(baseName + "_formed", modLoc(texBase + "formed"));
+            ModelFile modelCommon = models().cubeAll(baseName + "_common", modLoc(texBase + "common"));
+
+            VariantBlockStateBuilder v = getVariantBuilder(block.get());
+            v.partialState().with(formedProp, true ).modelForState().modelFile(modelFormed).addModel();
+            v.partialState().with(formedProp, false).modelForState().modelFile(modelCommon).addModel();
+
+            // 物品模型用 common
+            simpleBlockItem(block.get(), modelCommon);
+        } else {
+            // 不含 formed 属性：退化为 common 的简单 cube_all（并生成对应物品模型）
+            ModelFile modelCommon = models().cubeAll(baseName, modLoc(texBase + "common"));
+            simpleBlockWithItem(block.get(), modelCommon);
+        }
+    }
+
 
     /* 生成单个状态的 6 面模型 */
     private ModelFile wallLikeModel(Block block, String stateName, String texBase, ResourceLocation parent) {

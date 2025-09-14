@@ -178,12 +178,5 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(AEBlocks.INTERFACE.block())
                 .unlockedBy("unlock_me_pressure_chamber_wall", has(ModBlocks.PRESSURE_CHAMBER_WALL))
                 .save(recipeOutput);
-
-        // ME气压室玻璃
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APBlocks.ME_PRESSURE_CHAMBER_GLASS)
-                .requires(ModBlocks.PRESSURE_CHAMBER_GLASS)
-                .requires(AEBlocks.INTERFACE.block())
-                .unlockedBy("unlock_me_pressure_chamber_glass", has(ModBlocks.PRESSURE_CHAMBER_GLASS))
-                .save(recipeOutput);
     }
 }

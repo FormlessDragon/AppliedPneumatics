@@ -32,6 +32,7 @@ public class MEPressureChamberBase extends Block {
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
 
     private final TagKey<Block> FRAME_TAG = APBlockTags.CHAMBER_FRAME_TAG;
+    private final TagKey<Block> EDGE_TAG = APBlockTags.CHAMBER_EDGE_TAG;
     private final int minEdge = 3;
     private final int maxEdge = 7;
 
@@ -63,8 +64,9 @@ public class MEPressureChamberBase extends Block {
     /** 是否为外壳方块：仅看标签。方便添加其他模组的方块 */
     private boolean isFrame(LevelReader level, BlockPos pos, BlockState state)
     {
-        return state.is(FRAME_TAG);
+        return state.is(FRAME_TAG) || state.is(EDGE_TAG);
     }
+
 
     /** 是否为控制器方块：仅看 Block 是否实现接口。 */
     private boolean isController(LevelReader level, BlockPos pos)
@@ -159,8 +161,16 @@ public class MEPressureChamberBase extends Block {
             }
         }
         if (!shell.equals(expectedShell)) return null;
+
+        // 逐个外壳方块做“棱/面”标签精确校验
         for (BlockPos p : expectedShell) {
-            if (!isFrame(level, p, level.getBlockState(p))) return null;
+            BlockState bs = level.getBlockState(p);
+            boolean edge = isEdgePos(bounds, p.getX(), p.getY(), p.getZ());
+            if (edge) {
+                if (!bs.is(EDGE_TAG)) return null;    // 棱：必须命中 EDGE_TAG
+            } else {
+                if (!bs.is(FRAME_TAG)) return null;   // 面：必须命中 FRAME_TAG
+            }
         }
 
         // 内部必须为空气
@@ -306,6 +316,16 @@ public class MEPressureChamberBase extends Block {
             }
         }
     }
+
+    // 判断某外壳坐标是否位于"棱"
+    private static boolean isEdgePos(Bounds b, int x, int y, int z) {
+        int c = 0;
+        if (x == b.minX || x == b.maxX) c++;
+        if (y == b.minY || y == b.maxY) c++;
+        if (z == b.minZ || z == b.maxZ) c++;
+        return c >= 2; // 2=边, 3=角
+    }
+
 
 
     // 数据存储

@@ -10,4 +10,6 @@ public class APBlockTags
 {
     public static final TagKey<Block> CHAMBER_FRAME_TAG =
             TagKey.create(Registries.BLOCK, ResourceLocation.tryBuild(AppliedPneumatics.MODID, "me_pressure_chamber_frame"));
+    public static final TagKey<Block> CHAMBER_EDGE_TAG =
+            TagKey.create(Registries.BLOCK, ResourceLocation.tryBuild(AppliedPneumatics.MODID, "me_pressure_chamber_edge"));
 }

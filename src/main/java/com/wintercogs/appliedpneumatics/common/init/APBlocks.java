@@ -2,7 +2,6 @@ package com.wintercogs.appliedpneumatics.common.init;
 
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.blocks.MEPressureInterfaceBlock;
-import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberGlass;
 import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberValve;
 import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberWall;
 import com.wintercogs.appliedpneumatics.common.items.APItems;
@@ -28,9 +27,6 @@ public class APBlocks
 
     public static final DeferredBlock<Block> ME_PRESSURE_CHAMBER_WALL = registerBlock("me_pressure_chamber_wall",
             () -> new MEPressureChamberWall(BlockBehaviour.Properties.of().strength(2f)));
-
-    public static final DeferredBlock<Block> ME_PRESSURE_CHAMBER_GLASS = registerBlock("me_pressure_chamber_glass",
-            () -> new MEPressureChamberGlass(BlockBehaviour.Properties.of().strength(2f)));
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block)
     {

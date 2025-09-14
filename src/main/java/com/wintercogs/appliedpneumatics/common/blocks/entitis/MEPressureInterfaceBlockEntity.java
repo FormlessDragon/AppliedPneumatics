@@ -31,6 +31,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -349,4 +350,13 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
     {
         return new MEPressureInterfaceMenu(id, inventory, this);
     }
+
+    public void dropContent()
+    {
+        ItemStack dropStack = inventory.getStackInSlot(0);
+        if(level != null && !dropStack.isEmpty())
+            Block.popResource(level, worldPosition, dropStack);
+    }
+
+
 }

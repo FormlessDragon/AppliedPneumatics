@@ -27,7 +27,7 @@ public class MEPressureInterfaceBlock extends Block implements EntityBlock
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult)
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult)
     {
         super.useWithoutItem(state,level,pos,player,hitResult);
         if(!level.isClientSide()&&!player.isShiftKeyDown())
@@ -55,5 +55,17 @@ public class MEPressureInterfaceBlock extends Block implements EntityBlock
                 MEPressureInterfaceBlockEntity.serverTick(level1, blockPos, blockState, be);
             }
         };
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston)
+    {
+        if (!state.is(newState.getBlock())) {
+            if (level.getBlockEntity(pos) instanceof MEPressureInterfaceBlockEntity blockEntity) {
+                level.updateNeighbourForOutputSignal(pos, this);
+                blockEntity.dropContent();
+            }
+            super.onRemove(state, level, pos, newState, movedByPiston);
+        }
     }
 }

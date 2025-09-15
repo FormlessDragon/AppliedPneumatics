@@ -3,11 +3,11 @@ package com.wintercogs.appliedpneumatics.common.blocks.entitis;
 import appeng.api.AECapabilities;
 import appeng.api.config.Actionable;
 import appeng.api.networking.*;
-import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IStorageService;
 import appeng.api.storage.MEStorage;
 import com.wintercogs.appliedpneumatics.common.init.APBlockEntities;
+import com.wintercogs.appliedpneumatics.common.init.APBlocks;
 import com.wintercogs.appliedpneumatics.common.me.grid.SimpleBlockNodeListener;
 import com.wintercogs.appliedpneumatics.common.me.keys.AirKey;
 import com.wintercogs.appliedpneumatics.common.menu.MEPressureInterfaceMenu;
@@ -47,7 +47,7 @@ import java.util.EnumSet;
 /**
  * ME气压接口，作为ME网络与气动工艺的最佳通道使用
  */
-public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActionHost, MenuProvider, IAirListener
+public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuProvider, IAirListener, IInWorldGridNodeHost
 {
 
     // AE部分-------------------------------------------------------------------------------------------------------------------
@@ -57,16 +57,8 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
             .setIdlePowerUsage(8.0) // 待机消耗
             .setFlags(GridFlags.REQUIRE_CHANNEL) // 需要频道
             .setExposedOnSides(EnumSet.allOf(Direction.class)) // 可以用于连接的方向
-            .setInWorldNode(true); // 是世界内节点
-
-    private final IInWorldGridNodeHost nodeHost = new IInWorldGridNodeHost()
-    {
-        @Override
-        public @Nullable IGridNode getGridNode(@Nullable Direction side)
-        {
-            return node.isReady() ? node.getNode() : null;
-        }
-    };
+            .setInWorldNode(true) // 是世界内节点
+            .setVisualRepresentation(APBlocks.ME_PRESSURE_INTERFACE_BLOCK);
 
     // 气动部分--------------------------------------------------------------------------------
     private float expectedPressure = 2.0f; // 期望气压值
@@ -105,7 +97,7 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
         event.registerBlockEntity(
                 AECapabilities.IN_WORLD_GRID_NODE_HOST,
                 APBlockEntities.ME_PRESSURE_INTERFACE_BLOCK_ENTITY.get(),
-                (be, unused) -> be.asNodeHost()
+                (be, unused) -> be
         );
         event.registerBlockEntity(
                 PNCCapabilities.AIR_HANDLER_MACHINE,
@@ -230,14 +222,8 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
         return ss != null ? ss.getInventory() : null;
     }
 
-    // 暴露给 Block Capability 的访问器
-    public IInWorldGridNodeHost asNodeHost()
-    {
-        return nodeHost;
-    }
-
     @Override
-    public @Nullable IGridNode getActionableNode()
+    public @Nullable IGridNode getGridNode(Direction dir)
     {
         return node.isReady() ? node.getNode() : null;
     }
@@ -256,7 +242,7 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
             int wantedAir = (int) (difference * baseVolume);
             if (wantedAir > 0)
             {
-                int extracted = (int) storage.extract(AirKey.INSTANCE, wantedAir, Actionable.MODULATE, IActionSource.ofMachine(be));
+                int extracted = (int) storage.extract(AirKey.INSTANCE, wantedAir, Actionable.MODULATE, IActionSource.empty());
                 if(extracted > 0)
                 {
                     be.airHandler.addAir(extracted);
@@ -265,7 +251,7 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
             else if(wantedAir < 0)
             {
                 wantedAir = -wantedAir; // 反转数值
-                int inserted = (int) storage.insert(AirKey.INSTANCE, wantedAir, Actionable.MODULATE, IActionSource.ofMachine(be));
+                int inserted = (int) storage.insert(AirKey.INSTANCE, wantedAir, Actionable.MODULATE, IActionSource.empty());
                 if(inserted > 0)
                 {
                     be.airHandler.addAir(-inserted);
@@ -358,6 +344,5 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements IActi
         if(level != null && !dropStack.isEmpty())
             Block.popResource(level, worldPosition, dropStack);
     }
-
 
 }

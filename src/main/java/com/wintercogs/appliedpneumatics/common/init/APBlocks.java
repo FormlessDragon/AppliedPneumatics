@@ -1,10 +1,14 @@
 package com.wintercogs.appliedpneumatics.common.init;
 
+import appeng.block.AEBaseBlock;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.blocks.MEPressureInterfaceBlock;
+import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberGlass;
 import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberValve;
+import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberVibrantGlass;
 import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberWall;
 import com.wintercogs.appliedpneumatics.common.items.APItems;
+import me.desht.pneumaticcraft.common.block.IBlockPressureChamber;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -27,6 +31,15 @@ public class APBlocks
 
     public static final DeferredBlock<Block> ME_PRESSURE_CHAMBER_WALL = registerBlock("me_pressure_chamber_wall",
             () -> new MEPressureChamberWall(BlockBehaviour.Properties.of().strength(2f)));
+
+    // 注册一个类似AE聚能石英玻璃的方块
+    public static final DeferredBlock<Block> ME_PRESSURE_CHAMBER_VIBRANT_GLASS = registerBlock("me_pressure_chamber_vibrant_glass",
+            () -> new MEPressureChamberVibrantGlass(AEBaseBlock.glassProps().lightLevel(b -> 15).noOcclusion()
+                    .isValidSpawn((blockState, blockGetter, blockPos, entityType) -> false)));
+
+    // 注册一个类似压力室玻璃的方块
+    public static final DeferredBlock<Block> ME_PRESSURE_CHAMBER_GLASS = registerBlock("me_pressure_chamber_glass",
+            () -> new MEPressureChamberGlass(IBlockPressureChamber.pressureChamberBlockProps().noOcclusion()));
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block)
     {

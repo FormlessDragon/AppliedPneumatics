@@ -39,6 +39,8 @@ public class APCreativeModeTabs
                         output.accept(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get());
                         output.accept(APBlocks.ME_PRESSURE_CHAMBER_VALVE.get());
                         output.accept(APBlocks.ME_PRESSURE_CHAMBER_WALL.get());
+                        output.accept(APBlocks.ME_PRESSURE_CHAMBER_GLASS.get());
+                        output.accept(APBlocks.ME_PRESSURE_CHAMBER_VIBRANT_GLASS.get());
                     })
                     .build());
 

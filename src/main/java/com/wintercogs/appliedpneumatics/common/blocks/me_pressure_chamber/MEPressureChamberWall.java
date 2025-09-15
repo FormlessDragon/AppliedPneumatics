@@ -1,16 +1,20 @@
 package com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber;
 
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberWallBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APBlockStates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
 
-public class MEPressureChamberWall extends MEPressureChamberBase implements MEPressureChamberBase.IChamberPartLike
+public class MEPressureChamberWall extends MEPressureChamberBase implements EntityBlock, IChamberPartLike
 {
 
     public MEPressureChamberWall(Properties properties)
@@ -28,7 +32,10 @@ public class MEPressureChamberWall extends MEPressureChamberBase implements MEPr
 
     /* 成型/破碎时计算每面的面态并写回状态 */
     @Override
-    public void onChamberFormed(ServerLevel level, BlockPos self, FormedStructure fs) {
+    public void onChamberFormed(ServerLevel level, BlockPos self, FormedStructure fs)
+    {
+        super.onChamberFormed(level, self, fs);
+
         final BlockState s = level.getBlockState(self);
         final Bounds b = fs.bounds();
 
@@ -79,9 +86,17 @@ public class MEPressureChamberWall extends MEPressureChamberBase implements MEPr
     }
 
     @Override
-    public void onChamberBroken(ServerLevel level, BlockPos self, Set<BlockPos> oldShell) {
+    public void onChamberBroken(ServerLevel level, BlockPos self, Set<BlockPos> oldShell)
+    {
+        super.onChamberBroken(level, self, oldShell);
+
         final BlockState s = level.getBlockState(self);
         level.setBlock(self, s.setValue(APBlockStates.WALL_STATE, APBlockStates.WallState.COMMON), SOFT_FLAGS);
     }
 
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState)
+    {
+        return new MEPressureChamberWallBlockEntity(blockPos, blockState);
+    }
 }

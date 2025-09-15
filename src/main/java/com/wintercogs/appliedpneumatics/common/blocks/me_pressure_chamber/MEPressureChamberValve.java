@@ -1,6 +1,6 @@
 package com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber;
 
-import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureChamberValveBlockEntity;
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberValveBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.EntityBlock;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class MEPressureChamberValve extends MEPressureChamberBase implements EntityBlock , MEPressureChamberBase.IChamberControllerLike
+public class MEPressureChamberValve extends MEPressureChamberBase implements EntityBlock , IChamberControllerLike
 {
     public MEPressureChamberValve(Properties properties)
     {
@@ -21,25 +21,25 @@ public class MEPressureChamberValve extends MEPressureChamberBase implements Ent
     @Override
     public void onControlFormed(ServerLevel level, BlockPos controllerPos, FormedStructure fs)
     {
-
     }
 
     @Override
     public void onControlBroken(ServerLevel level, BlockPos controllerPos, Set<BlockPos> oldShell)
     {
-
     }
 
     @Override
     public void onChamberFormed(ServerLevel level, BlockPos selfPos, FormedStructure fs)
     {
-
+        super.onChamberFormed(level, selfPos, fs);
+        if(level.getBlockEntity(selfPos) instanceof MEPressureChamberValveBlockEntity be)
+            be.onChamberFormed();
     }
 
     @Override
     public void onChamberBroken(ServerLevel level, BlockPos selfPos, Set<BlockPos> oldShell)
     {
-
+        super.onChamberBroken(level, selfPos, oldShell);
     }
 
     @Override

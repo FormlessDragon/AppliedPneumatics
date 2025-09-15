@@ -29,11 +29,14 @@ public class ModBlockTagProvider extends BlockTagsProvider
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get())
                 .add(APBlocks.ME_PRESSURE_CHAMBER_VALVE.get())
-                .add(APBlocks.ME_PRESSURE_CHAMBER_WALL.get());
+                .add(APBlocks.ME_PRESSURE_CHAMBER_WALL.get())
+                .add(APBlocks.ME_PRESSURE_CHAMBER_GLASS.get())
+                .add(APBlocks.ME_PRESSURE_CHAMBER_VIBRANT_GLASS.get());
 
         // 这些方块可以作为气压室的外壳
         tag(APBlockTags.CHAMBER_FRAME_TAG)
-                .add(AEBlocks.QUARTZ_VIBRANT_GLASS.block())
+                .add(APBlocks.ME_PRESSURE_CHAMBER_GLASS.get())
+                .add(APBlocks.ME_PRESSURE_CHAMBER_VIBRANT_GLASS.get())
                 .add(ModBlocks.PRESSURE_CHAMBER_GLASS.get())
                 .add(APBlocks.ME_PRESSURE_CHAMBER_WALL.get())
                 .add(APBlocks.ME_PRESSURE_CHAMBER_VALVE.get())
@@ -42,5 +45,6 @@ public class ModBlockTagProvider extends BlockTagsProvider
         // 谁可以作为气压室的棱
         tag(APBlockTags.CHAMBER_EDGE_TAG)
                 .add(APBlocks.ME_PRESSURE_CHAMBER_WALL.get());
+
     }
 }

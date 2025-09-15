@@ -15,6 +15,10 @@
   "item.appliedpneumatics.air_cell_64m": "64M-ME空气存储元件",
   "item.appliedpneumatics.air_cell_256m": "256M-ME空气存储元件",
   "block.appliedpneumatics.me_pressure_interface_block": "ME气压接口",
+  "block.appliedpneumatics.me_pressure_chamber_valve": "ME压力室气阀",
+  "block.appliedpneumatics.me_pressure_chamber_wall": "ME压力室墙壁",
+  "block.appliedpneumatics.me_pressure_chamber_vibrant_glass": "ME压力室聚能石英玻璃",
+  "block.appliedpneumatics.me_pressure_chamber_glass": "ME压力室玻璃",
 
   "menu.title.beyonddimensions.me_pressure_interface_menu": "ME气压接口",
   "menu.label.appliedpneumatics.me_pressure_interface.air_amount": "容积使用:%s\\%sL (%sbar)",

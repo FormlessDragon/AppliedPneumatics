@@ -38,6 +38,8 @@ public class ModBlockStateProvider extends BlockStateProvider
         blockWithItem(APBlocks.ME_PRESSURE_INTERFACE_BLOCK);
         genCubeAllWithFormedToggle(APBlocks.ME_PRESSURE_CHAMBER_VALVE);
         genWallLike13States(APBlocks.ME_PRESSURE_CHAMBER_WALL);
+        // APBlocks.ME_PRESSURE_CHAMBER_GLASS手写
+        // APBlocks.ME_PRESSURE_CHAMBER_VIBRANT_GLASS手写
     }
 
     private void blockWithItem(DeferredBlock<?> deferredBlock)

@@ -1,8 +1,11 @@
 package com.wintercogs.appliedpneumatics.common.init;
 
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
-import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureChamberValveBlockEntity;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberGlassBlockEntity;
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberValveBlockEntity;
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberVibrantGlassBlockEntity;
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberWallBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
@@ -30,6 +33,36 @@ public class APBlockEntities
             () -> BlockEntityType.Builder.of(
                             MEPressureChamberValveBlockEntity::new,
                             APBlocks.ME_PRESSURE_CHAMBER_VALVE.get()
+                    )
+                    .build(null)
+    );
+
+    // 压力室墙壁
+    public static final Supplier<BlockEntityType<MEPressureChamberWallBlockEntity>> ME_PRESSURE_CHAMBER_WALL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "me_pressure_chamber_wall_block_entity",
+            () -> BlockEntityType.Builder.of(
+                            MEPressureChamberWallBlockEntity::new,
+                            APBlocks.ME_PRESSURE_CHAMBER_WALL.get()
+                    )
+                    .build(null)
+    );
+
+    // 压力室玻璃
+    public static final Supplier<BlockEntityType<MEPressureChamberGlassBlockEntity>> ME_PRESSURE_CHAMBER_GLASS_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "me_pressure_chamber_glass_block_entity",
+            () -> BlockEntityType.Builder.of(
+                            MEPressureChamberGlassBlockEntity::new,
+                            APBlocks.ME_PRESSURE_CHAMBER_GLASS.get()
+                    )
+                    .build(null)
+    );
+
+    // 压力室聚能玻璃
+    public static final Supplier<BlockEntityType<MEPressureChamberVibrantGlassBlockEntity>> ME_PRESSURE_CHAMBER_VIBRANT_GLASS_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "me_pressure_chamber_vibrant_glass_block_entity",
+            () -> BlockEntityType.Builder.of(
+                            MEPressureChamberVibrantGlassBlockEntity::new,
+                            APBlocks.ME_PRESSURE_CHAMBER_VIBRANT_GLASS.get()
                     )
                     .build(null)
     );

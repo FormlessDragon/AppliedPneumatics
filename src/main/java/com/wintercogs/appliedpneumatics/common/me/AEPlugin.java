@@ -1,10 +1,12 @@
 package com.wintercogs.appliedpneumatics.common.me;
 
 import appeng.api.behaviors.*;
+import appeng.api.features.P2PTunnelAttunement;
 import appeng.api.stacks.AEKeyTypes;
 import appeng.parts.automation.StackWorldBehaviors;
 import appeng.parts.automation.StorageExportStrategy;
 import appeng.parts.automation.StorageImportStrategy;
+import com.wintercogs.appliedpneumatics.common.items.APItems;
 import com.wintercogs.appliedpneumatics.common.me.keys.AirKey;
 import com.wintercogs.appliedpneumatics.common.me.keys.types.AirKeyType;
 import com.wintercogs.appliedpneumatics.common.me.strategies.AirContainerItemStrategy;
@@ -13,6 +15,7 @@ import com.wintercogs.appliedpneumatics.common.me.strategies.AirHandlerStrategy;
 import me.desht.pneumaticcraft.api.PNCCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 
 public class AEPlugin
@@ -41,6 +44,9 @@ public class AEPlugin
 
         // UI中与物品交互的逻辑
         ContainerItemStrategy.register(AirKeyType.INSTANCE, AirKey.class, new AirContainerItemStrategy());
+
+        // p2p协调
+        P2PTunnelAttunement.registerAttunementApi(APItems.AIR_P2P_TUNEL, PNCCapabilities.AIR_HANDLER_ITEM, Component.translatable("appliedpneumatics.pneumatic"));
     }
 
     public static StackImportStrategy createAirImport(ServerLevel level, BlockPos fromPos, Direction fromSide)

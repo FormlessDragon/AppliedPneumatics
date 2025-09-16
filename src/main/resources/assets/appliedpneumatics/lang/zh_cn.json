@@ -1,6 +1,8 @@
 {
   "appliedpneumatics.me.key.air": "空气",
   "appliedpneumatics.me.externalstorage.air": "外部空气存储",
+  "appliedpneumatics.cur.tooltip.p2p_input": "P2P输入端：%sBar",
+  "appliedpneumatics.cur.tooltip.p2p_output": "P2P输出端：%sBar",
 
   "creativetab.appliedpneumatics.items": "应用气动",
 
@@ -14,6 +16,7 @@
   "item.appliedpneumatics.air_cell_16m": "16M-ME空气存储元件",
   "item.appliedpneumatics.air_cell_64m": "64M-ME空气存储元件",
   "item.appliedpneumatics.air_cell_256m": "256M-ME空气存储元件",
+  "item.appliedpneumatics.air_p2p_tunel": "空气P2P通道",
   "block.appliedpneumatics.me_pressure_interface_block": "ME气压接口",
   "block.appliedpneumatics.me_pressure_chamber_valve": "ME压力室气阀",
   "block.appliedpneumatics.me_pressure_chamber_wall": "ME压力室墙壁",

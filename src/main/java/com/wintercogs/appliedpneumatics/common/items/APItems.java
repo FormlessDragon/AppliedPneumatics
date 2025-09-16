@@ -1,8 +1,12 @@
 package com.wintercogs.appliedpneumatics.common.items;
 
+import appeng.api.parts.PartModels;
+import appeng.items.parts.PartItem;
+import appeng.items.parts.PartModelsHelper;
 import appeng.items.storage.BasicStorageCell;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.me.keys.types.AirKeyType;
+import com.wintercogs.appliedpneumatics.common.me.p2p.AirP2PTunnelPart;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -93,6 +97,13 @@ public class APItems
                     2097152,
                     1,
                     AirKeyType.INSTANCE));
+
+    public static final DeferredItem<PartItem<AirP2PTunnelPart>> AIR_P2P_TUNEL = ITEMS.register("air_p2p_tunel",
+            () -> {
+                // 注册模型
+                PartModels.registerModels(PartModelsHelper.createModels(AirP2PTunnelPart.class));
+                return new PartItem<>(new Item.Properties(), AirP2PTunnelPart.class, AirP2PTunnelPart::new);
+            });
 
 
     public static void register(IEventBus eventBus)

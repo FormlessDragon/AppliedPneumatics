@@ -41,6 +41,7 @@ public class APCreativeModeTabs
                         output.accept(APBlocks.ME_PRESSURE_CHAMBER_WALL.get());
                         output.accept(APBlocks.ME_PRESSURE_CHAMBER_GLASS.get());
                         output.accept(APBlocks.ME_PRESSURE_CHAMBER_VIBRANT_GLASS.get());
+                        output.accept(APItems.AIR_P2P_TUNEL.get());
                     })
                     .build());
 

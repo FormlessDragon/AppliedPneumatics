@@ -47,6 +47,7 @@ public class AEPlugin
 
         // p2p协调
         P2PTunnelAttunement.registerAttunementApi(APItems.AIR_P2P_TUNEL, PNCCapabilities.AIR_HANDLER_ITEM, Component.translatable("appliedpneumatics.pneumatic"));
+        P2PTunnelAttunement.registerAttunementTag(APItems.HEAT_P2P_TUNEL); // 用P2PTunnelAttunement.getAttunementTag(APItems.HEAT_P2P_TUNEL.get());获取此标签来标记物品
     }
 
     public static StackImportStrategy createAirImport(ServerLevel level, BlockPos fromPos, Direction fromSide)

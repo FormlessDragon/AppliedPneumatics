@@ -7,6 +7,7 @@ import appeng.items.storage.BasicStorageCell;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.me.keys.types.AirKeyType;
 import com.wintercogs.appliedpneumatics.common.me.p2p.AirP2PTunnelPart;
+import com.wintercogs.appliedpneumatics.common.me.p2p.HeatP2PTunnelPart;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -98,11 +99,20 @@ public class APItems
                     1,
                     AirKeyType.INSTANCE));
 
+    // 空气p2p通道
     public static final DeferredItem<PartItem<AirP2PTunnelPart>> AIR_P2P_TUNEL = ITEMS.register("air_p2p_tunel",
             () -> {
                 // 注册模型
                 PartModels.registerModels(PartModelsHelper.createModels(AirP2PTunnelPart.class));
                 return new PartItem<>(new Item.Properties(), AirP2PTunnelPart.class, AirP2PTunnelPart::new);
+            });
+
+    // 热量p2p通道
+    public static final DeferredItem<PartItem<HeatP2PTunnelPart>> HEAT_P2P_TUNEL = ITEMS.register("heat_p2p_tunel",
+            () -> {
+                // 注册模型
+                PartModels.registerModels(PartModelsHelper.createModels(HeatP2PTunnelPart.class));
+                return new PartItem<>(new Item.Properties(), HeatP2PTunnelPart.class, HeatP2PTunnelPart::new);
             });
 
 

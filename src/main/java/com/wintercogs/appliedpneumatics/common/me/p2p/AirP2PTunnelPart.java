@@ -31,6 +31,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
+/*
+ * 空气 P2P：
+ * - 外界在输入端向 addAir(amount) 时，输入端把 amount 按“压强差”权重分发到每个输出端的相邻接口；
+ * - 输入端对外暴露的气体、压强、容量为“输出端邻居的聚合视图”（压强取均值，气体量和容量取总和）；
+ * - 输出端仅作为“可连接点”，返回极高压强，防止外界主动对内输入。
+ */
+// 不仅实现了IAirHandlerMachine，还实现了两个，XD
 public class AirP2PTunnelPart extends P2PTunnelPart<AirP2PTunnelPart>
 {
     private static final P2PModels MODELS =
@@ -82,9 +89,9 @@ public class AirP2PTunnelPart extends P2PTunnelPart<AirP2PTunnelPart>
 
             if (level instanceof ServerLevel sl) {
                 if (inputAdjacentCache == null) {
-                    BlockPos npos = be.getBlockPos().relative(side);
+                    BlockPos relativedPos = be.getBlockPos().relative(side);
                     Direction face = side.getOpposite();
-                    inputAdjacentCache = BlockCapabilityCache.create(AIR_CAP, sl, npos, face);
+                    inputAdjacentCache = BlockCapabilityCache.create(AIR_CAP, sl, relativedPos, face);
                 }
                 return inputAdjacentCache.getCapability();
             } else {
@@ -92,29 +99,25 @@ public class AirP2PTunnelPart extends P2PTunnelPart<AirP2PTunnelPart>
                 if (nbe == null) return null;
                 return PNCCapabilities.getAirHandler(nbe, side.getOpposite()).orElse(null);
             }
-        } finally { reentryDepth--; }
+        }
+        finally
+        {
+            reentryDepth--;
+        }
     }
 
     /** 解析“某个输出端”的相邻真实 IAirHandlerMachine，可能为 null。 */
     private static @Nullable IAirHandlerMachine resolveOutputAdjacentOrNull(AirP2PTunnelPart out)
     {
         var be = out.getBlockEntity();
-        var side = out.getSide();
-        if (be == null || side == null) return null;
+        var face = out.getSide();
+        if (be == null || face == null) return null;
         var level = be.getLevel();
         if (level == null) return null;
 
-        if (level instanceof ServerLevel sl) {
-            BlockPos npos = be.getBlockPos().relative(side);
-            Direction face = side.getOpposite();
-            // 输出端不缓存，按需现取，避免维护多份缓存
-            var cache = BlockCapabilityCache.create(AIR_CAP, sl, npos, face);
-            return cache.getCapability();
-        } else {
-            BlockEntity nbe = level.getBlockEntity(be.getBlockPos().relative(side));
-            if (nbe == null) return null;
-            return PNCCapabilities.getAirHandler(nbe, side.getOpposite()).orElse(null);
-        }
+        BlockPos relativedPos = be.getBlockPos().relative(face);
+        Direction capSide = face.getOpposite();
+        return level.getCapability(AIR_CAP, relativedPos, capSide);
     }
 
 

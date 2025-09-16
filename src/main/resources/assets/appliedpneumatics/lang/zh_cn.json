@@ -17,6 +17,7 @@
   "item.appliedpneumatics.air_cell_64m": "64M-ME空气存储元件",
   "item.appliedpneumatics.air_cell_256m": "256M-ME空气存储元件",
   "item.appliedpneumatics.air_p2p_tunel": "空气P2P通道",
+  "item.appliedpneumatics.heat_p2p_tunel": "温度P2P通道",
   "block.appliedpneumatics.me_pressure_interface_block": "ME气压接口",
   "block.appliedpneumatics.me_pressure_chamber_valve": "ME压力室气阀",
   "block.appliedpneumatics.me_pressure_chamber_wall": "ME压力室墙壁",

@@ -19,7 +19,7 @@ public class APCreativeModeTabs
     public static final Supplier<CreativeModeTab> AP_CREATIVE_MODE_TAB = CREATIVE_MODE_TAB.register(
             "ap_creative_mode_tab",
             ()->CreativeModeTab.builder()
-                    .icon(()->new ItemStack(APItems.AIR_CELL_256M.get()))
+                    .icon(()->new ItemStack(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get()))
                     .title(Component.translatable("creativetab.appliedpneumatics.items"))
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(APItems.AIR_CELL_1K.get());
@@ -42,6 +42,7 @@ public class APCreativeModeTabs
                         output.accept(APBlocks.ME_PRESSURE_CHAMBER_GLASS.get());
                         output.accept(APBlocks.ME_PRESSURE_CHAMBER_VIBRANT_GLASS.get());
                         output.accept(APItems.AIR_P2P_TUNEL.get());
+                        output.accept(APItems.HEAT_P2P_TUNEL.get());
                     })
                     .build());
 

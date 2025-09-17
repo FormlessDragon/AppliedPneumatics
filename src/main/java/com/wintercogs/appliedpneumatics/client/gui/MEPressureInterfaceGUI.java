@@ -1,122 +1,55 @@
 package com.wintercogs.appliedpneumatics.client.gui;
 
+import appeng.client.gui.implementations.UpgradeableScreen;
+import appeng.client.gui.style.StyleManager;
 import appeng.client.gui.widgets.AE2Button;
-import com.wintercogs.appliedpneumatics.AppliedPneumatics;
-import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
 import com.wintercogs.appliedpneumatics.common.menu.MEPressureInterfaceMenu;
-import com.wintercogs.appliedpneumatics.common.network.ExpectedPressureChangePacket;
 import com.wintercogs.appliedpneumatics.util.GuiRenderHelper;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.Slot;
-import net.neoforged.neoforge.network.PacketDistributor;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-public class MEPressureInterfaceGUI extends AbstractContainerScreen<MEPressureInterfaceMenu>
+
+public class MEPressureInterfaceGUI extends UpgradeableScreen<MEPressureInterfaceMenu>
 {
-    public static final ResourceLocation Background = ResourceLocation.tryBuild(AppliedPneumatics.MODID, "textures/gui/me_pressure_interface_menu.png");
-
-    private final MEPressureInterfaceBlockEntity be;
-    private AE2Button addExpectedPressureButton;
-    private AE2Button addExpectedPressureButtonLess;
-    private AE2Button reduceExpectedPressureButton;
-    private AE2Button reduceExpectedPressureButtonLess;
-
-    public MEPressureInterfaceGUI(MEPressureInterfaceMenu menu, Inventory playerInventory, Component title)
-    {
-        super(menu, playerInventory, title);
-        this.be = menu.getBlockEntity();
+    // 将使用样式 JSON，背景由样式管理
+    public MEPressureInterfaceGUI(MEPressureInterfaceMenu menu, Inventory inv, Component title) {
+        super(menu, inv, title, StyleManager.loadStyleDoc("/screens/me_pressure_interface.json"));
     }
 
+    // 代码中写一些文本绘制
+    // AE的json中似乎无法传入动态数据
     @Override
-    protected void init()
+    public void drawFG(GuiGraphics guiGraphics, int offsetX, int offsetY, int mouseX, int mouseY)
     {
-        this.imageWidth = 176;
-        this.imageHeight = 207;
-        this.leftPos = (this.width - imageWidth)/2;
-        this.topPos = (this.height - imageHeight)/2;
-        this.titleLabelX = 8;
-        this.titleLabelY = 6;
-        this.inventoryLabelX = 8;
-        this.inventoryLabelY = 110;
-
-        addExpectedPressureButton = new AE2Button(this.leftPos + 168 - 26,this.topPos + 76,26,20,Component.literal("+1"),button -> {
-            PacketDistributor.sendToServer(new ExpectedPressureChangePacket(1f));
-        });
-        addRenderableWidget(addExpectedPressureButton);
-
-        addExpectedPressureButtonLess = new AE2Button(this.leftPos + 168 - 26 - 34,this.topPos + 76,26,20,Component.literal("+0.1"),button -> {
-            PacketDistributor.sendToServer(new ExpectedPressureChangePacket(0.1f));
-        });
-        addRenderableWidget(addExpectedPressureButtonLess);
-
-        reduceExpectedPressureButtonLess = new AE2Button(this.leftPos + 42,this.topPos + 76,26,20,Component.literal("-0.1"),button -> {
-            PacketDistributor.sendToServer(new ExpectedPressureChangePacket(-0.1f));
-        });
-        addRenderableWidget(reduceExpectedPressureButtonLess);
-
-        reduceExpectedPressureButton = new AE2Button(this.leftPos + 8,this.topPos + 76,26,20,Component.literal("-1"),button -> {
-            PacketDistributor.sendToServer(new ExpectedPressureChangePacket(-1f));
-        });
-        addRenderableWidget(reduceExpectedPressureButton);
-    }
-
-    @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
-    {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        renderTooltip(guiGraphics, mouseX, mouseY);
-    }
-
-    @Override
-    protected void renderBg(@NotNull GuiGraphics gui, float v, int x, int y)
-    {
-        if(Background != null)
-            gui.blit(Background, this.leftPos, this.topPos, 0, 0, imageWidth, imageHeight);
-    }
-
-    @Override
-    protected void renderTooltip(GuiGraphics guiGraphics, int x, int y)
-    {
-        super.renderTooltip(guiGraphics, x, y);
-    }
-
-    @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY)
-    {
-        guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 4210752, false);
-        guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
-
+        super.drawFG(guiGraphics, offsetX, offsetY, mouseX, mouseY);
         String airStr = String.format(Locale.ROOT, "%.1f", (float) menu.latestAir / 1000f);
-        String maxStr = String.format(Locale.ROOT, "%.1f", (float) menu.latestBaseVolume / 1000f);
-        String currentPressureStr = String.format(Locale.ROOT, "%.0f", (float)menu.latestAir / (float)menu.latestBaseVolume);
+        String maxStr = String.format(Locale.ROOT, "%.1f", (float) menu.latestVolume / 1000f);
+        String currentPressureStr = String.format(Locale.ROOT, "%.0f", (float)menu.latestAir / (float)menu.latestVolume);
         String pressureStr = String.format(Locale.ROOT, "%.1f", menu.latestExpectedPressure);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.air_amount",airStr, maxStr, currentPressureStr), 13, 148, 22, 4210752, false);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.max_pressure", menu.latestDangerPressure), 13, 148, 38, 4210752, false);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.literal(pressureStr), 13, 168, 82, 4210752, false);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text"), 13, 168, 60, 4210752, false);
-
     }
 
+    // 按钮：用 sendClientAction 走 AE 菜单动作通道
     @Override
-    protected void renderSlotHighlight(@NotNull GuiGraphics guiGraphics, Slot slot, int mouseX, int mouseY, float partialTick)
+    protected void init()
     {
-        if (slot.isHighlightable()) {
-            int x = slot.x;
-            int y = slot.y;
-            int w = 16, h = 16;
+        super.init();
+        int xRight = this.leftPos + this.imageWidth - 8;
+        int yMid = this.topPos + 76;
 
-            guiGraphics.hLine(x, x + w, y - 1, 0xFFdaffff);
-            guiGraphics.hLine(x - 1, x + w, y + h, 0xFFdaffff);
-            guiGraphics.vLine(x - 1, y - 2, y + h, 0xFFdaffff);
-            guiGraphics.vLine(x + w, y - 2, y + h, 0xFFdaffff);
-            guiGraphics.fillGradient(RenderType.guiOverlay(), x, y, x + w, y + h, 0x669cd3ff, 0x669cd3ff, 0);
-        }
+        addRenderableWidget(new AE2Button(xRight - 26, yMid, 26, 20, Component.literal("+1"),
+                b -> menu.sendExpectedPressureActionToServer(1.0f)));
+        addRenderableWidget(new AE2Button(xRight - 26 - 34, yMid, 26, 20, Component.literal("+0.1"),
+                b -> menu.sendExpectedPressureActionToServer( 0.1f)));
+        addRenderableWidget(new AE2Button(this.leftPos + 42, yMid, 26, 20, Component.literal("-0.1"),
+                b -> menu.sendExpectedPressureActionToServer(-0.1f)));
+        addRenderableWidget(new AE2Button(this.leftPos + 8, yMid, 26, 20, Component.literal("-1"),
+                b -> menu.sendExpectedPressureActionToServer(-1.0f)));
     }
 }

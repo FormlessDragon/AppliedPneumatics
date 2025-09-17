@@ -1,182 +1,90 @@
 package com.wintercogs.appliedpneumatics.common.menu;
 
+import appeng.menu.SlotSemantics;
+import appeng.menu.guisync.GuiSync;
+import appeng.menu.implementations.UpgradeableMenu;
+import appeng.menu.slot.AppEngSlot;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APMenus;
-import com.wintercogs.appliedpneumatics.common.network.QuickMenuSyncPacket;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.SlotItemHandler;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class MEPressureInterfaceMenu extends AbstractContainerMenu implements QuickSyncable
+public class MEPressureInterfaceMenu extends UpgradeableMenu<MEPressureInterfaceBlockEntity>
 {
+    // 动作常量 - 改变期望气压值
+    public static String changeExpectedPressureAction = "change_expected_pressure";
 
-    private final Player player;
-    private final MEPressureInterfaceBlockEntity be;
+    // @GuiSync 同步字段（客户端可见最新值，走AE的DataSynchronization同步方案）
+    // id从10开始，避免和父类冲突
+    @GuiSync(10) public int latestAir = 0;
+    @GuiSync(11) public int latestVolume = 0;
+    @GuiSync(12) public double latestExpectedPressure = 0f;
+    @GuiSync(13) public double latestDangerPressure = 0f;
 
-    private int invStartIndex = 0; // 用于for起始
-    private int invEndIndex = 0; // 用于for结束判断
-    private int beSlotIndex = 0; // 充气槽位 精确匹配槽位
-
-    public int latestAir = 0;
-    public int latestBaseVolume = 0;
-    public float latestExpectedPressure = 0;
-    public float latestDangerPressure = 0;
-
-    /**
-     * 客户端构造函数
-     */
-    public MEPressureInterfaceMenu(int id, Inventory playerInventory, FriendlyByteBuf data)
-    {
-        this(id, playerInventory, (MEPressureInterfaceBlockEntity) playerInventory.player.level().getBlockEntity(data.readBlockPos()));
+    // 构造：客户端
+    public MEPressureInterfaceMenu(int id, Inventory playerInv, RegistryFriendlyByteBuf buf) {
+        this(id, playerInv, (MEPressureInterfaceBlockEntity)
+                playerInv.player.level().getBlockEntity(buf.readBlockPos()));
     }
 
-    /**
-     * 服务端构造函数
-     */
-    public MEPressureInterfaceMenu(int id, Inventory playerInventory, MEPressureInterfaceBlockEntity be)
+    // 构造：服务端
+    public MEPressureInterfaceMenu(int id, Inventory playerInv, @NotNull MEPressureInterfaceBlockEntity host)
     {
-        super(APMenus.ME_PRESSURE_INTERFACE_MENU.get(), id);
-        this.player = playerInventory.player;
-        this.be = be;
+        super(APMenus.ME_PRESSURE_INTERFACE_MENU.get(), id, playerInv, host);
 
-        invStartIndex = slots.size(); // 用于for起始
-        // 背包和快捷栏
-        for (int row = 0; row < 3; ++row)
-        {
-            for (int col = 0; col < 9; ++col)
-            {
-                this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 123 + row * 18));
-            }
-        }
-        for (int col = 0; col < 9; ++col)
-        {
-            this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 181));
-        }
-        invEndIndex = slots.size(); // 用于for结束判断
-
-        beSlotIndex = slots.size(); // 精确匹配槽位
-        // 充气槽
-        addSlot(new SlotItemHandler(be.getInventory(), 0, 152, 26));
-
+        // 客户端->服务端（用 AE 的动作机制处理按钮/步进）
+        registerClientAction(changeExpectedPressureAction, Float.class, this::onClientChangeExpectedPressure);
     }
 
-    public MEPressureInterfaceBlockEntity getBlockEntity()
+    // 放除了升级槽之外的其他真实库存
+    // 注：玩家槽位已经由UpgradeableMenu处理，不必再写
+    @Override
+    protected void setupInventorySlots()
     {
-        return be;
+        // 你的机器输入槽（示例：索引0）
+        AppEngSlot slot = new AppEngSlot(getHost().getInventory(), 0);
+        // 用 AE 的语义化添加
+        this.addSlot(slot, SlotSemantics.MACHINE_INPUT);
     }
 
+    // 同步：把最新值写入 @GuiSync 字段，再交给基类广播
     @Override
     public void broadcastChanges()
     {
+        var be = getHost();
+        this.latestAir = be.getAirHandler().getAir();
+        this.latestVolume = be.getVolume();
+        this.latestExpectedPressure = be.getExpectedPressure();
+        this.latestDangerPressure = be.getAirHandler().getDangerPressure();
+
+        // 最后触发基类调用，进行广播
         super.broadcastChanges();
-        boolean changed = false;
-        if(latestAir != be.getAirHandler().getAir())
-        {
-            latestAir = be.getAirHandler().getAir();
-            changed = true;
-        }
-        if(latestBaseVolume != be.getBaseVolume())
-        {
-            latestBaseVolume = be.getBaseVolume();
-            changed = true;
-        }
-        if(latestExpectedPressure != be.getExpectedPressure())
-        {
-            latestExpectedPressure = be.getExpectedPressure();
-            changed = true;
-        }
-        if(latestDangerPressure != be.getAirHandler().getDangerPressure())
-        {
-            latestDangerPressure = be.getAirHandler().getDangerPressure();
-            changed = true;
-        }
-        if(changed && player instanceof ServerPlayer serverPlayer)
-        {
-            PacketDistributor.sendToPlayer(serverPlayer, new QuickMenuSyncPacket(getQuickSyncTag()));
-        }
     }
 
-    @Override
-    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int slotIndex)
+    // 客户端动作回调
+    public void sendExpectedPressureActionToServer(float expectedPressureDelta)
     {
-        Slot slot = this.slots.get(slotIndex);
-        if (!slot.hasItem()) return ItemStack.EMPTY;
+        sendClientAction(changeExpectedPressureAction, expectedPressureDelta);
+    }
 
-        ItemStack stack = slot.getItem();
-        ItemStack ret = stack.copy();
+    private void onClientChangeExpectedPressure(float delta) {
+        var be = getHost();
+        if (be.isRemoved()) return;
+        float now = be.getExpectedPressure();
+        be.setExpectedPressure(now + delta); // 内部自限幅
+    }
 
-        if (invStartIndex <= slotIndex && slotIndex < invEndIndex)
-        {
-            // 从玩家背包 → 方块槽位
-            if (!this.moveItemStackTo(stack, beSlotIndex, beSlotIndex + 1, false))
-            {
-                return ItemStack.EMPTY;
-            }
-        }
-        else if (slotIndex == beSlotIndex)
-        {
-            // 从方块槽位 → 玩家背包
-            if (!this.moveItemStackTo(stack, invStartIndex, invEndIndex, false))
-            {
-                return ItemStack.EMPTY;
-            }
-        }
-        else
-        {
-            // 非预期范围，兜底丢回玩家背包
-            if (!this.moveItemStackTo(stack, invStartIndex, invEndIndex, false))
-            {
-                return ItemStack.EMPTY;
-            }
-        }
-
-        if (stack.isEmpty())
-        {
-            slot.set(ItemStack.EMPTY);
-        }
-        else
-        {
-            slot.setChanged();
-        }
-
-        // 按常规容器实现，触发取出回调
-        slot.onTake(player, stack);
-
-        return ret;
+    public @Nullable MEPressureInterfaceBlockEntity getBlockEntity()
+    {
+        return getHost();
     }
 
     @Override
     public boolean stillValid(@NotNull Player player)
     {
-        return be != null && !be.isRemoved();
-    }
-
-
-    @Override
-    public CompoundTag getQuickSyncTag()
-    {
-        CompoundTag tag = new CompoundTag();
-        tag.putInt("air", latestAir);
-        tag.putInt("base_volume", latestBaseVolume);
-        tag.putFloat("expected_pressure", latestExpectedPressure);
-        tag.putFloat("last_danger_pressure", latestDangerPressure);
-        return tag;
-    }
-
-    @Override
-    public void loadQuickSync(CompoundTag tag)
-    {
-        this.latestAir = tag.getInt("air");
-        this.latestBaseVolume = tag.getInt("base_volume");
-        this.latestExpectedPressure = tag.getFloat("expected_pressure");
-        this.latestDangerPressure = tag.getFloat("last_danger_pressure");
+        return !getHost().isRemoved();
     }
 }

@@ -1,0 +1,27 @@
+{
+  "$schema": "schema.json",
+  "includes": [
+    "common/common.json",
+    "common/player_inventory.json"
+  ],
+  "background": {
+    "texture": "appliedpneumatics:textures/gui/me_pressure_interface_menu.png",
+    "textureWidth": 256,
+    "textureHeight": 256,
+    "srcRect": [0, 0, 176, 207]
+  },
+  "slots": {
+    "MACHINE_INPUT": { "left": 152, "top": 26 },
+    "UPGRADE": {
+      "right": 0,
+      "top": 0,
+      "grid": "VERTICAL"
+    }
+  },
+  "text": {
+    "title": {
+      "text": { "translate": "menu.title.beyonddimensions.me_pressure_interface_menu" },
+      "position": { "left": 8, "top": 6 }
+    }
+  }
+}

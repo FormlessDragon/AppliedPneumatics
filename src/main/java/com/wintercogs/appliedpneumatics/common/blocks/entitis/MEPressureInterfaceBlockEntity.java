@@ -2,10 +2,16 @@ package com.wintercogs.appliedpneumatics.common.blocks.entitis;
 
 import appeng.api.AECapabilities;
 import appeng.api.config.Actionable;
+import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.*;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IStorageService;
 import appeng.api.storage.MEStorage;
+import appeng.api.upgrades.IUpgradeInventory;
+import appeng.api.upgrades.IUpgradeableObject;
+import appeng.api.upgrades.UpgradeInventories;
+import appeng.util.inv.AppEngInternalInventory;
+import appeng.util.inv.filter.IAEItemFilter;
 import com.wintercogs.appliedpneumatics.common.init.APBlockEntities;
 import com.wintercogs.appliedpneumatics.common.init.APBlocks;
 import com.wintercogs.appliedpneumatics.common.me.grid.SimpleBlockNodeListener;
@@ -37,8 +43,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +51,7 @@ import java.util.EnumSet;
 /**
  * ME气压接口，作为ME网络与气动工艺的最佳通道使用
  */
-public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuProvider, IAirListener, IInWorldGridNodeHost
+public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuProvider, IAirListener, IInWorldGridNodeHost, IUpgradeableObject
 {
 
     // AE部分-------------------------------------------------------------------------------------------------------------------
@@ -60,6 +64,9 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuP
             .setInWorldNode(true) // 是世界内节点
             .setVisualRepresentation(APBlocks.ME_PRESSURE_INTERFACE_BLOCK);
 
+    // 升级卡仓 5卡槽 包含四个容量卡和一个真空卡
+    private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(APBlocks.ME_PRESSURE_INTERFACE_BLOCK, 5, this::onUpgradesChanged);
+
     // 气动部分--------------------------------------------------------------------------------
     private float expectedPressure = 2.0f; // 期望气压值
     private static final int baseVolume = 1000; // 基本容量
@@ -68,20 +75,13 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuP
     private int lastAir = 0;
 
     // 充气槽位--------------------------------------------------------------------------------
-    private final ItemStackHandler inventory = new ItemStackHandler(1)
+    private final AppEngInternalInventory inventory = new AppEngInternalInventory(1)
     {
-        // 只允许放入带气体物品
-        @Override
-        public boolean isItemValid(int slot, @NotNull ItemStack stack)
-        {
-            return stack.getCapability(PNCCapabilities.AIR_HANDLER_ITEM) != null;
-        }
-
         @Override
         protected void onContentsChanged(int slot)
         {
             super.onContentsChanged(slot);
-            setChanged(); // 保存方块实体
+            setChanged();
         }
     };
 
@@ -89,6 +89,14 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuP
     {
         super(APBlockEntities.ME_PRESSURE_INTERFACE_BLOCK_ENTITY.get(), pos, state);
         airHandler.setConnectableFaces(EnumSet.allOf(Direction.class)); // 设置可散发空气的面
+        inventory.setFilter(new IAEItemFilter()
+        {
+            @Override
+            public boolean allowInsert(InternalInventory inv, int slot, ItemStack stack)
+            {
+                return !stack.isEmpty() && stack.getCapability(PNCCapabilities.AIR_HANDLER_ITEM) != null;
+            }
+        });
     }
 
     // 注册AE节点和空气容器能力
@@ -107,11 +115,11 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuP
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
                 APBlockEntities.ME_PRESSURE_INTERFACE_BLOCK_ENTITY.get(),
-                (be, direction) -> be.inventory
+                (be, direction) -> be.inventory.toItemHandler()
         );
     }
 
-    public IItemHandler getInventory()
+    public AppEngInternalInventory getInventory()
     {
         return inventory;
     }
@@ -121,14 +129,14 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuP
         return airHandler;
     }
 
-    public int getBaseVolume()
+    public int getVolume()
     {
         return baseVolume;
     }
 
     public int getMaxVolume()
     {
-        return (int) (baseVolume * (double)airHandler.getDangerPressure());
+        return (int) (getVolume() * (double)airHandler.getDangerPressure());
     }
 
     public float getExpectedPressure()
@@ -141,6 +149,7 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuP
         expectedPressure = Math.min(25f, expectedPressure);
         expectedPressure = Math.max(-1f, expectedPressure);
         this.expectedPressure = expectedPressure;
+        setChanged();
     }
 
     @Override
@@ -165,8 +174,17 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuP
         super.loadAdditional(tag, registries);
         node.loadFromNBT(tag);
         airHandler.deserializeNBT(tag.getCompound("air_handler"));
-        this.inventory.deserializeNBT(registries,tag.getCompound("inv"));
+        this.inventory.readFromNBT(tag, "inv", registries);
         this.expectedPressure = tag.getFloat("expected_pressure");
+        this.upgrades.writeToNBT(tag, "interface_upgrades", registries);
+    }
+
+    // load完成之后，且level被注入后
+    @Override
+    public void onLoad()
+    {
+        super.onLoad();
+        onUpgradesChanged(); // 加载后刷新一次升级状态
     }
 
     @Override
@@ -175,8 +193,9 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuP
         super.saveAdditional(tag, registries);
         node.saveToNBT(tag);
         tag.put("air_handler", airHandler.serializeNBT());
-        tag.put("inv", inventory.serializeNBT(registries));
+        this.inventory.writeToNBT(tag,"inv", registries);
         tag.putFloat("expected_pressure", expectedPressure);
+        this.upgrades.readFromNBT(tag, "interface_upgrades", registries);
     }
 
     // 提供基础的网络同步
@@ -194,7 +213,7 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuP
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    // === 5) 卸载/移除：销毁节点，断开连接 ===
+    // 卸载/移除：销毁节点，断开连接 ===
 
     @Override
     public void onChunkUnloaded()
@@ -226,6 +245,18 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuP
     public @Nullable IGridNode getGridNode(Direction dir)
     {
         return node.isReady() ? node.getNode() : null;
+    }
+
+    /* 对外返回升级仓 */
+    @Override
+    public IUpgradeInventory getUpgrades()
+    {
+        return upgrades;
+    }
+
+    private void onUpgradesChanged()
+    {
+        setChanged();
     }
 
     // 执行ME系统以及空气容器的交互

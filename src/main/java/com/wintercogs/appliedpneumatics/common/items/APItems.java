@@ -1,6 +1,7 @@
 package com.wintercogs.appliedpneumatics.common.items;
 
 import appeng.api.parts.PartModels;
+import appeng.api.upgrades.Upgrades;
 import appeng.items.parts.PartItem;
 import appeng.items.parts.PartModelsHelper;
 import appeng.items.storage.BasicStorageCell;
@@ -115,6 +116,17 @@ public class APItems
                 return new PartItem<>(new Item.Properties(), HeatP2PTunnelPart.class, HeatP2PTunnelPart::new);
             });
 
+    // 容量卡 (实际类型为UpgradeCardItem)
+    public static final DeferredItem<Item> VOLUME_CRAD = ITEMS.register("volume_card",
+            () -> Upgrades.createUpgradeCardItem(new Item.Properties()));
+
+    // 安全卡
+    public static final DeferredItem<Item> SECURITY_CRAD = ITEMS.register("security_card",
+            () -> Upgrades.createUpgradeCardItem(new Item.Properties()));
+
+    // 真空卡
+    public static final DeferredItem<Item> VACUUM_CRAD = ITEMS.register("vacuum_card",
+            () -> Upgrades.createUpgradeCardItem(new Item.Properties()));
 
     public static void register(IEventBus eventBus)
     {

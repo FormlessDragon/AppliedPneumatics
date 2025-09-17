@@ -27,5 +27,8 @@ public class ModItemModelProvider extends ItemModelProvider
         basicItem(APItems.AIR_CELL_16M.get());
         basicItem(APItems.AIR_CELL_64M.get());
         basicItem(APItems.AIR_CELL_256M.get());
+        basicItem(APItems.VOLUME_CRAD.get());
+        basicItem(APItems.SECURITY_CRAD.get());
+        basicItem(APItems.VACUUM_CRAD.get());
     }
 }

@@ -3,9 +3,11 @@ package com.wintercogs.appliedpneumatics.common.me;
 import appeng.api.behaviors.*;
 import appeng.api.features.P2PTunnelAttunement;
 import appeng.api.stacks.AEKeyTypes;
+import appeng.api.upgrades.Upgrades;
 import appeng.parts.automation.StackWorldBehaviors;
 import appeng.parts.automation.StorageExportStrategy;
 import appeng.parts.automation.StorageImportStrategy;
+import com.wintercogs.appliedpneumatics.common.init.APBlocks;
 import com.wintercogs.appliedpneumatics.common.items.APItems;
 import com.wintercogs.appliedpneumatics.common.me.keys.AirKey;
 import com.wintercogs.appliedpneumatics.common.me.keys.types.AirKeyType;
@@ -20,6 +22,8 @@ import net.minecraft.server.level.ServerLevel;
 
 public class AEPlugin
 {
+    public static String CELL_UPGRADE_GROUP = "appliedpneumatics.group.cell_upgrade";
+
     /**
      * 必须在早期注册的项目使用init
      */
@@ -48,6 +52,36 @@ public class AEPlugin
         // p2p协调
         P2PTunnelAttunement.registerAttunementApi(APItems.AIR_P2P_TUNEL, PNCCapabilities.AIR_HANDLER_ITEM, Component.translatable("appliedpneumatics.pneumatic"));
         P2PTunnelAttunement.registerAttunementTag(APItems.HEAT_P2P_TUNEL); // 用P2PTunnelAttunement.getAttunementTag(APItems.HEAT_P2P_TUNEL.get());获取此标签来标记物品
+
+        // 升级卡支持
+        // ME接口
+        Upgrades.add(APItems.VOLUME_CRAD, APBlocks.ME_PRESSURE_INTERFACE_BLOCK, 4);
+        Upgrades.add(APItems.SECURITY_CRAD, APBlocks.ME_PRESSURE_INTERFACE_BLOCK, 1);
+        Upgrades.add(APItems.VACUUM_CRAD, APBlocks.ME_PRESSURE_INTERFACE_BLOCK, 1);
+
+        // 存储元件支持的升级卡（安全卡、真空卡） 其中真空卡为气体版溢出销毁卡
+        // 1k ~ 256M
+        Upgrades.add(APItems.SECURITY_CRAD, APItems.AIR_CELL_1K, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.VACUUM_CRAD,   APItems.AIR_CELL_1K, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.SECURITY_CRAD, APItems.AIR_CELL_4K, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.VACUUM_CRAD,   APItems.AIR_CELL_4K, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.SECURITY_CRAD, APItems.AIR_CELL_16K, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.VACUUM_CRAD,   APItems.AIR_CELL_16K, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.SECURITY_CRAD, APItems.AIR_CELL_64K, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.VACUUM_CRAD,   APItems.AIR_CELL_64K, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.SECURITY_CRAD, APItems.AIR_CELL_256K, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.VACUUM_CRAD,   APItems.AIR_CELL_256K, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.SECURITY_CRAD, APItems.AIR_CELL_1M, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.VACUUM_CRAD,   APItems.AIR_CELL_1M, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.SECURITY_CRAD, APItems.AIR_CELL_4M, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.VACUUM_CRAD,   APItems.AIR_CELL_4M, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.SECURITY_CRAD, APItems.AIR_CELL_16M, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.VACUUM_CRAD,   APItems.AIR_CELL_16M, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.SECURITY_CRAD, APItems.AIR_CELL_64M, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.VACUUM_CRAD,   APItems.AIR_CELL_64M, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.SECURITY_CRAD, APItems.AIR_CELL_256M, 1 ,CELL_UPGRADE_GROUP);
+        Upgrades.add(APItems.VACUUM_CRAD,   APItems.AIR_CELL_256M, 1 ,CELL_UPGRADE_GROUP);
+
     }
 
     public static StackImportStrategy createAirImport(ServerLevel level, BlockPos fromPos, Direction fromSide)

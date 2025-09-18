@@ -21,11 +21,6 @@ public class APDataComponents
             "air_stored", builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG)
     );
 
-    // 存储元件上一次更新漏气的时间点
-    public static final DeferredHolder<DataComponentType<?>,DataComponentType<Long>> AIR_CELL_LAST_LEAK_TICK = register(
-            "air_cell_last_leak_tick", builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG)
-    );
-
 
     private static <T> DeferredHolder<DataComponentType<?>,DataComponentType<T>> register(String name, UnaryOperator<DataComponentType.Builder<T>> builder) {
         return DATA_COMPONENTS.register(name,()->  builder.apply(DataComponentType.builder()).build());

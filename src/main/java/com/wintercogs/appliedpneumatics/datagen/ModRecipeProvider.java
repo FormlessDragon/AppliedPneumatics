@@ -4,7 +4,7 @@ import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.init.APBlocks;
-import com.wintercogs.appliedpneumatics.common.items.APItems;
+import com.wintercogs.appliedpneumatics.common.init.APItems;
 import gripe._90.megacells.definition.MEGAItems;
 import me.desht.pneumaticcraft.common.registry.ModBlocks;
 import me.desht.pneumaticcraft.common.registry.ModItems;

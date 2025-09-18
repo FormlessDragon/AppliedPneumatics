@@ -7,7 +7,6 @@ import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPres
 import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberValve;
 import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberVibrantGlass;
 import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberWall;
-import com.wintercogs.appliedpneumatics.common.items.APItems;
 import me.desht.pneumaticcraft.common.block.IBlockPressureChamber;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;

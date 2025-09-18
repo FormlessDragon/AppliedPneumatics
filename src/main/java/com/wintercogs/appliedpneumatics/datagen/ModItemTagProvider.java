@@ -2,7 +2,7 @@ package com.wintercogs.appliedpneumatics.datagen;
 
 import appeng.api.features.P2PTunnelAttunement;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
-import com.wintercogs.appliedpneumatics.common.items.APItems;
+import com.wintercogs.appliedpneumatics.common.init.APItems;
 import me.desht.pneumaticcraft.common.registry.ModBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;

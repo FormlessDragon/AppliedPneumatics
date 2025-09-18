@@ -1,7 +1,6 @@
 package com.wintercogs.appliedpneumatics.common.init;
 
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
-import com.wintercogs.appliedpneumatics.common.items.APItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -43,9 +42,9 @@ public class APCreativeModeTabs
                         output.accept(APBlocks.ME_PRESSURE_CHAMBER_VIBRANT_GLASS.get());
                         output.accept(APItems.AIR_P2P_TUNEL.get());
                         output.accept(APItems.HEAT_P2P_TUNEL.get());
-                        output.accept(APItems.VOLUME_CRAD.get());
-                        output.accept(APItems.SECURITY_CRAD.get());
-                        output.accept(APItems.VACUUM_CRAD.get());
+                        output.accept(APItems.VOLUME_CARD.get());
+                        output.accept(APItems.SECURITY_CARD.get());
+                        output.accept(APItems.VACUUM_CARD.get());
                     })
                     .build());
 

@@ -2,11 +2,8 @@ package com.wintercogs.appliedpneumatics;
 
 import com.mojang.logging.LogUtils;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
-import com.wintercogs.appliedpneumatics.common.init.APBlockEntities;
-import com.wintercogs.appliedpneumatics.common.init.APBlocks;
-import com.wintercogs.appliedpneumatics.common.init.APCreativeModeTabs;
-import com.wintercogs.appliedpneumatics.common.init.APMenus;
-import com.wintercogs.appliedpneumatics.common.items.APItems;
+import com.wintercogs.appliedpneumatics.common.datacomponents.APDataComponents;
+import com.wintercogs.appliedpneumatics.common.init.*;
 import com.wintercogs.appliedpneumatics.common.me.AEPlugin;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.IEventBus;
@@ -50,6 +47,7 @@ public class AppliedPneumatics
         APItems.register(modEventBus);
         APBlocks.register(modEventBus);
         APBlockEntities.register(modEventBus);
+        APDataComponents.register(modEventBus);
 
         modEventBus.addListener(MEPressureInterfaceBlockEntity::onRegisterCaps);
     }

@@ -193,7 +193,7 @@ public class AirStorageCell extends Item implements ICellWorkbenchItem
         long mod = storedAir % apb;
         return mod == 0 ? 0 : (apb - mod);
     }
-    private static long remainingAmount(int totalBytes, long storedAir) {
+    public static long remainingAmount(int totalBytes, long storedAir) {
         long apb = amountPerByte();
         if (apb <= 0) return 0;
         long fb = freeBytes(totalBytes, usedBytes(storedAir));

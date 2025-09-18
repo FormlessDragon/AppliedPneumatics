@@ -1,12 +1,16 @@
 package com.wintercogs.appliedpneumatics.common.me.storage;
 
 import appeng.api.config.Actionable;
+import appeng.api.networking.IGridNode;
+import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
+import appeng.api.parts.IPart;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.KeyCounter;
 import appeng.api.storage.cells.CellState;
 import appeng.api.storage.cells.ISaveProvider;
 import appeng.api.storage.cells.StorageCell;
+import appeng.parts.AEBasePart;
 import appeng.util.Platform;
 import com.wintercogs.appliedpneumatics.common.datacomponents.APDataComponents;
 import com.wintercogs.appliedpneumatics.common.eventlistner.APDelayedBreaker;
@@ -238,27 +242,96 @@ public class AirCellInventory implements StorageCell
         itemStack.set(APDataComponents.AIR_STORED, Math.max(0, value));
     }
 
-    public static @Nullable BlockEntity tryGetHostBE(ISaveProvider host)
-    {
+    public static @Nullable BlockEntity tryGetHostBE(ISaveProvider host) {
         if (host == null) return null;
 
-        // 1.直接就是 BlockEntity（少数实现可能这样传）
-        if (host instanceof BlockEntity be) return be;
+        // 1. 直接是 BlockEntity
+        if (host instanceof BlockEntity be)
+        {
+            return be;
+        }
 
-        // 2.lambda：反射查找捕获字段里是否有 BlockEntity，如me驱动器就是给的这个
+        // 2. 是 IPart
+        if (host instanceof IPart part)
+        {
+            if(part instanceof AEBasePart aeBasePart)
+            {
+                return aeBasePart.getBlockEntity();
+            }
+            else
+            {
+                IGridNode node = part.getGridNode();
+                if (node != null)
+                {
+                    if(node.getOwner() instanceof BlockEntity be)
+                        return be;
+                    else if(node instanceof AEBasePart aeBasePart)
+                        return aeBasePart.getBlockEntity();
+                }
+            }
+        }
+
+        // 3. 是 IActionHost
+        if (host instanceof IActionHost actionHost)
+        {
+            IGridNode node = actionHost.getActionableNode();
+            if (node != null)
+            {
+                if(node.getOwner() instanceof BlockEntity be)
+                    return be;
+                else if(node instanceof AEBasePart aeBasePart)
+                    return aeBasePart.getBlockEntity();
+            }
+        }
+
+        // 4. Lambda 情况：反射查找捕获字段
         Class<?> hostClass = host.getClass();
         try {
-            for (Field field : hostClass.getDeclaredFields()) {
-                if (!BlockEntity.class.isAssignableFrom(field.getType())) continue;
+            for (Field field : hostClass.getDeclaredFields())
+            {
                 field.setAccessible(true);
                 Object value = field.get(host);
-                if (value instanceof BlockEntity be) return be;
+                if (value == null) continue;
+
+                // 递归解析
+                if (value instanceof BlockEntity be)
+                {
+                    return be;
+                }
+                if (value instanceof IPart part)
+                {
+                    if(part instanceof AEBasePart aeBasePart)
+                    {
+                        return aeBasePart.getBlockEntity();
+                    }
+                    else
+                    {
+                        IGridNode node = part.getGridNode();
+                        if (node != null)
+                        {
+                            if(node.getOwner() instanceof BlockEntity be)
+                                return be;
+                            else if(node instanceof AEBasePart aeBasePart)
+                                return aeBasePart.getBlockEntity();
+                        }
+                    }
+                }
+                if (value instanceof IActionHost actionHost) {
+                    IGridNode node = actionHost.getActionableNode();
+                    if (node != null)
+                    {
+                        if(node.getOwner() instanceof BlockEntity be)
+                            return be;
+                        else if(node instanceof AEBasePart aeBasePart)
+                            return aeBasePart.getBlockEntity();
+                    }
+                }
             }
         } catch (Throwable ignored) {
-            // 忽略，返回 null
+            // 出错就返回 null
         }
+
         return null;
     }
-
 
 }

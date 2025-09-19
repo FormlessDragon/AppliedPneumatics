@@ -45,6 +45,7 @@ public class APCreativeModeTabs
                         output.accept(APItems.VOLUME_CARD.get());
                         output.accept(APItems.SECURITY_CARD.get());
                         output.accept(APItems.VACUUM_CARD.get());
+                        output.accept(APItems.AMADRON_WIRELESS_TERMINAL.get());
                     })
                     .build());
 

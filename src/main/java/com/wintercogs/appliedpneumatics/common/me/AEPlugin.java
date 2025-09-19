@@ -1,6 +1,7 @@
 package com.wintercogs.appliedpneumatics.common.me;
 
 import appeng.api.behaviors.*;
+import appeng.api.features.GridLinkables;
 import appeng.api.features.P2PTunnelAttunement;
 import appeng.api.stacks.AEKeyTypes;
 import appeng.api.storage.StorageCells;
@@ -10,6 +11,7 @@ import appeng.parts.automation.StorageExportStrategy;
 import appeng.parts.automation.StorageImportStrategy;
 import com.wintercogs.appliedpneumatics.common.init.APBlocks;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
+import com.wintercogs.appliedpneumatics.common.items.AmadronWirelessTerminalItem;
 import com.wintercogs.appliedpneumatics.common.me.keys.AirKey;
 import com.wintercogs.appliedpneumatics.common.me.keys.types.AirKeyType;
 import com.wintercogs.appliedpneumatics.common.me.storage.AirCellHandler;
@@ -84,6 +86,9 @@ public class AEPlugin
         Upgrades.add(APItems.VACUUM_CARD,   APItems.AIR_CELL_64M, 1 ,CELL_UPGRADE_GROUP);
         Upgrades.add(APItems.SECURITY_CARD, APItems.AIR_CELL_256M, 1 ,CELL_UPGRADE_GROUP);
         Upgrades.add(APItems.VACUUM_CARD,   APItems.AIR_CELL_256M, 1 ,CELL_UPGRADE_GROUP);
+
+        // 添加无线终端绑定支持
+        GridLinkables.register(APItems.AMADRON_WIRELESS_TERMINAL, AmadronWirelessTerminalItem.LINKABLE_HANDLER);
 
     }
 

@@ -1,7 +1,8 @@
-package com.wintercogs.appliedpneumatics.common.datacomponents;
+package com.wintercogs.appliedpneumatics.common.init;
 
 import com.mojang.serialization.Codec;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -19,6 +20,11 @@ public class APDataComponents
     // 存储元件中空气数量
     public static final DeferredHolder<DataComponentType<?>,DataComponentType<Long>> AIR_STORED = register(
             "air_stored", builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG)
+    );
+
+    // 存储一个亚马龙处理站的位置
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<GlobalPos>> AMADRON_PROCESS_POS = register(
+      "amadron_process_pos", builder -> builder.persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC)
     );
 
 

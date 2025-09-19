@@ -26,6 +26,7 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider
         dropSelf(APBlocks.ME_PRESSURE_CHAMBER_WALL.get());
         dropSelf(APBlocks.ME_PRESSURE_CHAMBER_GLASS.get());
         dropSelf(APBlocks.ME_PRESSURE_CHAMBER_VIBRANT_GLASS.get());
+        dropSelf(APBlocks.ME_AMADRON_PROCESS_STATION.get());
     }
 
     @Override

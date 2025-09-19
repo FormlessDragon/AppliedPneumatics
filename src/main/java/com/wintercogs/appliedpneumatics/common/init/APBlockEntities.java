@@ -1,6 +1,7 @@
 package com.wintercogs.appliedpneumatics.common.init;
 
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEAmadronProcessStationBlockEntity;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberGlassBlockEntity;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberValveBlockEntity;
@@ -65,6 +66,15 @@ public class APBlockEntities
                             APBlocks.ME_PRESSURE_CHAMBER_VIBRANT_GLASS.get()
                     )
                     .build(null)
+    );
+
+    // ME亚马龙处理站
+    public static final Supplier<BlockEntityType<MEAmadronProcessStationBlockEntity>> ME_AMADRON_PROCESS_STATION_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "me_amadron_process_station_block_entity",
+            () -> BlockEntityType.Builder.of(
+                    MEAmadronProcessStationBlockEntity::new,
+                    APBlocks.ME_AMADRON_PROCESS_STATION.get()
+            ).build(null)
     );
 
     public static void register(IEventBus eventBus)

@@ -1,7 +1,7 @@
 package com.wintercogs.appliedpneumatics.common.eventlistner;
 
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
-import com.wintercogs.appliedpneumatics.common.datacomponents.APDataComponents;
+import com.wintercogs.appliedpneumatics.common.init.APDataComponents;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
 import com.wintercogs.appliedpneumatics.common.items.AirStorageCell;
 import me.desht.pneumaticcraft.common.particle.AirParticleData;

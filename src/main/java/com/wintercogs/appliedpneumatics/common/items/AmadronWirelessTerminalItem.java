@@ -18,20 +18,35 @@ import appeng.items.tools.powered.PoweredContainerItem;
 import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
 import appeng.menu.locator.ItemMenuHostLocator;
 import appeng.util.Platform;
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEAmadronProcessStationBlockEntity;
+import com.wintercogs.appliedpneumatics.common.init.APDataComponents;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
+import me.desht.pneumaticcraft.api.item.IPositionProvider;
+import me.desht.pneumaticcraft.common.registry.ModSounds;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 
@@ -39,7 +54,7 @@ import java.util.function.DoubleSupplier;
  * 亚马龙无线终端
  * 能直接从链接的ME网络支付订单
  */
-public class AmadronWirelessTerminalItem extends PoweredContainerItem implements IUpgradeableItem
+public class AmadronWirelessTerminalItem extends PoweredContainerItem implements IUpgradeableItem, IPositionProvider
 {
     public static final IGridLinkableHandler LINKABLE_HANDLER = new LinkableHandler();
 
@@ -57,6 +72,39 @@ public class AmadronWirelessTerminalItem extends PoweredContainerItem implements
     }
 
     @Override
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand)
+    {
+        return super.use(level, player, usedHand);
+    }
+
+    @Override
+    public @NotNull InteractionResult useOn(@NotNull UseOnContext context)
+    {
+        super.useOn(context);
+
+        Player player = context.getPlayer();
+        Level level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof MEAmadronProcessStationBlockEntity && player != null && player.isShiftKeyDown())
+        {
+            ItemStack tabletStack = player.getItemInHand(context.getHand());
+            GlobalPos globalPos = GlobalPos.of(level.dimension(), pos);
+            if(!level.isClientSide())
+            {
+                toggleLinkToAmadronProcess(tabletStack, globalPos);
+            }
+            else
+            {
+                player.playSound(ModSounds.CHIRP.get(), 1.0F, 1.5F);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        } else {
+            return InteractionResult.PASS;
+        }
+    }
+
+    @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines,
                                 TooltipFlag advancedTooltips) {
         super.appendHoverText(stack, context, lines, advancedTooltips);
@@ -65,6 +113,23 @@ public class AmadronWirelessTerminalItem extends PoweredContainerItem implements
             lines.add(Tooltips.of(GuiText.Unlinked, Tooltips.RED));
         } else {
             lines.add(Tooltips.of(GuiText.Linked, Tooltips.GREEN));
+        }
+
+        GlobalPos amadronStationPos = getLinkedAmadronPos(stack);
+        if(amadronStationPos == null)
+        {
+            lines.add(Component.translatable("tooltip.appliedpneumatics.item.amadron.unlink")
+                    .withStyle(ChatFormatting.RED));
+        }
+        else
+        {
+            ResourceKey<Level> dim = amadronStationPos.dimension();
+            Component dimName = Component.translatable("dimension." + dim.location().getNamespace() + "." + dim.location().getPath());
+
+            BlockPos pos = amadronStationPos.pos();
+            lines.add(Component.translatable("tooltip.appliedpneumatics.item.amadron.linked",
+                            dimName, pos.getX(), pos.getY(), pos.getZ())
+                    .withStyle(ChatFormatting.GREEN));
         }
     }
 
@@ -158,6 +223,69 @@ public class AmadronWirelessTerminalItem extends PoweredContainerItem implements
     public @Nullable ItemMenuHost<?> getMenuHost(Player player, ItemMenuHostLocator locator, @Nullable BlockHitResult hitResult)
     {
         return null;
+    }
+
+    // 快速绑定、取消绑定方块
+    private static void toggleLinkToAmadronProcess(ItemStack stack, GlobalPos pos)
+    {
+        if(stack.has(APDataComponents.AMADRON_PROCESS_POS) && Objects.equals(stack.get(APDataComponents.AMADRON_PROCESS_POS), pos))
+        {
+            stack.remove(APDataComponents.AMADRON_PROCESS_POS);
+        }
+        else
+        {
+            stack.set(APDataComponents.AMADRON_PROCESS_POS, pos);
+        }
+    }
+
+    // 用于客户端渲染覆盖层
+    public static @Nullable GlobalPos getLinkedAmadronPos(ItemStack stack)
+    {
+        return stack.get(APDataComponents.AMADRON_PROCESS_POS);
+    }
+
+    // 用于服务端获取数据
+    public static @Nullable MEAmadronProcessStationBlockEntity getLinkWithAmadronProcess(ItemStack stack, Level level)
+    {
+        // 客户端不处理，直接返回 null
+        if (level.isClientSide) {
+            return null;
+        }
+
+        // 没有绑定则直接返回 null
+        GlobalPos pos = stack.get(APDataComponents.AMADRON_PROCESS_POS);
+        if (pos == null) {
+            return null;
+        }
+
+        // 根据 GlobalPos 找对应的服务器维度
+        ServerLevel serverLevel = level.getServer() != null ? level.getServer().getLevel(pos.dimension()) : null;
+        if (serverLevel == null) {
+            return null;
+        }
+
+        BlockEntity be = serverLevel.getBlockEntity(pos.pos());
+        if (be instanceof MEAmadronProcessStationBlockEntity station) {
+            return station;
+        }
+        return null;
+    }
+
+    @Override
+    public @NotNull List<BlockPos> getStoredPositions(UUID player, @NotNull ItemStack itemStack)
+    {
+        GlobalPos amadronPos = getLinkedAmadronPos(itemStack);
+        if(amadronPos != null)
+        {
+            return List.of(amadronPos.pos());
+        }
+        return List.of();
+    }
+
+    @Override
+    public int getRenderColor(int index)
+    {
+        return 0x9003FF80; // 半透明绿色 - 与亚马龙终端风格一致
     }
 
     private static class LinkableHandler implements IGridLinkableHandler

@@ -36,6 +36,7 @@ public class ModBlockStateProvider extends BlockStateProvider
     protected void registerStatesAndModels()
     {
         blockWithItem(APBlocks.ME_PRESSURE_INTERFACE_BLOCK);
+        blockWithItem(APBlocks.ME_AMADRON_PROCESS_STATION);
         genCubeAllWithFormedToggle(APBlocks.ME_PRESSURE_CHAMBER_VALVE);
         genWallLike13States(APBlocks.ME_PRESSURE_CHAMBER_WALL);
         // APBlocks.ME_PRESSURE_CHAMBER_GLASS手写

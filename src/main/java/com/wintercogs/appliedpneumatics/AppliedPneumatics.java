@@ -1,7 +1,6 @@
 package com.wintercogs.appliedpneumatics;
 
 import com.mojang.logging.LogUtils;
-import com.wintercogs.appliedpneumatics.common.datacomponents.APDataComponents;
 import com.wintercogs.appliedpneumatics.common.init.*;
 import com.wintercogs.appliedpneumatics.common.me.AEPlugin;
 import net.minecraft.core.registries.Registries;

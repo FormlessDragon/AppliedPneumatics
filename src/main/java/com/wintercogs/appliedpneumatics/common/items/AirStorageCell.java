@@ -14,7 +14,7 @@ import appeng.items.storage.StorageCellTooltipComponent;
 import appeng.recipes.game.StorageCellDisassemblyRecipe;
 import appeng.util.InteractionUtil;
 import appeng.util.Platform;
-import com.wintercogs.appliedpneumatics.common.datacomponents.APDataComponents;
+import com.wintercogs.appliedpneumatics.common.init.APDataComponents;
 import com.wintercogs.appliedpneumatics.common.me.keys.AirKey;
 import com.wintercogs.appliedpneumatics.common.me.keys.types.AirKeyType;
 import net.minecraft.network.chat.Component;

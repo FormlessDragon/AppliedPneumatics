@@ -2,6 +2,7 @@ package com.wintercogs.appliedpneumatics.common.init;
 
 import appeng.block.AEBaseBlock;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
+import com.wintercogs.appliedpneumatics.common.blocks.MEAmadronProcessStation;
 import com.wintercogs.appliedpneumatics.common.blocks.MEPressureInterfaceBlock;
 import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberGlass;
 import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberValve;
@@ -39,6 +40,10 @@ public class APBlocks
     // 注册一个类似压力室玻璃的方块
     public static final DeferredBlock<Block> ME_PRESSURE_CHAMBER_GLASS = registerBlock("me_pressure_chamber_glass",
             () -> new MEPressureChamberGlass(IBlockPressureChamber.pressureChamberBlockProps().noOcclusion()));
+
+    // ME亚马龙处理站
+    public static final DeferredBlock<Block> ME_AMADRON_PROCESS_STATION = registerBlock("me_amadron_process_station",
+            () -> new MEAmadronProcessStation(BlockBehaviour.Properties.of().strength(2f)));
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block)
     {

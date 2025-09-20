@@ -1,7 +1,9 @@
 package com.wintercogs.appliedpneumatics.common.init;
 
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
+import com.wintercogs.appliedpneumatics.client.gui.MEAmadronProcessStationGUI;
 import com.wintercogs.appliedpneumatics.client.gui.MEPressureInterfaceGUI;
+import com.wintercogs.appliedpneumatics.common.menu.MEAmadronProcessStationMenu;
 import com.wintercogs.appliedpneumatics.common.menu.MEPressureInterfaceMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
@@ -23,6 +25,9 @@ public class APMenus
     public static final Supplier<MenuType<MEPressureInterfaceMenu>> ME_PRESSURE_INTERFACE_MENU = MENU_TYPES.register("me_pressure_interface_menu",
             () -> IMenuTypeExtension.create(MEPressureInterfaceMenu::new));
 
+    public static final Supplier<MenuType<MEAmadronProcessStationMenu>> ME_AMADRON_PROCESS_STATION_MENU = MENU_TYPES.register("me_amadron_process_menu",
+            () -> IMenuTypeExtension.create(MEAmadronProcessStationMenu::new));
+
     public static void registerMenus(IEventBus eventBus)
     {
         MENU_TYPES.register(eventBus);
@@ -32,5 +37,6 @@ public class APMenus
     public static void registerScreens(RegisterMenuScreensEvent event)
     {
         event.register(ME_PRESSURE_INTERFACE_MENU.get(), MEPressureInterfaceGUI::new);
+        event.register(ME_AMADRON_PROCESS_STATION_MENU.get(), MEAmadronProcessStationGUI::new);
     }
 }

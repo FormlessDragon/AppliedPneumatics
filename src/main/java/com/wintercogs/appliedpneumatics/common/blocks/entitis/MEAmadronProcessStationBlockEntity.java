@@ -91,8 +91,9 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
                     GenericStackInvWrapper inputWrapper = new GenericStackInvWrapper(be.inputInv);
                     GenericStackInvWrapper outputWrapper = new GenericStackInvWrapper(be.outputInv)
                     {
+                        // 防止被无人机从中取出内容物
                         @Override
-                        public boolean canInsert()
+                        public boolean canExtract()
                         {
                             return false;
                         }
@@ -214,7 +215,7 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
     @Override
     public Component getDisplayName()
     {
-        return Component.translatable("menu.title.beyonddimensions.me_amadron_process_station");
+        return Component.translatable("menu.title.appliedpneumatics.me_amadron_process_station");
     }
 
     @Override

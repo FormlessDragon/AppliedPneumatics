@@ -3,16 +3,15 @@
   "includes": [
     "common/common.json",
     "common/player_inventory.json",
-    "common/toolbox.json"
+    "amadron_terminal_toolbox.json"
   ],
   "background": {
-    "texture": "appliedpneumatics:textures/gui/me_pressure_interface_menu.png",
+    "texture": "appliedpneumatics:textures/gui/amadron_wireless_terminal.png",
     "textureWidth": 256,
     "textureHeight": 256,
-    "srcRect": [0, 0, 176, 207]
+    "srcRect": [0, 0, 195, 225]
   },
   "slots": {
-    "MACHINE_INPUT": { "left": 152, "top": 26 },
     "UPGRADE": {
       "right": 0,
       "top": 0,
@@ -21,7 +20,7 @@
   },
   "text": {
     "title": {
-      "text": { "translate": "menu.title.appliedpneumatics.me_pressure_interface_menu" },
+      "text": { "translate": "menu.title.appliedpneumatics.amadron_wireless_terminal" },
       "position": { "left": 8, "top": 6 }
     }
   }

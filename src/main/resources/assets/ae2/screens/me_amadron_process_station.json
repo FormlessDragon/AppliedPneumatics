@@ -6,13 +6,15 @@
     "common/toolbox.json"
   ],
   "background": {
-    "texture": "appliedpneumatics:textures/gui/me_pressure_interface_menu.png",
+    "texture": "appliedpneumatics:textures/gui/me_amadron_process_station_menu.png",
     "textureWidth": 256,
     "textureHeight": 256,
-    "srcRect": [0, 0, 176, 207]
+    "srcRect": [0, 0, 176, 215]
   },
   "slots": {
-    "MACHINE_INPUT": { "left": 152, "top": 26 },
+    "ENCODED_PATTERN": { "left": 8, "top": 19, "grid": "HORIZONTAL" },
+    "MACHINE_INPUT": { "left": 10, "top": 57, "grid": "BREAK_AFTER_3COLS" },
+    "MACHINE_OUTPUT": { "left": 114, "top": 57, "grid": "BREAK_AFTER_3COLS" },
     "UPGRADE": {
       "right": 0,
       "top": 0,
@@ -21,7 +23,7 @@
   },
   "text": {
     "title": {
-      "text": { "translate": "menu.title.beyonddimensions.me_amadron_process_station_menu" },
+      "text": { "translate": "menu.title.appliedpneumatics.me_amadron_process_station_menu" },
       "position": { "left": 8, "top": 6 }
     }
   }

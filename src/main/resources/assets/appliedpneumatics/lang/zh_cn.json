@@ -31,7 +31,9 @@
   "block.appliedpneumatics.me_pressure_chamber_glass": "ME压力室玻璃",
   "block.appliedpneumatics.me_amadron_process_station": "ME亚马龙处理站",
 
-  "menu.title.beyonddimensions.me_pressure_interface_menu": "ME气压接口",
+  "menu.title.appliedpneumatics.me_pressure_interface_menu": "ME气压接口",
+  "menu.title.appliedpneumatics.me_amadron_process_station_menu": "ME亚马龙处理站",
+  "menu.title.appliedpneumatics.amadron_wireless_terminal": "亚马龙无线终端",
   "menu.label.appliedpneumatics.me_pressure_interface.air_amount": "容积使用:%s\\%sL (%sbar)",
   "menu.label.appliedpneumatics.me_pressure_interface.max_pressure": "危险气压阈值:%sbar",
   "menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text": "期望气压",

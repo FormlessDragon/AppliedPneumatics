@@ -17,10 +17,13 @@ import appeng.core.localization.Tooltips;
 import appeng.items.tools.powered.PoweredContainerItem;
 import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
 import appeng.menu.locator.ItemMenuHostLocator;
+import appeng.menu.locator.MenuLocators;
 import appeng.util.Platform;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEAmadronProcessStationBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APDataComponents;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
+import com.wintercogs.appliedpneumatics.common.menu.AmadronWirelessTerminalMenu;
+import com.wintercogs.appliedpneumatics.common.menu.host.AmadronWirelessTerminalMenuHost;
 import me.desht.pneumaticcraft.api.item.IPositionProvider;
 import me.desht.pneumaticcraft.common.registry.ModSounds;
 import net.minecraft.ChatFormatting;
@@ -29,9 +32,11 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -54,7 +59,8 @@ import java.util.function.DoubleSupplier;
  * 亚马龙无线终端
  * 能直接从链接的ME网络支付订单
  */
-public class AmadronWirelessTerminalItem extends PoweredContainerItem implements IUpgradeableItem, IPositionProvider
+public class AmadronWirelessTerminalItem extends PoweredContainerItem implements
+        IUpgradeableItem, IPositionProvider
 {
     public static final IGridLinkableHandler LINKABLE_HANDLER = new LinkableHandler();
 
@@ -74,7 +80,24 @@ public class AmadronWirelessTerminalItem extends PoweredContainerItem implements
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand)
     {
-        return super.use(level, player, usedHand);
+        if (!level.isClientSide()) {
+            ServerPlayer sp = (ServerPlayer) player;
+
+            // 1) 构造定位器：这次是“手里这格”
+            ItemMenuHostLocator locator = MenuLocators.forHand(player, usedHand);
+
+            // 2) 打开菜单：服务端直接 new Host + Menu；同时把 locator 写到 buf
+            player.openMenu(new SimpleMenuProvider(
+                    (windowId, inv, p) -> {
+                        var host = new AmadronWirelessTerminalMenuHost(this, p, locator);
+                        return new AmadronWirelessTerminalMenu(windowId, inv, host);
+                    },
+                    Component.translatable("menu.title.appliedpneumatics.amadron_wireless_terminal")
+            ),buf -> {
+                MenuLocators.writeToPacket(buf, locator);
+            });
+        }
+        return InteractionResultHolder.sidedSuccess(player.getItemInHand(usedHand), level.isClientSide);
     }
 
     @Override

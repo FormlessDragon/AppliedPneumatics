@@ -149,7 +149,7 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuP
 
     public void setExpectedPressure(float expectedPressure)
     {
-        expectedPressure = Math.min(25f, expectedPressure);
+        expectedPressure = Math.min(20f, expectedPressure);
 
         float bottomPressure = isUpgradedWith(APItems.VACUUM_CARD) ? -1f : 0f;
         expectedPressure = Math.max(bottomPressure, expectedPressure);
@@ -378,7 +378,7 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuP
     @Override
     public Component getDisplayName()
     {
-        return Component.translatable("menu.title.beyonddimensions.me_pressure_interface_menu");
+        return Component.translatable("menu.title.appliedpneumatics.me_pressure_interface_menu");
     }
 
     @Override

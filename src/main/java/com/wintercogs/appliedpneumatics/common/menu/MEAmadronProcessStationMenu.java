@@ -9,6 +9,7 @@ import com.wintercogs.appliedpneumatics.common.init.APMenus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +47,14 @@ public class MEAmadronProcessStationMenu extends UpgradeableMenu<MEAmadronProces
         ConfigMenuInventory outputWrapper = getBlockEntity().getOutputInv().createMenuWrapper();
         for(int i = 0; i<outputWrapper.size(); i++)
         {
-            AppEngSlot slot = new AppEngSlot(outputWrapper, i);
+            AppEngSlot slot = new AppEngSlot(outputWrapper, i)
+            {
+                @Override
+                public boolean mayPlace(ItemStack stack)
+                {
+                    return false;
+                }
+            };
             this.addSlot(slot, SlotSemantics.MACHINE_OUTPUT);
         }
     }

@@ -38,6 +38,8 @@
   "menu.label.appliedpneumatics.me_pressure_interface.max_pressure": "危险气压阈值:%sbar",
   "menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text": "期望气压",
 
+  "menu.appliedpneumatics.button.submit": "提交订单",
+
   "tooltip.appliedpneumatics.item.amadron.unlink": "未绑定到亚马龙处理站",
   "tooltip.appliedpneumatics.item.amadron.linked": "绑定到%s [%s, %s, %s]",
 

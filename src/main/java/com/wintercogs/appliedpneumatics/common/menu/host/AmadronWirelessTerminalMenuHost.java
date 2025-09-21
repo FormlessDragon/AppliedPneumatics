@@ -6,6 +6,7 @@ import appeng.api.features.HotkeyAction;
 import appeng.api.implementations.blockentities.IWirelessAccessPoint;
 import appeng.api.implementations.menuobjects.IPortableTerminal;
 import appeng.api.implementations.menuobjects.ItemMenuHost;
+import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.security.IActionHost;
@@ -24,10 +25,15 @@ import appeng.me.helpers.PlayerSource;
 import appeng.me.storage.NullInventory;
 import appeng.menu.ISubMenu;
 import appeng.menu.locator.ItemMenuHostLocator;
+import appeng.util.inv.AppEngInternalInventory;
+import appeng.util.inv.InternalInventoryHost;
+import appeng.util.inv.SupplierInternalInventory;
+import com.wintercogs.appliedpneumatics.common.init.APDataComponents;
 import com.wintercogs.appliedpneumatics.common.items.AmadronWirelessTerminalItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,6 +53,8 @@ public class AmadronWirelessTerminalMenuHost extends ItemMenuHost<AmadronWireles
     private final MEStorage storage;
     private ILinkStatus linkStatus = ILinkStatus.ofDisconnected();
 
+    private final SupplierInternalInventory<InternalInventory> inventory;
+
     public AmadronWirelessTerminalMenuHost(AmadronWirelessTerminalItem item, Player player, ItemMenuHostLocator locator, BiConsumer<Player, ISubMenu> returnToMainMenu)
     {
         super(item, player, locator);
@@ -55,8 +63,40 @@ public class AmadronWirelessTerminalMenuHost extends ItemMenuHost<AmadronWireles
         this.storage = new SupplierStorage(new StackDependentSupplier<>(
                 this::getItemStack, this::getStorageFromStack));
 
+        this.inventory = new SupplierInternalInventory<>(
+                new StackDependentSupplier<>(
+                        this::getItemStack,
+                        stack -> createPatternInv(player, stack)));
+
         updateConnectedAccessPoint();
         updateLinkStatus();
+    }
+
+
+
+    private static InternalInventory createPatternInv(Player player, ItemStack stack)
+    {
+        AppEngInternalInventory patternGrid = new AppEngInternalInventory(new InternalInventoryHost()
+        {
+            @Override
+            public void saveChangedInventory(AppEngInternalInventory inv)
+            {
+                stack.set(APDataComponents.COMMON_ITEM_CONTENT, inv.toItemContainerContents());
+            }
+
+            @Override
+            public boolean isClientSide()
+            {
+                return player.level().isClientSide();
+            }
+        }, 1);
+        patternGrid.fromItemContainerContents(stack.getOrDefault(APDataComponents.COMMON_ITEM_CONTENT, ItemContainerContents.EMPTY));
+        return patternGrid;
+    }
+
+    public InternalInventory getPatternInv()
+    {
+        return inventory;
     }
 
     /** 获取当前链接状态 */

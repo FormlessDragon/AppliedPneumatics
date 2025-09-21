@@ -1,8 +1,11 @@
 package com.wintercogs.appliedpneumatics.client.gui;
 
+import appeng.api.config.ActionItems;
 import appeng.client.gui.implementations.UpgradeableScreen;
 import appeng.client.gui.style.StyleManager;
+import appeng.client.gui.widgets.AE2Button;
 import appeng.client.gui.widgets.AETextField;
+import appeng.client.gui.widgets.ActionButton;
 import appeng.client.gui.widgets.Scrollbar;
 import com.wintercogs.appliedpneumatics.client.gui.widgets.AmadronOfferPanel;
 import com.wintercogs.appliedpneumatics.common.menu.AmadronWirelessTerminalMenu;
@@ -32,6 +35,8 @@ public class AmadronWirelessTerminalGUI extends UpgradeableScreen<AmadronWireles
 
     private final Scrollbar scrollbar;
     private final AETextField seacher;
+    private final AE2Button submitButton;
+    private final ActionButton savePatternButton;
 
     private int totalOffers = 0;
     private int totalRows   = 0; // 所有交易换算为多少“行”
@@ -44,6 +49,9 @@ public class AmadronWirelessTerminalGUI extends UpgradeableScreen<AmadronWireles
 
         this.scrollbar = widgets.addScrollBar("scrollbar", Scrollbar.BIG);
         this.seacher = widgets.addTextField("search");
+        this.submitButton = widgets.addButton("submit_button", Component.translatable("menu.appliedpneumatics.button.submit"), button -> {});
+        this.savePatternButton = new ActionButton(ActionItems.ENCODE, actionItems -> {});
+        widgets.add("save_pattern_button", this.savePatternButton);
     }
 
     @Override

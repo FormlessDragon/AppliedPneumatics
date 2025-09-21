@@ -6,6 +6,7 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -25,6 +26,11 @@ public class APDataComponents
     // 存储一个亚马龙处理站的位置
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<GlobalPos>> AMADRON_PROCESS_POS = register(
       "amadron_process_pos", builder -> builder.persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC)
+    );
+
+    // 存储一个物品列表
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemContainerContents>> COMMON_ITEM_CONTENT = register(
+            "common_item_content", builder -> builder.persistent(ItemContainerContents.CODEC).networkSynchronized(ItemContainerContents.STREAM_CODEC)
     );
 
 

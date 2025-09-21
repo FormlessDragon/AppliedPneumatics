@@ -16,6 +16,10 @@
       "right": 0,
       "top": 0,
       "grid": "VERTICAL"
+    },
+    "BLANK_PATTERN": {
+      "left": 133,
+      "top": 117
     }
   },
   "text": {
@@ -34,6 +38,16 @@
       "top": 4,
       "width": 89,
       "height": 12
+    },
+    "submit_button": {
+      "left": 38,
+      "top": 116,
+      "width": 89,
+      "height": 18
+    },
+    "save_pattern_button": {
+      "left": 153,
+      "top": 115
     }
   }
 }

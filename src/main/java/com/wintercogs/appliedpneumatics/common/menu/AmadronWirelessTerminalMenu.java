@@ -1,6 +1,8 @@
 package com.wintercogs.appliedpneumatics.common.menu;
 
+import appeng.menu.SlotSemantics;
 import appeng.menu.implementations.UpgradeableMenu;
+import appeng.menu.slot.RestrictedInputSlot;
 import com.wintercogs.appliedpneumatics.common.init.APMenus;
 import com.wintercogs.appliedpneumatics.common.menu.host.AmadronWirelessTerminalMenuHost;
 import me.desht.pneumaticcraft.common.amadron.AmadronOfferManager;
@@ -38,6 +40,8 @@ public class AmadronWirelessTerminalMenu extends UpgradeableMenu<AmadronWireless
     @Override
     protected void setupInventorySlots()
     {
+        RestrictedInputSlot slot = new RestrictedInputSlot(RestrictedInputSlot.PlacableItemType.BLANK_PATTERN ,getHost().getPatternInv(), 0);
+        addSlot(slot, SlotSemantics.BLANK_PATTERN);
     }
 
     @Override

@@ -25,8 +25,9 @@ public class AmadronOfferPanel extends AbstractWidget
     private static final ResourceLocation BG =
             ResourceLocation.fromNamespaceAndPath(AppliedPneumatics.MODID, "textures/gui/amadron_wireless_terminal.png");
 
-    private static final Bounds staticOfferUVBounds = new Bounds(95, 244, 8, 11);
-    private static final Bounds villagerOfferUVBounds = new Bounds(83, 244, 8, 11);
+    private static final Bounds staticOfferUVBounds = new Bounds(95, 282, 8, 11);
+    private static final Bounds villagerOfferUVBounds = new Bounds(83, 282, 8, 11);
+    private static final Bounds playerOfferUVBounds = new Bounds(107, 283, 8, 8);
 
 
     /** 面板尺寸 & 图标区域（16×16） */
@@ -114,7 +115,7 @@ public class AmadronOfferPanel extends AbstractWidget
     protected void renderWidget(@NotNull GuiGraphics g, int mouseX, int mouseY, float pt)
     {
         // 背景
-        g.blit(BG, getX(), getY(), 1, 233, PANEL_W, PANEL_H, 256, 256);
+        g.blit(BG, getX(), getY(), 1, 271, PANEL_W, PANEL_H, 512, 512);
 
         if (!valid) {
             g.drawString(Minecraft.getInstance().font, "…", getX() + 4, getY() + 7, 0x777777);
@@ -162,13 +163,16 @@ public class AmadronOfferPanel extends AbstractWidget
             typeW = villagerOfferUVBounds.width;
             typeH = villagerOfferUVBounds.height;
         }
+        else if(offerType.isPlayer)
+        {
+            typeU = playerOfferUVBounds.x;
+            typeV = playerOfferUVBounds.y;
+            typeW = playerOfferUVBounds.width;
+            typeH = playerOfferUVBounds.height;
+        }
         if(typeU != -1 && typeV != -1 && typeW != -1 && typeH != -1)
         {
-            g.blit(BG, getX() + 35, getY() + 9, 300, typeU, typeV, typeW, typeH, 256, 256);
-        }
-        if(offerType.isPlayer)
-        {
-
+            g.blit(BG, getX() + 35, getY() + 9, 300, typeU, typeV, typeW, typeH, 512, 512);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.wintercogs.appliedpneumatics.common.init;
 
+import appeng.menu.implementations.MenuTypeBuilder;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.client.gui.AmadronWirelessTerminalGUI;
 import com.wintercogs.appliedpneumatics.client.gui.MEAmadronProcessStationGUI;
@@ -7,7 +8,10 @@ import com.wintercogs.appliedpneumatics.client.gui.MEPressureInterfaceGUI;
 import com.wintercogs.appliedpneumatics.common.menu.AmadronWirelessTerminalMenu;
 import com.wintercogs.appliedpneumatics.common.menu.MEAmadronProcessStationMenu;
 import com.wintercogs.appliedpneumatics.common.menu.MEPressureInterfaceMenu;
+import com.wintercogs.appliedpneumatics.common.menu.host.AmadronWirelessTerminalMenuHost;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -31,7 +35,10 @@ public class APMenus
             () -> IMenuTypeExtension.create(MEAmadronProcessStationMenu::new));
 
     public static final Supplier<MenuType<AmadronWirelessTerminalMenu>> AMADRON_WIRELESS_TERMINAL_MENU = MENU_TYPES.register("amadron_wireless_terminal_menu",
-            () -> IMenuTypeExtension.create(AmadronWirelessTerminalMenu::new));
+            () -> MenuTypeBuilder.create(AmadronWirelessTerminalMenu::new, AmadronWirelessTerminalMenuHost.class)
+                    .withMenuTitle(host -> Component.translatable("menu.title.appliedpneumatics.amadron_wireless_terminal"))
+                    .build(ResourceLocation.fromNamespaceAndPath(AppliedPneumatics.MODID, "amadron_wireless_terminal_menu"))
+    );
 
     public static void registerMenus(IEventBus eventBus)
     {

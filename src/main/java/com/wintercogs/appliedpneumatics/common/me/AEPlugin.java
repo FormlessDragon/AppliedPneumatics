@@ -6,6 +6,7 @@ import appeng.api.features.P2PTunnelAttunement;
 import appeng.api.stacks.AEKeyTypes;
 import appeng.api.storage.StorageCells;
 import appeng.api.upgrades.Upgrades;
+import appeng.core.definitions.AEItems;
 import appeng.parts.automation.StackWorldBehaviors;
 import appeng.parts.automation.StorageExportStrategy;
 import appeng.parts.automation.StorageImportStrategy;
@@ -86,6 +87,9 @@ public class AEPlugin
         Upgrades.add(APItems.VACUUM_CARD,   APItems.AIR_CELL_64M, 1 ,CELL_UPGRADE_GROUP);
         Upgrades.add(APItems.SECURITY_CARD, APItems.AIR_CELL_256M, 1 ,CELL_UPGRADE_GROUP);
         Upgrades.add(APItems.VACUUM_CARD,   APItems.AIR_CELL_256M, 1 ,CELL_UPGRADE_GROUP);
+
+        // 亚马龙终端
+        Upgrades.add(AEItems.ENERGY_CARD, APItems.AMADRON_WIRELESS_TERMINAL, 2);
 
         // 添加无线终端绑定支持
         GridLinkables.register(APItems.AMADRON_WIRELESS_TERMINAL, AmadronWirelessTerminalItem.LINKABLE_HANDLER);

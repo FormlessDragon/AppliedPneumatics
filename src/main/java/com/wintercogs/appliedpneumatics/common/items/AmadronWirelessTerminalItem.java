@@ -1,6 +1,9 @@
 package com.wintercogs.appliedpneumatics.common.items;
 
 import appeng.api.config.Actionable;
+import appeng.api.config.FuzzyMode;
+import appeng.api.config.RedstoneMode;
+import appeng.api.config.Settings;
 import appeng.api.features.IGridLinkableHandler;
 import appeng.api.ids.AEComponents;
 import appeng.api.implementations.blockentities.IWirelessAccessPoint;
@@ -11,18 +14,22 @@ import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableItem;
 import appeng.api.upgrades.UpgradeInventories;
 import appeng.api.upgrades.Upgrades;
+import appeng.api.util.IConfigManager;
+import appeng.blockentity.networking.WirelessAccessPointBlockEntity;
 import appeng.core.localization.GuiText;
 import appeng.core.localization.PlayerMessages;
 import appeng.core.localization.Tooltips;
 import appeng.items.tools.powered.PoweredContainerItem;
 import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
+import appeng.menu.ISubMenu;
+import appeng.menu.MenuOpener;
 import appeng.menu.locator.ItemMenuHostLocator;
 import appeng.menu.locator.MenuLocators;
 import appeng.util.Platform;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEAmadronProcessStationBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APDataComponents;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
-import com.wintercogs.appliedpneumatics.common.menu.AmadronWirelessTerminalMenu;
+import com.wintercogs.appliedpneumatics.common.init.APMenus;
 import com.wintercogs.appliedpneumatics.common.menu.host.AmadronWirelessTerminalMenuHost;
 import me.desht.pneumaticcraft.api.item.IPositionProvider;
 import me.desht.pneumaticcraft.common.registry.ModSounds;
@@ -36,7 +43,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -46,14 +52,17 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 /**
  * 亚马龙无线终端
@@ -80,24 +89,13 @@ public class AmadronWirelessTerminalItem extends PoweredContainerItem implements
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand)
     {
+        ItemStack stack = player.getItemInHand(usedHand);
+
         if (!level.isClientSide()) {
-            ServerPlayer sp = (ServerPlayer) player;
-
-            // 1) 构造定位器：这次是“手里这格”
-            ItemMenuHostLocator locator = MenuLocators.forHand(player, usedHand);
-
-            // 2) 打开菜单：服务端直接 new Host + Menu；同时把 locator 写到 buf
-            player.openMenu(new SimpleMenuProvider(
-                    (windowId, inv, p) -> {
-                        var host = new AmadronWirelessTerminalMenuHost(this, p, locator);
-                        return new AmadronWirelessTerminalMenu(windowId, inv, host);
-                    },
-                    Component.translatable("menu.title.appliedpneumatics.amadron_wireless_terminal")
-            ),buf -> {
-                MenuLocators.writeToPacket(buf, locator);
-            });
+            var locator = MenuLocators.forHand(player, usedHand);
+            MenuOpener.open(APMenus.AMADRON_WIRELESS_TERMINAL_MENU.get(), player, locator);
         }
-        return InteractionResultHolder.sidedSuccess(player.getItemInHand(usedHand), level.isClientSide);
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 
     @Override
@@ -212,7 +210,8 @@ public class AmadronWirelessTerminalItem extends PoweredContainerItem implements
      *               hasPower
      * @return true if wireless terminal uses power
      */
-    public boolean usePower(Player player, double amount, ItemStack is) {
+    public boolean usePower(Player player, double amount, ItemStack is)
+    {
         return extractAEPower(is, amount, Actionable.MODULATE) >= amount - 0.5;
     }
 
@@ -221,7 +220,8 @@ public class AmadronWirelessTerminalItem extends PoweredContainerItem implements
      *
      * @return returns true if there is any power left.
      */
-    public boolean hasPower(Player player, double amt, ItemStack is) {
+    public boolean hasPower(Player player, double amt, ItemStack is)
+    {
         return getAECurrentPower(is) >= amt;
     }
 
@@ -245,7 +245,59 @@ public class AmadronWirelessTerminalItem extends PoweredContainerItem implements
     @Override
     public @Nullable ItemMenuHost<?> getMenuHost(Player player, ItemMenuHostLocator locator, @Nullable BlockHitResult hitResult)
     {
-        return null;
+        final ItemStack stack = locator.locateItem(player);
+        if (!(stack.getItem() instanceof AmadronWirelessTerminalItem)) return null;
+
+        // 子菜单返回回调（客户端用 no-op 就行）
+        // 服务端暂时也没有额外回调
+        BiConsumer<Player, ISubMenu> onReturn = (pl, sub) -> {};
+
+        // 服务端：做校验 + 开启扣电
+        if (player instanceof ServerPlayer sp && player.level() instanceof ServerLevel)
+        {
+            MutableObject<Component> err = new MutableObject<>();
+            IGrid grid = getLinkedGrid(stack, player.level(), err::setValue);
+            if (grid == null)
+            {
+                if (err.getValue()!=null)
+                    sp.displayClientMessage(err.getValue(), false);
+                return null;
+            }
+            if (!isPlayerInRangeOfAnyWap(sp, grid))
+            {
+                sp.displayClientMessage(PlayerMessages.OutOfRange.text(), false);
+                return null;
+            }
+
+            final double OPEN_COST = 8.0;  // 打开耗电
+            if (getAECurrentPower(stack) + 1e-6 < OPEN_COST)
+            {
+                sp.displayClientMessage(GuiText.OutOfPower.text(), false);
+                return null;
+            }
+            usePower(sp, OPEN_COST, stack); // 打开耗电
+        }
+
+        // 两端都要返回 host
+        return new AmadronWirelessTerminalMenuHost(this, player, locator, onReturn);
+    }
+
+    private static boolean isPlayerInRangeOfAnyWap(ServerPlayer sp, IGrid grid)
+    {
+        for (var wap : grid.getMachines(WirelessAccessPointBlockEntity.class))
+        {
+            if (!wap.isActive()) continue;
+            var loc = wap.getLocation();
+            if (loc.getLevel() != sp.level()) continue; // 必须同维度
+
+            double dx = loc.getPos().getX() - sp.getX();
+            double dy = loc.getPos().getY() - sp.getY();
+            double dz = loc.getPos().getZ() - sp.getZ();
+            double r2 = dx*dx + dy*dy + dz*dz;
+            double range = wap.getRange();
+            if (r2 < range * range) return true;
+        }
+        return false;
     }
 
     // 快速绑定、取消绑定方块
@@ -309,6 +361,16 @@ public class AmadronWirelessTerminalItem extends PoweredContainerItem implements
     public int getRenderColor(int index)
     {
         return 0x9003FF80; // 半透明绿色 - 与亚马龙终端风格一致
+    }
+
+    /**
+     * 返回此无线终端的配置设置 这里无可用配置
+     */
+    public IConfigManager getConfigManager(Supplier<ItemStack> target) {
+        return IConfigManager.builder(target)
+                .registerSetting(Settings.REDSTONE_CONTROLLED, RedstoneMode.IGNORE)
+                .registerSetting(Settings.FUZZY_MODE, FuzzyMode.IGNORE_ALL)
+                .build();
     }
 
     private static class LinkableHandler implements IGridLinkableHandler

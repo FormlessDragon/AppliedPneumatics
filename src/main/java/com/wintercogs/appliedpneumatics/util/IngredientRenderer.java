@@ -2,9 +2,17 @@ package com.wintercogs.appliedpneumatics.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.fluids.FluidStack;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
 
@@ -16,7 +24,40 @@ public class IngredientRenderer
     private static final int TEXTURE_SIZE = 16;
     private static final int MIN_FLUID_HEIGHT = 1;
 
-    public static void drawTiledSprite(GuiGraphics guiGraphics, final int tiledWidth, final int tiledHeight, int color, long scaledAmount, TextureAtlasSprite sprite, int posX, int posY) {
+    /** 为传入的液体画一个标准的16x16的贴图 */
+    public static void darwFluidAs16WHTiledSprite(@NotNull  GuiGraphics guiGraphics, @NotNull Fluid fluid, int posX, int posY)
+    {
+        IClientFluidTypeExtensions props = IClientFluidTypeExtensions.of(fluid);
+        ResourceLocation still = props.getStillTexture();
+        TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
+
+        if (sprite != null && sprite.atlasLocation() != MissingTextureAtlasSprite.getLocation()) {
+            int tint = IClientFluidTypeExtensions.of(fluid).getTintColor();
+            // 复用项目现有的绘制工具
+            drawTiledSprite(guiGraphics, 16, 16, tint, 16, sprite, posX, posY);
+        }
+    }
+
+    /** 为传入的液体画一个标准的16x16的贴图 */
+    public static void darwFluidAs16WHTiledSprite(@NotNull GuiGraphics guiGraphics, @NotNull  FluidStack fluidStack, int posX, int posY)
+    {
+        if(!fluidStack.isEmpty())
+        {
+            Fluid fluid = fluidStack.getFluid();
+            IClientFluidTypeExtensions props = IClientFluidTypeExtensions.of(fluid);
+            ResourceLocation still = props.getStillTexture(fluidStack);
+            TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(still);
+
+            if (sprite != null && sprite.atlasLocation() != MissingTextureAtlasSprite.getLocation()) {
+                int tint = IClientFluidTypeExtensions.of(fluid).getTintColor();
+                // 复用项目现有的绘制工具
+                drawTiledSprite(guiGraphics, 16, 16, tint, 16, sprite, posX, posY);
+            }
+        }
+    }
+
+    public static void drawTiledSprite(GuiGraphics guiGraphics, final int tiledWidth, final int tiledHeight, int color, long scaledAmount, TextureAtlasSprite sprite, int posX, int posY)
+    {
 
         RenderSystem.enableBlend();
 
@@ -52,17 +93,19 @@ public class IngredientRenderer
 
     }
 
-    private static void setGLColorFromInt(int color) {
-        float red = ((color >> 16) & 255) / 256f;
-        float green = ((color >> 8) & 255) / 256f;
-        float blue = (color & 255) / 256f;
+    private static void setGLColorFromInt(int color)
+    {
+        float red = ((color >> 16) & 255) / 255f;
+        float green = ((color >> 8) & 255) / 255f;
+        float blue = (color & 255) / 255f;
         //float alpha = ((color >> 24) & 0xFF) / 255F;
         float alpha = 1;
 
         RenderSystem.setShaderColor(red, green, blue, alpha);
     }
 
-    private static void drawTextureWithMasking(Matrix4f matrix, float xCoord, float yCoord, TextureAtlasSprite textureSprite, long maskTop, long maskRight, float zLevel) {
+    private static void drawTextureWithMasking(Matrix4f matrix, float xCoord, float yCoord, TextureAtlasSprite textureSprite, long maskTop, long maskRight, float zLevel)
+    {
         float uMin = textureSprite.getU0();
         float uMax = textureSprite.getU1();
         float vMin = textureSprite.getV0();

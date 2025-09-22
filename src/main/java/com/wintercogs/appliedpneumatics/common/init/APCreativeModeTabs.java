@@ -47,6 +47,7 @@ public class APCreativeModeTabs
                         output.accept(APItems.VACUUM_CARD.get());
                         output.accept(APItems.AMADRON_WIRELESS_TERMINAL.get());
                         output.accept(APBlocks.ME_AMADRON_PROCESS_STATION.get());
+                        output.accept(APItems.AMADRON_PATTERN.get());
                     })
                     .build());
 

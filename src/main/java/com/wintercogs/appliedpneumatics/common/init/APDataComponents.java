@@ -2,6 +2,7 @@ package com.wintercogs.appliedpneumatics.common.init;
 
 import com.mojang.serialization.Codec;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
+import com.wintercogs.appliedpneumatics.common.me.crafting.EncodedAmadronPattern;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -31,6 +32,11 @@ public class APDataComponents
     // 存储一个物品列表
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemContainerContents>> COMMON_ITEM_CONTENT = register(
             "common_item_content", builder -> builder.persistent(ItemContainerContents.CODEC).networkSynchronized(ItemContainerContents.STREAM_CODEC)
+    );
+
+    // 存储样板编码的配方id
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<EncodedAmadronPattern>> AMADRON_PATTERN = register(
+            "amadron_pattern", builder -> builder.persistent(EncodedAmadronPattern.CODEC).networkSynchronized(EncodedAmadronPattern.STREAM_CODEC)
     );
 
 

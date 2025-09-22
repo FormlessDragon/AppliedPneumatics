@@ -1,5 +1,6 @@
 package com.wintercogs.appliedpneumatics.common.init;
 
+import appeng.api.crafting.PatternDetailsHelper;
 import appeng.api.parts.PartModels;
 import appeng.api.upgrades.Upgrades;
 import appeng.core.AEConfig;
@@ -8,6 +9,7 @@ import appeng.items.parts.PartModelsHelper;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.items.AirStorageCell;
 import com.wintercogs.appliedpneumatics.common.items.AmadronWirelessTerminalItem;
+import com.wintercogs.appliedpneumatics.common.me.crafting.AmadronPatternDetails;
 import com.wintercogs.appliedpneumatics.common.me.p2p.AirP2PTunnelPart;
 import com.wintercogs.appliedpneumatics.common.me.p2p.HeatP2PTunnelPart;
 import net.minecraft.world.item.Item;
@@ -103,6 +105,10 @@ public class APItems
     // 亚马龙无线终端
     public static final DeferredItem<AmadronWirelessTerminalItem> AMADRON_WIRELESS_TERMINAL = ITEMS.register("amadron_wireless_terminal",
             () -> new AmadronWirelessTerminalItem(AEConfig.instance().getWirelessTerminalBattery(),new Item.Properties().stacksTo(1)));
+
+    // 亚马龙样板
+    public static final DeferredItem<Item> AMADRON_PATTERN = ITEMS.register("amadron_pattern",
+            () -> PatternDetailsHelper.encodedPatternItemBuilder(AmadronPatternDetails::new).invalidPatternTooltip(AmadronPatternDetails::getInvalidPatternTooltip).build());
 
     public static void register(IEventBus eventBus)
     {

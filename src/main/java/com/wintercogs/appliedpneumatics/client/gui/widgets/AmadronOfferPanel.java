@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -40,112 +41,125 @@ public class AmadronOfferPanel extends AbstractWidget
     private static final float TEXT_SCALE = 0.666f;
     private static final float TEXT_Z = 300f;
 
-    private static boolean inBox(int mx, int my, int x, int y, int w, int h) {
+    private static boolean inBox(int mx, int my, int x, int y, int w, int h)
+    {
         return mx >= x && mx < x + w && my >= y && my < y + h;
     }
 
-    // ---- 关键：配方主键 & 缓存的显示数据 ----
+    // 配方主键 & 缓存的显示数据
     private final ResourceLocation offerId;
 
     private final OfferType offerType;
     private final AmadronTradeResource input;
     private final AmadronTradeResource output;
-    private final int tradeLevel;
     private final int maxStock;
-    private final int initialStock;
 
-    // 预拆解缓存，仅用于渲染
-    @Nullable private final ItemStack inputItem, outputItem;
-    @Nullable private final FluidStack inputFluid, outputFluid;
-    private final boolean inputIsItem, outputIsItem;
+    private int wantedStock; // 存储一个数据，标识玩家想购买多少个此交易
+
+    // 点击回调
+    @Nullable private final onPress onClicked;
 
     /** 客户端是否拿到了有效的 offer */
     private final boolean valid;
 
     // 仅允许通过工厂创建
-    private AmadronOfferPanel(int x, int y, ResourceLocation offerId, @Nullable AmadronOffer offer) {
+    private AmadronOfferPanel(int x, int y, ResourceLocation offerId, @Nullable AmadronOffer offer, @Nullable onPress onClicked)
+    {
         super(x, y, PANEL_W, PANEL_H, Component.translatable("appliedpneumatics.gui.widget.amadron_offer_panel"));
         this.offerId = offerId;
+        this.onClicked = onClicked;
 
-        if (offer != null) {
-            this.valid        = true;
-            this.offerType    = new OfferType(offer.isStaticOffer(), offer.isVillagerTrade(), offer instanceof AmadronPlayerOffer);
-            this.input        = offer.getInput();
-            this.output       = offer.getOutput();
-            this.tradeLevel   = offer.getTradeLevel();
-            this.maxStock     = offer.getMaxStock();
-            this.initialStock = offer.getStock();
+        if (offer != null)
+        {
+            this.valid = true;
+            this.offerType = new OfferType(offer.isStaticOffer(), offer.isVillagerTrade(), offer instanceof AmadronPlayerOffer);
+            this.input = offer.getInput();
+            this.output = offer.getOutput();
+            this.maxStock = offer.getStock();
 
-            this.inputItem    = input.getItem();
-            this.outputItem   = output.getItem();
-            this.inputFluid   = input.getFluid();
-            this.outputFluid  = output.getFluid();
-            this.inputIsItem  = !inputItem.isEmpty();
-            this.outputIsItem = !outputItem.isEmpty();
-        } else {
-            this.valid        = false;
-            this.offerType    = new OfferType(false, false, false);
-            this.input        = AmadronTradeResource.of(ItemStack.EMPTY);
-            this.output       = AmadronTradeResource.of(ItemStack.EMPTY);
-            this.tradeLevel   = 1;
-            this.maxStock     = -1;
-            this.initialStock = -1;
-
-            this.inputItem = this.outputItem = ItemStack.EMPTY;
-            this.inputFluid = this.outputFluid = FluidStack.EMPTY;
-            this.inputIsItem = this.outputIsItem = false;
+        }
+        else
+        {
+            this.valid = false;
+            this.offerType = new OfferType(false, false, false);
+            this.input = AmadronTradeResource.of(ItemStack.EMPTY);
+            this.output = AmadronTradeResource.of(ItemStack.EMPTY);
+            this.maxStock = -1;
         }
     }
 
     /** 工厂：用配方 id 构造面板（客户端侧） */
-    public static AmadronOfferPanel fromOfferId(int x, int y, ResourceLocation id) {
+    public static AmadronOfferPanel fromOfferId(int x, int y, ResourceLocation id, onPress runnable)
+    {
         var offer = me.desht.pneumaticcraft.common.amadron.AmadronOfferManager.getInstance().getOffer(id);
-        return new AmadronOfferPanel(x, y, id, offer);
+        return new AmadronOfferPanel(x, y, id, offer, runnable);
     }
 
     // ---------- Getters ----------
+
+    public int getWantedStock()
+    {
+        return wantedStock;
+    }
     public ResourceLocation getOfferId() { return offerId; }
     public boolean isValidOffer() { return valid; }
     public OfferType getOfferType() { return offerType; }
     public AmadronTradeResource getInput() { return input; }
     public AmadronTradeResource getOutput() { return output; }
 
+    // 由于AE已经覆写点击事件，需要自己放到外界判断
+    // （耦合度有点高，不过还能接受）
+    public void onClicked(double mouseX, double mouseY, int button, boolean isShiftKeyDown)
+    {
+        super.onClick(mouseX, mouseY, button);
+        if(button == GLFW.GLFW_MOUSE_BUTTON_LEFT || button == GLFW.GLFW_MOUSE_BUTTON_RIGHT)
+        {
+            if(isShiftKeyDown)
+            {
+                double wantmulit = button == GLFW.GLFW_MOUSE_BUTTON_LEFT ? 0.5 : 2;
+                this.wantedStock = (int)Math.max(0, wantedStock * wantmulit);
+                if(maxStock > 0)
+                {
+                    this.wantedStock = Math.min(maxStock, wantedStock);
+                }
+                this.wantedStock = Math.min(64, wantedStock);
+            }
+            else
+            {
+                int wantedAdd = button == GLFW.GLFW_MOUSE_BUTTON_LEFT ? -1 : 1;
+                this.wantedStock = Math.max(0, wantedStock + wantedAdd);
+                if(maxStock > 0)
+                {
+                    this.wantedStock = Math.min(maxStock, wantedStock);
+                }
+                this.wantedStock = Math.min(64, wantedStock);
+            }
+
+        }
+        else if(button == GLFW.GLFW_MOUSE_BUTTON_MIDDLE)
+        {
+            this.wantedStock = 0;
+        }
+    }
+
     // ---------- 渲染 ----------
     @Override
-    protected void renderWidget(@NotNull GuiGraphics g, int mouseX, int mouseY, float pt)
+    protected void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float pt)
     {
         // 背景
-        g.blit(BG, getX(), getY(), 1, 271, PANEL_W, PANEL_H, 512, 512);
+        gui.blit(BG, getX(), getY(), 1, 271, PANEL_W, PANEL_H, 512, 512);
 
         if (!valid) {
-            g.drawString(Minecraft.getInstance().font, "…", getX() + 4, getY() + 7, 0x777777);
+            gui.drawString(Minecraft.getInstance().font, "…", getX() + 4, getY() + 7, 0x777777);
             return;
         }
 
         final var font = Minecraft.getInstance().font;
         final int x0 = getX(), y0 = getY();
 
-        // 左侧：输入
-        if (inputIsItem) {
-            g.renderItem(inputItem, x0 + IN_ICON_X, y0 + ICON_Y);
-            drawCountBottomRight(g, font, String.valueOf(inputItem.getCount()),
-                    x0 + IN_ICON_X, y0 + ICON_Y);
-        } else {
-            IngredientRenderer.darwFluidAs16WHTiledSprite(g, input.getFluid(), x0 + IN_ICON_X, y0 + ICON_Y);
-            String inText = String.format("%.1fB", input.getAmount() / 1000.0);
-            drawCountBottomRight(g, font, inText, x0 + IN_ICON_X, y0 + ICON_Y);
-        }
-
-        // 右侧：输出
-        if (outputIsItem) {
-            g.renderItem(outputItem, x0 + OUT_ICON_X, y0 + OUT_ICON_Y);
-            drawCountBottomRight(g, font, String.valueOf(outputItem.getCount()),
-                    x0 + OUT_ICON_X, y0 + OUT_ICON_Y);
-        } else {
-            IngredientRenderer.darwFluidAs16WHTiledSprite(g, output.getFluid(), x0 + OUT_ICON_X, y0 + ICON_Y);
-            String outText = String.format("%.1fB", output.getAmount() / 1000.0);
-            drawCountBottomRight(g, font, outText, x0 + OUT_ICON_X, y0 + OUT_ICON_Y);
-        }
+        // 绘制成分
+        drawAmadronTradeResource(gui, input, font, x0 + IN_ICON_X, y0 + ICON_Y);
+        drawAmadronTradeResource(gui, output, font, x0 + OUT_ICON_X, y0 + ICON_Y);
 
         int typeU = -1, typeV = -1, typeW = -1, typeH = -1;
         // 绘制类型图标
@@ -170,9 +184,52 @@ public class AmadronOfferPanel extends AbstractWidget
             typeW = playerOfferUVBounds.width;
             typeH = playerOfferUVBounds.height;
         }
-        if(typeU != -1 && typeV != -1 && typeW != -1 && typeH != -1)
+        if(typeU != -1 && typeV != -1 && typeW != -1 && typeH != -1 && !offerType.isPlayer)
         {
-            g.blit(BG, getX() + 35, getY() + 9, 300, typeU, typeV, typeW, typeH, 512, 512);
+            gui.blit(BG, getX() + 35, getY() + 9, 300, typeU, typeV, typeW, typeH, 512, 512);
+        }
+        else if(typeU != -1 && typeV != -1 && typeW != -1 && typeH != -1)
+        {
+            gui.blit(BG, getX() + 35, getY() + 10, 300, typeU, typeV, typeW, typeH, 512, 512);
+        }
+
+        // 绘制可交易数量
+        var pose = gui.pose();
+        pose.pushPose();
+        pose.translate(x0, y0, TEXT_Z);
+        pose.scale(0.5f, 0.5f, 1.0f);
+
+        String wantedText = "";
+        String maxStockText = "";
+        if(wantedStock > 0)
+        {
+            wantedText = String.valueOf(wantedStock);
+        }
+        if(maxStock > 0)
+        {
+            maxStockText = String.valueOf(maxStock);
+        }
+
+        String renderText = !maxStockText.isEmpty() ? String.valueOf(wantedStock) + " / " + maxStockText : wantedText;
+
+        gui.drawCenteredString(font, renderText, 77, 5, 0xFFFFFF);
+        pose.popPose();
+    }
+
+    private static void drawAmadronTradeResource(GuiGraphics gui, AmadronTradeResource resource, Font font, int x, int y)
+    {
+        ItemStack mayItem = resource.getItem();
+        FluidStack mayFluid = resource.getFluid();
+        if (!mayItem.isEmpty())
+        {
+            gui.renderItem(mayItem, x, y);
+            drawCountBottomRight(gui, font, String.valueOf(mayItem.getCount()), x, y);
+        }
+        else if(!mayFluid.isEmpty())
+        {
+            IngredientRenderer.darwFluidAs16WHTiledSprite(gui, mayFluid.getFluid(), x, y);
+            String inText = String.format("%.1fB", mayFluid.getAmount() / 1000.0);
+            drawCountBottomRight(gui, font, inText, x, y);
         }
     }
 
@@ -195,7 +252,7 @@ public class AmadronOfferPanel extends AbstractWidget
     }
 
     // 由外部UI自行调用
-    public void renderStackTooltip(GuiGraphics g, int mouseX, int mouseY, int offsetX, int offsetY)
+    public void renderStackTooltip(GuiGraphics gui, int mouseX, int mouseY, int offsetX, int offsetY)
     {
         if (!valid) return;
 
@@ -206,39 +263,31 @@ public class AmadronOfferPanel extends AbstractWidget
         // 输入区域
         if (inBox(mouseX, mouseY, inX, inY, ICON_W, ICON_H))
         {
-            if (inputIsItem && inputItem != null && !inputItem.isEmpty())
-            {
-                g.renderTooltip(Minecraft.getInstance().font, inputItem, mouseX - offsetX, mouseY - offsetY);
-                return;
-            }
-            else if (inputFluid != null && !inputFluid.isEmpty())
-            {
-                var font = Minecraft.getInstance().font;
-                var lines = new ArrayList<Component>(2);
-                lines.add(inputFluid.getHoverName());
-                lines.add(Component.literal(inputFluid.getAmount() + " mB")
-                        .withStyle(net.minecraft.ChatFormatting.GRAY));
-                g.renderTooltip(font, lines, Optional.empty(), mouseX - offsetX, mouseY - offsetY);
-                return;
-            }
+            drawAmadronTradeResourceTooltip(gui, input, mouseX - offsetX, mouseY - offsetY);
         }
 
         // 输出区域
         if (inBox(mouseX, mouseY, outX, outY, ICON_W, ICON_H))
         {
-            if (outputIsItem && outputItem != null && !outputItem.isEmpty())
-            {
-                g.renderTooltip(Minecraft.getInstance().font, outputItem, mouseX - offsetX, mouseY - offsetY);
-            }
-            else if (outputFluid != null && !outputFluid.isEmpty())
-            {
-                var font = Minecraft.getInstance().font;
-                var lines = new ArrayList<Component>(2);
-                lines.add(outputFluid.getHoverName());
-                lines.add(Component.literal(outputFluid.getAmount() + " mB")
-                        .withStyle(net.minecraft.ChatFormatting.GRAY));
-                g.renderTooltip(font, lines, Optional.empty(), mouseX - offsetX, mouseY - offsetY);
-            }
+            drawAmadronTradeResourceTooltip(gui, output, mouseX - offsetX, mouseY - offsetY);
+        }
+    }
+
+    private static void drawAmadronTradeResourceTooltip(GuiGraphics gui, AmadronTradeResource resource, int mouseX, int mouseY)
+    {
+        ItemStack mayItem = resource.getItem();
+        FluidStack mayFluid = resource.getFluid();
+        if(!mayItem.isEmpty())
+        {
+            gui.renderTooltip(Minecraft.getInstance().font, mayItem, mouseX, mouseY);
+        }
+        else if(!mayFluid.isEmpty())
+        {
+            var font = Minecraft.getInstance().font;
+            var lines = new ArrayList<Component>(2);
+            lines.add(mayFluid.getHoverName());
+            lines.add(Component.literal(mayFluid.getAmount() + " mB").withStyle(net.minecraft.ChatFormatting.GRAY));
+            gui.renderTooltip(font, lines, Optional.empty(), mouseX , mouseY );
         }
     }
 
@@ -251,4 +300,9 @@ public class AmadronOfferPanel extends AbstractWidget
 
     /** 类型图标记录 */
     public record Bounds(int x, int y, int width, int height) {}
+
+    public interface onPress
+    {
+        void onPress(int button);
+    }
 }

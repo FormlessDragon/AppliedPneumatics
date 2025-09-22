@@ -40,10 +40,10 @@
       "height": 12
     },
     "submit_button": {
-      "left": 44,
-      "top": 116,
+      "left": 45,
+      "top": 115,
       "width": 89,
-      "height": 18
+      "height": 20
     },
     "save_pattern_button": {
       "left": 133,

@@ -35,6 +35,7 @@ public class ModItemModelProvider extends ItemModelProvider
         basicItem(APItems.SECURITY_CARD.get());
         basicItem(APItems.VACUUM_CARD.get());
         basicItem(APItems.AMADRON_WIRELESS_TERMINAL.get());
+        basicItem(APItems.AMADRON_PATTERN.get());
     }
 
     // 快速注册带led灯状态的存储元件模型

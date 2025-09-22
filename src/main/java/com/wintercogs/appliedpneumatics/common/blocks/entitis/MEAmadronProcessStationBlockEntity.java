@@ -64,6 +64,7 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
             setChanged();
         }
     };
+
     // 输入槽 - 供无人机拿取，允许能力系统对外输入输出
     private final GenericStackInv inputInv = new GenericStackInv(this::setChanged, 9);
     // 输出槽 - 缓存，一旦收到物品，直接送回AE，允许能力系统输入，不允许能力系统输出
@@ -88,7 +89,14 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
                 AECapabilities.GENERIC_INTERNAL_INV,
                 APBlockEntities.ME_AMADRON_PROCESS_STATION_BLOCK_ENTITY.get(),
                 (be, direction) -> {
-                    GenericStackInvWrapper inputWrapper = new GenericStackInvWrapper(be.inputInv);
+                    GenericStackInvWrapper inputWrapper = new GenericStackInvWrapper(be.inputInv)
+                    {
+                        @Override
+                        public boolean canInsert()
+                        {
+                            return false;
+                        }
+                    };
                     GenericStackInvWrapper outputWrapper = new GenericStackInvWrapper(be.outputInv)
                     {
                         // 防止被无人机从中取出内容物

@@ -28,6 +28,8 @@ public class AmadronPatternDetails implements IPatternDetails
     private final Input[] inputs;
     private final List<GenericStack> outputs;
 
+    private final ResourceLocation offerId;
+
     public AmadronPatternDetails(AEItemKey definition)
     {
         this.definition = definition;
@@ -41,6 +43,7 @@ public class AmadronPatternDetails implements IPatternDetails
         if(offer == null)
             throw new IllegalArgumentException("Given item does not have an offer: " + definition);
 
+        this.offerId = offer.getOfferId();
         ItemStack mayInputStackItem = offer.getInput().getItem();
         FluidStack mayInputStackFluid = offer.getInput().getFluid();
         GenericStack input = mayInputStackItem.isEmpty() ? GenericStack.fromFluidStack(mayInputStackFluid) : GenericStack.fromItemStack(mayInputStackItem);
@@ -50,6 +53,11 @@ public class AmadronPatternDetails implements IPatternDetails
         FluidStack mayOutputStackFluid = offer.getOutput().getFluid();
         GenericStack output = mayOutputStackItem.isEmpty() ? GenericStack.fromFluidStack(mayOutputStackFluid) : GenericStack.fromItemStack(mayOutputStackItem);
         outputs = new ArrayList<>(Collections.singleton(output));
+    }
+
+    public ResourceLocation getOfferId()
+    {
+        return offerId;
     }
 
     @Override

@@ -118,17 +118,17 @@ public class AmadronOfferPanel extends AbstractWidget
             {
                 double wantmulit = button == GLFW.GLFW_MOUSE_BUTTON_LEFT ? 0.5 : 2;
                 this.wantedStock = (int)Math.max(0, wantedStock * wantmulit);
-                if(maxStock > 0)
+                if(maxStock > -1)
                 {
                     this.wantedStock = Math.min(maxStock, wantedStock);
                 }
-                this.wantedStock = Math.min(64, wantedStock);
+                this.wantedStock = Math.min(256, wantedStock);
             }
             else
             {
                 int wantedAdd = button == GLFW.GLFW_MOUSE_BUTTON_LEFT ? -1 : 1;
                 this.wantedStock = Math.max(0, wantedStock + wantedAdd);
-                if(maxStock > 0)
+                if(maxStock > -1)
                 {
                     this.wantedStock = Math.min(maxStock, wantedStock);
                 }
@@ -205,7 +205,7 @@ public class AmadronOfferPanel extends AbstractWidget
         {
             wantedText = String.valueOf(wantedStock);
         }
-        if(maxStock > 0)
+        if(maxStock > -1)
         {
             maxStockText = String.valueOf(maxStock);
         }

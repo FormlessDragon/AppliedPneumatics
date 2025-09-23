@@ -73,7 +73,7 @@ public class AmadronWirelessTerminalMenuHost extends ItemMenuHost<AmadronWireles
     }
 
 
-
+    // 两个槽位，槽位0放空白样板，槽位1出当前样板
     private static InternalInventory createPatternInv(Player player, ItemStack stack)
     {
         AppEngInternalInventory patternGrid = new AppEngInternalInventory(new InternalInventoryHost()
@@ -89,7 +89,7 @@ public class AmadronWirelessTerminalMenuHost extends ItemMenuHost<AmadronWireles
             {
                 return player.level().isClientSide();
             }
-        }, 1);
+        }, 2);
         patternGrid.fromItemContainerContents(stack.getOrDefault(APDataComponents.COMMON_ITEM_CONTENT, ItemContainerContents.EMPTY));
         return patternGrid;
     }

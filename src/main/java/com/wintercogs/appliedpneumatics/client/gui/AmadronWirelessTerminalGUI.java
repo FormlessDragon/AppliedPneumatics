@@ -9,12 +9,14 @@ import appeng.client.gui.widgets.IconButton;
 import appeng.client.gui.widgets.Scrollbar;
 import com.wintercogs.appliedpneumatics.client.gui.widgets.AmadronOfferPanel;
 import com.wintercogs.appliedpneumatics.common.menu.AmadronWirelessTerminalMenu;
+import me.desht.pneumaticcraft.common.amadron.AmadronOfferManager;
 import me.desht.pneumaticcraft.common.amadron.MutableBasket;
 import me.desht.pneumaticcraft.common.amadron.ShoppingBasket;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +51,9 @@ public class AmadronWirelessTerminalGUI extends UpgradeableScreen<AmadronWireles
     private int lastTopRow  = -1; // 上一次的滚动位置（行索引）
     private final List<AmadronOfferPanel> pagePanels = new ArrayList<>();
 
+    // 用于制作样板
+    private @Nullable AmadronOfferPanel lastClickedPanel = null;
+
     public AmadronWirelessTerminalGUI(AmadronWirelessTerminalMenu menu, Inventory playerInventory, Component title)
     {
         super(menu, playerInventory, title, StyleManager.loadStyleDoc("/screens/amadron_wireless_terminal.json"));
@@ -57,6 +62,8 @@ public class AmadronWirelessTerminalGUI extends UpgradeableScreen<AmadronWireles
         this.seacher = widgets.addTextField("search");
         this.submitButton = widgets.addButton("submit_button", Component.translatable("menu.appliedpneumatics.button.submit"), this::onSubmit);
         this.savePatternButton = new IconButton(button -> {
+            if(lastClickedPanel != null)
+                menu.sendSavePatternAction(lastClickedPanel.getOfferId());
         })
         {
             @Override
@@ -98,10 +105,22 @@ public class AmadronWirelessTerminalGUI extends UpgradeableScreen<AmadronWireles
             if (panel.isActive() && panel.isMouseOver(xCoord, yCoord))
             {
                 panel.onClicked(xCoord, yCoord, btn, hasShiftDown());
+                updateLastClickedPanel(panel);
                 return true;
             }
         }
         return super.mouseClicked(xCoord, yCoord, btn);
+    }
+
+    private void updateLastClickedPanel(AmadronOfferPanel panelClicked)
+    {
+        if(panelClicked.getOfferType().isPlayer() || !panelClicked.getOfferType().isStatic()) return;
+        if(lastClickedPanel != null)
+        {
+            removeWidget(lastClickedPanel);
+        }
+        lastClickedPanel = AmadronOfferPanel.fromOfferId(getGuiLeft() + 12, getGuiTop() + 145, panelClicked.getOfferId(), (button) -> {});
+        addRenderableWidget(lastClickedPanel);
     }
 
     @Override
@@ -144,7 +163,8 @@ public class AmadronWirelessTerminalGUI extends UpgradeableScreen<AmadronWireles
     private void ensurePanelPoolUpToDate() {
         var ids = menu.getOfferIdsSnapshot();
 
-        for (int i = pagePanels.size(); i < ids.size(); i++) {
+        for (int i = pagePanels.size(); i < ids.size(); i++)
+        {
             ResourceLocation id = ids.get(i);
             AmadronOfferPanel panel = AmadronOfferPanel.fromOfferId(HIDE_X, HIDE_Y, id, (button) -> {});
             panel.active = false;
@@ -155,7 +175,8 @@ public class AmadronWirelessTerminalGUI extends UpgradeableScreen<AmadronWireles
         }
 
         // 多出来的旧面板保持隐藏（不移除）
-        for (int i = ids.size(); i < pagePanels.size(); i++) {
+        for (int i = ids.size(); i < pagePanels.size(); i++)
+        {
             var p = pagePanels.get(i);
             p.active = false;
             p.visible = false;

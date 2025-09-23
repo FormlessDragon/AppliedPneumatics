@@ -20,6 +20,10 @@
     "BLANK_PATTERN": {
       "left": 152,
       "top": 149
+    },
+    "ENCODED_PATTERN": {
+      "left": 111,
+      "top": 149
     }
   },
   "text": {

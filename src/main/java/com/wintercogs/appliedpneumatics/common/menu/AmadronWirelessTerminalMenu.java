@@ -1,24 +1,40 @@
 package com.wintercogs.appliedpneumatics.common.menu;
 
+import appeng.api.config.Actionable;
+import appeng.api.inventories.InternalInventory;
+import appeng.api.networking.security.IActionSource;
+import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.AEKey;
+import appeng.api.stacks.GenericStack;
+import appeng.api.storage.MEStorage;
+import appeng.me.storage.NullInventory;
 import appeng.menu.SlotSemantics;
 import appeng.menu.implementations.UpgradeableMenu;
 import appeng.menu.slot.RestrictedInputSlot;
 import com.wintercogs.appliedpneumatics.common.amadron.ImmutableBasketArg;
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEAmadronProcessStationBlockEntity;
+import com.wintercogs.appliedpneumatics.common.init.APItems;
 import com.wintercogs.appliedpneumatics.common.init.APMenus;
+import com.wintercogs.appliedpneumatics.common.items.AmadronWirelessTerminalItem;
+import com.wintercogs.appliedpneumatics.common.me.crafting.AmadronPatternDetails;
 import com.wintercogs.appliedpneumatics.common.menu.host.AmadronWirelessTerminalMenuHost;
 import me.desht.pneumaticcraft.common.amadron.AmadronOfferManager;
 import me.desht.pneumaticcraft.common.amadron.ImmutableBasket;
 import me.desht.pneumaticcraft.common.recipes.amadron.AmadronOffer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.*;
 
 public class AmadronWirelessTerminalMenu extends UpgradeableMenu<AmadronWirelessTerminalMenuHost>
 {
     private static String submitOrderAction = "submit_amadron_order_action";
+    private static String savePatternAction = "save_amadron_pattern_action";
 
     // 打开UI时所有可用的交易快照对应的Id（直到UI关闭前都不更新）
     // 无需同步，双端均有气动自行处理
@@ -33,16 +49,145 @@ public class AmadronWirelessTerminalMenu extends UpgradeableMenu<AmadronWireless
         super(APMenus.AMADRON_WIRELESS_TERMINAL_MENU.get(), id, playerInv, host);
 
         registerClientAction(submitOrderAction, ImmutableBasketArg.class, immutableBasketArg -> onSubmitOrder(immutableBasketArg.basket()));
+        registerClientAction(savePatternAction, String.class, offerId -> onSavePatternAction(ResourceLocation.parse(offerId)));
     }
 
     private void onSubmitOrder(ImmutableBasket basket)
     {
+        MEStorage storage = getHost().getInventory();
+        if (!getHost().getLinkStatus().connected() || storage == NullInventory.of())
+        {
+            getPlayer().sendSystemMessage(Component.literal("无法链接到当前ME网络"));
+            return;
+        }
+        MEAmadronProcessStationBlockEntity processBE =
+                AmadronWirelessTerminalItem.getLinkWithAmadronProcess(getHost().getItemStack(), getPlayer().level());
+        if (processBE == null)
+        {
+            getPlayer().sendSystemMessage(Component.literal("找不到或未连接到亚马龙处理站"));
+            return;
+        }
+        if (basket.isEmpty())
+        {
+            getPlayer().sendSystemMessage(Component.literal("购物车为空"));
+            return;
+        }
 
+        // 汇总总需求（按 AEKey）+ 记录“每个报价的单份需求”
+        Map<AEKey, Long> totalNeed = new HashMap<>();
+        List<AbstractMap.SimpleEntry<ResourceLocation, GenericStack>> jobsToCreate = new ArrayList<>();
+        int totalUnits = 0;
+
+        for (ResourceLocation offerId : basket)
+        {
+            int units = basket.getUnits(offerId);
+            if (units <= 0) continue;
+
+            AmadronOffer offer = AmadronOfferManager.getInstance().getOffer(offerId);
+            if (offer == null || !AmadronOfferManager.getInstance().isActive(offerId)) {
+                getPlayer().sendSystemMessage(Component.literal("报价不可用: " + offerId));
+                return;
+            }
+
+            // 单份输入（物品或流体）
+            GenericStack unitIn = !offer.getInput().getItem().isEmpty()
+                    ? GenericStack.fromItemStack(offer.getInput().getItem())
+                    : GenericStack.fromFluidStack(offer.getInput().getFluid());
+
+
+            // 汇总总量
+            long totalForOffer = Math.multiplyExact(unitIn.amount(), (long) units);
+            totalNeed.merge(unitIn.what(), totalForOffer, Long::sum);
+
+            // 预先生成“逐单位”的 job 资源描述（此时还未真正扣减，仅准备好列表）
+            // 这里这么做主要是因为包装job在BE中能够原子化执行，防止因为单个job的所需的执行次数过大导致即使输入槽全空也无法容纳所需资源
+            for (int i = 0; i < units; i++)
+            {
+                jobsToCreate.add(new AbstractMap.SimpleEntry<>(offerId, new GenericStack(unitIn.what(), unitIn.amount())));
+            }
+            totalUnits += units;
+        }
+
+        if (totalNeed.isEmpty())
+        {
+            getPlayer().sendSystemMessage(Component.literal("没有有效的下单项"));
+            return;
+        }
+
+        IActionSource src = IActionSource.ofPlayer(getPlayer());
+
+        // 2) 原子模拟：一次性按 Key 模拟提取总量
+        for (var entry : totalNeed.entrySet())
+        {
+            long got = storage.extract(entry.getKey(), entry.getValue(), Actionable.SIMULATE, src);
+            if (got < entry.getValue()) {
+                getPlayer().sendSystemMessage(
+                        Component.literal("材料不足：需要 " + entry.getValue() + " × " + entry.getKey()));
+                return;
+            }
+        }
+
+        // 3) 原子提交：一次性扣总量；任何异常→整体回滚
+        ArrayList<Map.Entry<AEKey, Long>> committed = new ArrayList<>();
+        try {
+            // 扣总量
+            for (var entry : totalNeed.entrySet())
+            {
+                long pulled = storage.extract(entry.getKey(), entry.getValue(), Actionable.MODULATE, src);
+                if (pulled < entry.getValue())
+                {
+                    throw new IllegalStateException("提交过程中原料发生变动，无法完成原子扣减");
+                }
+                committed.add(Map.entry(entry.getKey(), entry.getValue()));
+            }
+
+            // 逐单位创建 Job
+            for (var unitJob : jobsToCreate)
+            {
+                final ResourceLocation offerId = unitJob.getKey();
+                final GenericStack reserved = unitJob.getValue();
+                processBE.addJob(offerId, reserved, getPlayer().getUUID());
+            }
+        }
+        catch (Exception ex)
+        {
+            // 回滚所有已扣资源
+            for (var c : committed) {
+                storage.insert(c.getKey(), c.getValue(), Actionable.MODULATE, src);
+            }
+            getPlayer().sendSystemMessage(
+                    Component.literal("下单失败：")
+                            .append(ex.getMessage() == null ? "" : ex.getMessage()));
+            return;
+        }
+
+        // 标记以保证持久化，BE 会在 tick 中处理job
+        processBE.setChanged();
+        getPlayer().sendSystemMessage(Component.literal("已提交订单，共 " + totalUnits + " 项"));
     }
 
     public void sendSubmitOrderAction(ImmutableBasket basket)
     {
         sendClientAction(submitOrderAction, new ImmutableBasketArg(basket));
+    }
+
+    private void onSavePatternAction(ResourceLocation offerId)
+    {
+        InternalInventory patternInv = getHost().getPatternInv();
+        if(!patternInv.getStackInSlot(1).isEmpty()) return;
+
+        ItemStack extracted = patternInv.extractItem(0, 1, false);
+        if(!extracted.isEmpty())
+        {
+            ItemStack encodedPattern = new ItemStack(APItems.AMADRON_PATTERN.get(), 1);
+            AmadronPatternDetails.encode(encodedPattern, offerId);
+            patternInv.insertItem(1, encodedPattern, false);
+        }
+    }
+
+    public void sendSavePatternAction(ResourceLocation offerId)
+    {
+        sendClientAction(savePatternAction, offerId.toString());
     }
 
     public List<ResourceLocation> getOfferIdsSnapshot()
@@ -57,6 +202,9 @@ public class AmadronWirelessTerminalMenu extends UpgradeableMenu<AmadronWireless
     {
         RestrictedInputSlot slot = new RestrictedInputSlot(RestrictedInputSlot.PlacableItemType.BLANK_PATTERN ,getHost().getPatternInv(), 0);
         addSlot(slot, SlotSemantics.BLANK_PATTERN);
+
+        RestrictedInputSlot outputPatternSlot = new RestrictedInputSlot(RestrictedInputSlot.PlacableItemType.ENCODED_PATTERN ,getHost().getPatternInv(), 1);
+        addSlot(outputPatternSlot, SlotSemantics.ENCODED_PATTERN);
     }
 
     @Override

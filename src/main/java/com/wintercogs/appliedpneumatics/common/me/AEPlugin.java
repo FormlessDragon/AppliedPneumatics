@@ -91,6 +91,9 @@ public class AEPlugin
         // 亚马龙终端
         Upgrades.add(AEItems.ENERGY_CARD, APItems.AMADRON_WIRELESS_TERMINAL, 2);
 
+        // 亚马龙处理站
+        Upgrades.add(AEItems.SPEED_CARD, APBlocks.ME_AMADRON_PROCESS_STATION, 4);
+
         // 添加无线终端绑定支持
         GridLinkables.register(APItems.AMADRON_WIRELESS_TERMINAL, AmadronWirelessTerminalItem.LINKABLE_HANDLER);
 

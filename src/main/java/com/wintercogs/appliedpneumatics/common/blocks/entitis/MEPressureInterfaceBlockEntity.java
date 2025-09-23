@@ -48,6 +48,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 
 /**
@@ -389,9 +390,25 @@ public class MEPressureInterfaceBlockEntity extends BlockEntity implements MenuP
 
     public void dropContent()
     {
+        ArrayList<ItemStack> drops = new ArrayList<>();
         ItemStack dropStack = inventory.getStackInSlot(0);
-        if(level != null && !dropStack.isEmpty())
-            Block.popResource(level, worldPosition, dropStack);
+        if(!dropStack.isEmpty())
+            drops.add(dropStack);
+
+        for(int i = 0; i < upgrades.size(); i++)
+        {
+            ItemStack slotContent = upgrades.getStackInSlot(i);
+            if(slotContent.isEmpty()) continue;
+            drops.add(slotContent.copy());
+        }
+
+        if(level != null && !level.isClientSide && !drops.isEmpty())
+        {
+            for(ItemStack stack : drops)
+            {
+                Block.popResource(level, worldPosition, stack);
+            }
+        }
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.wintercogs.appliedpneumatics.common.menu;
 import appeng.api.config.Actionable;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.security.IActionSource;
-import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
 import appeng.api.storage.MEStorage;
@@ -26,7 +25,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -57,19 +55,19 @@ public class AmadronWirelessTerminalMenu extends UpgradeableMenu<AmadronWireless
         MEStorage storage = getHost().getInventory();
         if (!getHost().getLinkStatus().connected() || storage == NullInventory.of())
         {
-            getPlayer().sendSystemMessage(Component.literal("无法链接到当前ME网络"));
+            getPlayer().sendSystemMessage(Component.translatable("amadron.appliedpneumatics.order_fail.me_disconnected"));
             return;
         }
         MEAmadronProcessStationBlockEntity processBE =
                 AmadronWirelessTerminalItem.getLinkWithAmadronProcess(getHost().getItemStack(), getPlayer().level());
         if (processBE == null)
         {
-            getPlayer().sendSystemMessage(Component.literal("找不到或未连接到亚马龙处理站"));
+            getPlayer().sendSystemMessage(Component.translatable("amadron.appliedpneumatics.order_fail.cant_find_process_station"));
             return;
         }
         if (basket.isEmpty())
         {
-            getPlayer().sendSystemMessage(Component.literal("购物车为空"));
+            getPlayer().sendSystemMessage(Component.translatable("amadron.appliedpneumatics.order_fail.basket_empty"));
             return;
         }
 
@@ -85,7 +83,7 @@ public class AmadronWirelessTerminalMenu extends UpgradeableMenu<AmadronWireless
 
             AmadronOffer offer = AmadronOfferManager.getInstance().getOffer(offerId);
             if (offer == null || !AmadronOfferManager.getInstance().isActive(offerId)) {
-                getPlayer().sendSystemMessage(Component.literal("报价不可用: " + offerId));
+                getPlayer().sendSystemMessage(Component.translatable("amadron.appliedpneumatics.order_fail.order_invaild", offerId.toString()));
                 return;
             }
 
@@ -110,7 +108,7 @@ public class AmadronWirelessTerminalMenu extends UpgradeableMenu<AmadronWireless
 
         if (totalNeed.isEmpty())
         {
-            getPlayer().sendSystemMessage(Component.literal("没有有效的下单项"));
+            getPlayer().sendSystemMessage(Component.translatable("amadron.appliedpneumatics.order_fail.have_not_vaild_order"));
             return;
         }
 
@@ -122,7 +120,7 @@ public class AmadronWirelessTerminalMenu extends UpgradeableMenu<AmadronWireless
             long got = storage.extract(entry.getKey(), entry.getValue(), Actionable.SIMULATE, src);
             if (got < entry.getValue()) {
                 getPlayer().sendSystemMessage(
-                        Component.literal("材料不足：需要 " + entry.getValue() + " × " + entry.getKey()));
+                        Component.translatable("amadron.appliedpneumatics.order_fail.missing_materials", entry.getValue(), entry.getKey().getDisplayName()));
                 return;
             }
         }
@@ -155,15 +153,13 @@ public class AmadronWirelessTerminalMenu extends UpgradeableMenu<AmadronWireless
             for (var c : committed) {
                 storage.insert(c.getKey(), c.getValue(), Actionable.MODULATE, src);
             }
-            getPlayer().sendSystemMessage(
-                    Component.literal("下单失败：")
-                            .append(ex.getMessage() == null ? "" : ex.getMessage()));
+            getPlayer().sendSystemMessage(Component.translatable("amadron.appliedpneumatics.order_fail.for_details"));
             return;
         }
 
         // 标记以保证持久化，BE 会在 tick 中处理job
         processBE.setChanged();
-        getPlayer().sendSystemMessage(Component.literal("已提交订单，共 " + totalUnits + " 项"));
+        getPlayer().sendSystemMessage(Component.translatable("amadron.appliedpneumatics.order_success", totalUnits));
     }
 
     public void sendSubmitOrderAction(ImmutableBasket basket)

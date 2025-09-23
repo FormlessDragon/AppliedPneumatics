@@ -1,9 +1,6 @@
 package com.wintercogs.appliedpneumatics.common.items;
 
-import appeng.api.config.Actionable;
-import appeng.api.config.FuzzyMode;
-import appeng.api.config.RedstoneMode;
-import appeng.api.config.Settings;
+import appeng.api.config.*;
 import appeng.api.features.IGridLinkableHandler;
 import appeng.api.ids.AEComponents;
 import appeng.api.implementations.blockentities.IWirelessAccessPoint;
@@ -370,6 +367,7 @@ public class AmadronWirelessTerminalItem extends PoweredContainerItem implements
         return IConfigManager.builder(target)
                 .registerSetting(Settings.REDSTONE_CONTROLLED, RedstoneMode.IGNORE)
                 .registerSetting(Settings.FUZZY_MODE, FuzzyMode.IGNORE_ALL)
+                .registerSetting(Settings.TERMINAL_STYLE, TerminalStyle.MEDIUM)
                 .build();
     }
 

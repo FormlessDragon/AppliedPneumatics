@@ -9,7 +9,7 @@
     "texture": "appliedpneumatics:textures/gui/amadron_wireless_terminal.png",
     "textureWidth": 512,
     "textureHeight": 512,
-    "srcRect": [0, 0, 195, 270]
+    "srcRect": [195, 0, 195, 270]
   },
   "slots": {
     "UPGRADE": {
@@ -18,12 +18,12 @@
       "grid": "VERTICAL"
     },
     "BLANK_PATTERN": {
-      "left": 152,
-      "top": 149
+      "right": 43,
+      "bottom": 122
     },
     "ENCODED_PATTERN": {
-      "left": 111,
-      "top": 149
+      "right": 84,
+      "bottom": 122
     }
   },
   "text": {
@@ -45,13 +45,13 @@
     },
     "submit_button": {
       "left": 45,
-      "top": 115,
+      "bottom": 155,
       "width": 89,
       "height": 20
     },
     "save_pattern_button": {
       "left": 133,
-      "top": 147
+      "bottom": 123
     }
   }
 }

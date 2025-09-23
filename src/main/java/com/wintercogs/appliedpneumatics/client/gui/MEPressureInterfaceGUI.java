@@ -2,7 +2,6 @@ package com.wintercogs.appliedpneumatics.client.gui;
 
 import appeng.client.gui.implementations.UpgradeableScreen;
 import appeng.client.gui.style.StyleManager;
-import appeng.client.gui.widgets.AE2Button;
 import com.wintercogs.appliedpneumatics.common.menu.MEPressureInterfaceMenu;
 import com.wintercogs.appliedpneumatics.util.GuiRenderHelper;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,8 +14,14 @@ import java.util.Locale;
 public class MEPressureInterfaceGUI extends UpgradeableScreen<MEPressureInterfaceMenu>
 {
     // 将使用样式 JSON，背景由样式管理
-    public MEPressureInterfaceGUI(MEPressureInterfaceMenu menu, Inventory inv, Component title) {
+    public MEPressureInterfaceGUI(MEPressureInterfaceMenu menu, Inventory inv, Component title)
+    {
         super(menu, inv, title, StyleManager.loadStyleDoc("/screens/me_pressure_interface.json"));
+
+        widgets.addButton("add_button_1", Component.literal("+1"), () -> menu.sendExpectedPressureActionToServer(1.0f));
+        widgets.addButton("add_button_01", Component.literal("+0.1"), () -> menu.sendExpectedPressureActionToServer(0.1f));
+        widgets.addButton("reduce_button_01", Component.literal("-0.1"), () -> menu.sendExpectedPressureActionToServer(-0.1f));
+        widgets.addButton("reduce_button_1", Component.literal("-1"), () -> menu.sendExpectedPressureActionToServer(-1.0f));
     }
 
     // 代码中写一些文本绘制
@@ -40,16 +45,5 @@ public class MEPressureInterfaceGUI extends UpgradeableScreen<MEPressureInterfac
     protected void init()
     {
         super.init();
-        int xRight = this.leftPos + this.imageWidth - 8;
-        int yMid = this.topPos + 76;
-
-        addRenderableWidget(new AE2Button(xRight - 26, yMid, 26, 20, Component.literal("+1"),
-                b -> menu.sendExpectedPressureActionToServer(1.0f)));
-        addRenderableWidget(new AE2Button(xRight - 26 - 34, yMid, 26, 20, Component.literal("+0.1"),
-                b -> menu.sendExpectedPressureActionToServer( 0.1f)));
-        addRenderableWidget(new AE2Button(this.leftPos + 42, yMid, 26, 20, Component.literal("-0.1"),
-                b -> menu.sendExpectedPressureActionToServer(-0.1f)));
-        addRenderableWidget(new AE2Button(this.leftPos + 8, yMid, 26, 20, Component.literal("-1"),
-                b -> menu.sendExpectedPressureActionToServer(-1.0f)));
     }
 }

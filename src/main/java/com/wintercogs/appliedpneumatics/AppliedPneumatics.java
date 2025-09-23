@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import com.wintercogs.appliedpneumatics.common.init.*;
 import com.wintercogs.appliedpneumatics.common.me.AEPlugin;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -65,5 +66,10 @@ public class AppliedPneumatics
     public void onServerStarting(ServerStartingEvent event)
     {
         LOGGER.info("AppliedPneumatics server side setup");
+    }
+
+    public static ResourceLocation makeId(String path)
+    {
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 }

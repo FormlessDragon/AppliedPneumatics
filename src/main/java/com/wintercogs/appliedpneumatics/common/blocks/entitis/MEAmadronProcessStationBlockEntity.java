@@ -6,6 +6,7 @@ import appeng.api.crafting.IPatternDetails;
 import appeng.api.crafting.PatternDetailsHelper;
 import appeng.api.implementations.blockentities.ICraftingMachine;
 import appeng.api.implementations.blockentities.PatternContainerGroup;
+import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.*;
 import appeng.api.networking.crafting.ICraftingProvider;
 import appeng.api.networking.security.IActionHost;
@@ -21,6 +22,7 @@ import appeng.api.upgrades.IUpgradeableObject;
 import appeng.api.upgrades.UpgradeInventories;
 import appeng.core.definitions.AEItems;
 import appeng.helpers.externalstorage.GenericStackInv;
+import appeng.helpers.patternprovider.PatternContainer;
 import appeng.util.inv.AppEngInternalInventory;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.api.GenericInv.CombinedGenericInternalInventory;
@@ -74,7 +76,8 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class MEAmadronProcessStationBlockEntity extends BlockEntity implements MenuProvider,
-        IInWorldGridNodeHost, IActionHost, IUpgradeableObject, ICraftingProvider, ICraftingMachine
+        IInWorldGridNodeHost, IActionHost, IUpgradeableObject, ICraftingProvider, ICraftingMachine,
+        PatternContainer
 {
     // AE部分-------------------------------------------------------------------------------------------------------------------
     // 受管节点
@@ -807,7 +810,7 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
     @Override
     public PatternContainerGroup getCraftingMachineInfo()
     {
-        return new PatternContainerGroup(AEItemKey.of(APBlocks.ME_AMADRON_PROCESS_STATION), Component.translatable("testa"), List.of());
+        return new PatternContainerGroup(AEItemKey.of(APBlocks.ME_AMADRON_PROCESS_STATION), APBlocks.ME_AMADRON_PROCESS_STATION.get().getName(), List.of());
     }
 
     @Override
@@ -852,6 +855,24 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
     public void addJob(ResourceLocation offerId, @Nullable GenericStack selfResource, UUID player)
     {
         this.jobs.add(new Job(offerId, selfResource, player));
+    }
+
+    @Override
+    public @Nullable IGrid getGrid()
+    {
+        return node.isReady() ? node.getGrid() : null;
+    }
+
+    @Override
+    public InternalInventory getTerminalPatternInventory()
+    {
+        return patternInventory;
+    }
+
+    @Override
+    public PatternContainerGroup getTerminalGroup()
+    {
+        return new PatternContainerGroup(AEItemKey.of(APBlocks.ME_AMADRON_PROCESS_STATION), APBlocks.ME_AMADRON_PROCESS_STATION.get().getName(), List.of());
     }
 
     /** selfResource表示该Job自己携带了一部分资源，只有这部分资源被插入仓库才执行实际job */

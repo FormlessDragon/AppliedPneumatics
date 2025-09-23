@@ -27,6 +27,7 @@ import com.wintercogs.appliedpneumatics.api.GenericInv.CombinedGenericInternalIn
 import com.wintercogs.appliedpneumatics.api.GenericInv.GenericStackInvWrapper;
 import com.wintercogs.appliedpneumatics.common.init.APBlockEntities;
 import com.wintercogs.appliedpneumatics.common.init.APBlocks;
+import com.wintercogs.appliedpneumatics.common.init.APItems;
 import com.wintercogs.appliedpneumatics.common.me.crafting.AmadronPatternDetails;
 import com.wintercogs.appliedpneumatics.common.me.grid.SimpleBlockNodeListener;
 import com.wintercogs.appliedpneumatics.common.menu.MEAmadronProcessStationMenu;
@@ -89,6 +90,12 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
     // 样板槽 - 只允许UI存取
     private final AppEngInternalInventory patternInventory = new AppEngInternalInventory(9)
     {
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack)
+        {
+            return super.isItemValid(slot, stack) && stack.getItem() == APItems.AMADRON_PATTERN.get();
+        }
+
         @Override
         protected void onContentsChanged(int slot)
         {

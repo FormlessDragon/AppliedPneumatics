@@ -5,12 +5,14 @@ import com.wintercogs.appliedpneumatics.util.IngredientRenderer;
 import me.desht.pneumaticcraft.api.crafting.AmadronTradeResource;
 import me.desht.pneumaticcraft.common.recipes.amadron.AmadronOffer;
 import me.desht.pneumaticcraft.common.recipes.amadron.AmadronPlayerOffer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class AmadronOfferPanel extends AbstractWidget
@@ -49,6 +52,7 @@ public class AmadronOfferPanel extends AbstractWidget
     // 配方主键 & 缓存的显示数据
     private final ResourceLocation offerId;
 
+    private final Component supplierName;
     private final OfferType offerType;
     private final AmadronTradeResource input;
     private final AmadronTradeResource output;
@@ -76,7 +80,7 @@ public class AmadronOfferPanel extends AbstractWidget
             this.input = offer.getInput();
             this.output = offer.getOutput();
             this.maxStock = offer.getStock();
-
+            this.supplierName = offer.getVendorName();
         }
         else
         {
@@ -85,6 +89,7 @@ public class AmadronOfferPanel extends AbstractWidget
             this.input = AmadronTradeResource.of(ItemStack.EMPTY);
             this.output = AmadronTradeResource.of(ItemStack.EMPTY);
             this.maxStock = -1;
+            this.supplierName = Component.empty();
         }
     }
 
@@ -147,7 +152,10 @@ public class AmadronOfferPanel extends AbstractWidget
     protected void renderWidget(@NotNull GuiGraphics gui, int mouseX, int mouseY, float pt)
     {
         // 背景
-        gui.blit(BG, getX(), getY(), 1, 271, PANEL_W, PANEL_H, 512, 512);
+        if(isMouseOver(mouseX, mouseY))
+            gui.blit(BG, getX(), getY(), 1, 294, PANEL_W, PANEL_H, 512, 512);
+        else
+            gui.blit(BG, getX(), getY(), 1, 271, PANEL_W, PANEL_H, 512, 512);
 
         if (!valid) {
             gui.drawString(Minecraft.getInstance().font, "…", getX() + 4, getY() + 7, 0x777777);
@@ -254,23 +262,65 @@ public class AmadronOfferPanel extends AbstractWidget
     // 由外部UI自行调用
     public void renderStackTooltip(GuiGraphics gui, int mouseX, int mouseY, int offsetX, int offsetY)
     {
-        if (!valid) return;
+        if (!valid || !isMouseOverForTooltip(mouseX, mouseY)) return;
 
-        final int x0 = getX(), y0 = getY();
-        final int inX = x0 + IN_ICON_X, inY = y0 + ICON_Y;
-        final int outX = x0 + OUT_ICON_X, outY = y0 + OUT_ICON_Y;
 
-        // 输入区域
-        if (inBox(mouseX, mouseY, inX, inY, ICON_W, ICON_H))
-        {
-            drawAmadronTradeResourceTooltip(gui, input, mouseX - offsetX, mouseY - offsetY);
+        var mc = Minecraft.getInstance();
+        var font = mc.font;
+        List<Component> tooltips = new ArrayList<>();
+
+        // 工具：左彩右白（右侧是 Component 版本，避免 getString() 丢样式）
+        TriFunction<String, ChatFormatting, Component, Component> twoColorC = (leftKey, leftColor, rightComp) ->
+                Component.empty()
+                        .append(Component.translatable(leftKey).withStyle(leftColor))
+                        .append(rightComp.copy().withStyle(ChatFormatting.WHITE));
+
+        // 1~3 行：左黄右白
+        tooltips.add(twoColorC.apply(
+                "tooltip.appliedpneumatics.amadron_trade.supplier",
+                ChatFormatting.YELLOW,
+                supplierName // 如果这是 Component，直接用；若是 String 用 Component.literal(supplierName)
+        ));
+        tooltips.add(twoColorC.apply(
+                "tooltip.appliedpneumatics.amadron_trade.output",
+                ChatFormatting.YELLOW,
+                Component.literal(output.getName())
+        ));
+        tooltips.add(twoColorC.apply(
+                "tooltip.appliedpneumatics.amadron_trade.input",
+                ChatFormatting.YELLOW,
+                Component.literal(input.getName())
+        ));
+
+        // 第 4 行：左蓝右白
+        tooltips.add(twoColorC.apply(
+                "tooltip.appliedpneumatics.amadron_trade.in_basket",
+                ChatFormatting.AQUA, // 蓝色
+                Component.literal(String.valueOf(Math.max(0, wantedStock)))
+        ));
+
+        // 最后一行：小号灰字（与原版 modid 行一致的“小字”效果）
+        if (mc.options.advancedItemTooltips) {
+            Component smallGray = Component.literal("OfferID: " + offerId)
+                    .withStyle(Style.EMPTY
+                            .withColor(ChatFormatting.DARK_GRAY)
+                            .withFont(ResourceLocation.fromNamespaceAndPath("minecraft", "uniform"))); // 小号字体
+            tooltips.add(smallGray);
         }
 
-        // 输出区域
-        if (inBox(mouseX, mouseY, outX, outY, ICON_W, ICON_H))
-        {
-            drawAmadronTradeResourceTooltip(gui, output, mouseX - offsetX, mouseY - offsetY);
-        }
+        gui.renderTooltip(font, tooltips, Optional.empty(), mouseX - offsetX, mouseY - offsetY);
+    }
+
+    /** 让监测区往右边和下边多一个像素，防止闪烁 */
+    public boolean isMouseOverForTooltip(double mouseX, double mouseY)
+    {
+        return this.active && this.visible && mouseX >= (double)this.getX() && mouseY >= (double)this.getY() && mouseX < (double)(this.getX() + this.width + 1) && mouseY < (double)(this.getY() + this.height + 1);
+    }
+
+    /** 一个简单的三参函数式接口 */
+    @FunctionalInterface
+    interface TriFunction<A, B, C, R> {
+        R apply(A a, B b, C c);
     }
 
     private static void drawAmadronTradeResourceTooltip(GuiGraphics gui, AmadronTradeResource resource, int mouseX, int mouseY)

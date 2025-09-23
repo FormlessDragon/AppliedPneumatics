@@ -324,7 +324,15 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
         if (level.getGameTime() % 200 == 0)
         {
             int maxDrones = 1 + Math.max(0, be.getInstalledUpgrades(AEItems.SPEED_CARD) - 1);
-            int maxUnitsPerDrone = Integer.MAX_VALUE;
+            int maxUnitsPerDrone = switch (be.getInstalledUpgrades(AEItems.SPEED_CARD))
+            {
+                case 1 -> 32;
+                case 2 -> 64;
+                case 3 -> 128;
+                case 4 -> 256;
+                
+                default -> 16;
+            };
             be.doJob(maxDrones, maxUnitsPerDrone);
         }
     }
@@ -354,10 +362,10 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
     {
         if (this.level == null || this.level.isClientSide) return;
 
+        this.isBusy = false;
         IActionSource src = IActionSource.ofMachine(this);
         if (this.jobs.isEmpty())
         {
-            this.isBusy = false;
             return;
         }
 

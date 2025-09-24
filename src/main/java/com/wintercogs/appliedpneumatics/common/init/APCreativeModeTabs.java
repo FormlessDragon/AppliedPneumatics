@@ -21,6 +21,7 @@ public class APCreativeModeTabs
                     .icon(()->new ItemStack(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get()))
                     .title(Component.translatable("creativetab.appliedpneumatics.items"))
                     .displayItems((itemDisplayParameters, output) -> {
+                        output.accept(APItems.AIR_CELL_SHELL.get());
                         output.accept(APItems.AIR_CELL_1K.get());
                         output.accept(APItems.AIR_CELL_4K.get());
                         output.accept(APItems.AIR_CELL_16K.get());
@@ -29,6 +30,7 @@ public class APCreativeModeTabs
                         // 大宗存储仅在Mega元件加载时启用
                         if(AppliedPneumatics.MEGA_CELL_LOADED)
                         {
+                            output.accept(APItems.MEGA_AIR_CELL_SHELL.get());
                             output.accept(APItems.AIR_CELL_1M.get());
                             output.accept(APItems.AIR_CELL_4M.get());
                             output.accept(APItems.AIR_CELL_16M.get());

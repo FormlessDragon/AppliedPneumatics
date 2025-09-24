@@ -22,6 +22,14 @@ public class APItems
 {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(AppliedPneumatics.MODID);
 
+    // 存储外壳-普通
+    public static final DeferredItem<Item> AIR_CELL_SHELL = ITEMS.register("air_cell_shell",
+            () -> new Item(new Item.Properties()));
+
+    // 存储外壳-MEGA
+    public static final DeferredItem<Item> MEGA_AIR_CELL_SHELL = ITEMS.register("mega_air_cell_shell",
+            () -> new Item(new Item.Properties()));
+
     // 气体元件 1K ~ 256M
     public static final DeferredItem<AirStorageCell> AIR_CELL_1K = ITEMS.register("air_cell_1k",
             () -> new AirStorageCell(new Item.Properties().stacksTo(1),

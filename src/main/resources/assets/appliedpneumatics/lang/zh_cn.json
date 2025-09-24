@@ -8,6 +8,8 @@
 
   "creativetab.appliedpneumatics.items": "应用气动",
 
+  "item.appliedpneumatics.air_cell_shell": "空气存储元件外壳",
+  "item.appliedpneumatics.mega_air_cell_shell": "MEGA空气存储元件外壳",
   "item.appliedpneumatics.air_cell_1k": "1k-ME空气存储元件",
   "item.appliedpneumatics.air_cell_4k": "4k-ME空气存储元件",
   "item.appliedpneumatics.air_cell_16k": "16k-ME空气存储元件",

@@ -15,6 +15,7 @@ import me.desht.pneumaticcraft.api.heat.IHeatExchangerLogic;
 import me.desht.pneumaticcraft.api.heat.TemperatureListener;
 import me.desht.pneumaticcraft.common.config.ConfigHelper;
 import me.desht.pneumaticcraft.common.heat.HeatExchangerLogicAmbient;
+import me.desht.pneumaticcraft.common.heat.HeatExchangerManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +26,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.capabilities.BlockCapability;
-import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class HeatP2PTunnelPart extends P2PTunnelPart<HeatP2PTunnelPart>
     private static final BlockCapability<IHeatExchangerLogic, Direction> HEAT_CAP = PNCCapabilities.HEAT_EXCHANGER_BLOCK;
 
     // 输入端面对的邻居的能力缓存
-    private @Nullable BlockCapabilityCache<IHeatExchangerLogic, Direction> inputAdjacentCache;
+    private @Nullable IHeatExchangerLogic inputAdjacentCache;
 
     // 递归保护
     private int reentryDepth = 0;
@@ -87,16 +87,17 @@ public class HeatP2PTunnelPart extends P2PTunnelPart<HeatP2PTunnelPart>
             if (level == null) return null;
 
             if (level instanceof ServerLevel sl) {
-                if (inputAdjacentCache == null) {
+                if(inputAdjacentCache == null)
+                {
                     BlockPos relativedPos = be.getBlockPos().relative(face);
                     Direction capSide = face.getOpposite();
-                    inputAdjacentCache = BlockCapabilityCache.create(HEAT_CAP, sl, relativedPos, capSide);
+                    inputAdjacentCache = HeatExchangerManager.getInstance().getLogic(sl, relativedPos, capSide).orElse(null);
                 }
-                return inputAdjacentCache.getCapability();
+                return inputAdjacentCache;
             } else {
-                BlockEntity nbe = level.getBlockEntity(be.getBlockPos().relative(face));
-                if (nbe == null) return null;
-                return PNCCapabilities.getHeatLogic(nbe, face.getOpposite()).orElse(null);
+                BlockPos relativedPos = be.getBlockPos().relative(face);
+                Direction capSide = face.getOpposite();
+                return HeatExchangerManager.getInstance().getLogic(level, relativedPos, capSide).orElse(null);
             }
         } finally {
             reentryDepth--;
@@ -114,7 +115,7 @@ public class HeatP2PTunnelPart extends P2PTunnelPart<HeatP2PTunnelPart>
 
         BlockPos relativedPos = be.getBlockPos().relative(face);
         Direction capSide = face.getOpposite();
-        return level.getCapability(HEAT_CAP, relativedPos, capSide);
+        return HeatExchangerManager.getInstance().getLogic(level, relativedPos, capSide).orElse(null);
     }
 
     // —— 网络/邻居变化：统一失效缓存并让两侧重新拿能力 —— //

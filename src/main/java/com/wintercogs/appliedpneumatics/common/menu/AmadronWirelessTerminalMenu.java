@@ -117,7 +117,7 @@ public class AmadronWirelessTerminalMenu extends UpgradeableMenu<AmadronWireless
             return;
         }
 
-        if(jobsToCreate.size() + processBE.getJobAmount() >= 512)
+        if(jobsToCreate.size() + processBE.getJobAmount() > 512)
         {
             getPlayer().sendSystemMessage(Component.translatable("amadron.appliedpneumatics.order_fail.order_too_much"));
             return;

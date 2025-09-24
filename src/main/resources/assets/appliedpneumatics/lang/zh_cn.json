@@ -42,7 +42,7 @@
 
   "menu.appliedpneumatics.button.submit": "提交订单",
   "menu.appliedpneumatics.button.cancel_jobs": "取消订单",
-  "menu.appliedpneumatics.button.cancel_jobs.tooltip": "这将会：\n1.取消掉所有订单，无论是通过终端下单还是通过自动合成下单\n2.将订单携带的资源全部送回ME网络，或形成掉落物\n3.已经存在于输入槽的资源不会被自动送回",
+  "menu.appliedpneumatics.button.cancel_jobs.tooltip": "这将会：\n1.取消掉所有订单，无论是通过终端下单还是通过自动合成下单\n2.将订单携带的资源全部送回ME网络，或形成掉落物\n3.已经存在于输入槽的资源不会被自动送回\n4.如果是通过自动合成下单，这不会取消合成任务",
 
   "tooltip.appliedpneumatics.item.amadron.unlink": "未绑定到亚马龙处理站",
   "tooltip.appliedpneumatics.item.amadron.linked": "绑定到%s [%s, %s, %s]",

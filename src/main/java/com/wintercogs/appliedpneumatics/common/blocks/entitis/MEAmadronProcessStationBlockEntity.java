@@ -4,7 +4,6 @@ import appeng.api.AECapabilities;
 import appeng.api.config.Actionable;
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.crafting.PatternDetailsHelper;
-import appeng.api.implementations.blockentities.ICraftingMachine;
 import appeng.api.implementations.blockentities.PatternContainerGroup;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.GridFlags;
@@ -72,7 +71,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity implements MenuProvider,
-        IUpgradeableObject, ICraftingProvider, ICraftingMachine, PatternContainer, ServerTickingBlockEntity
+        IUpgradeableObject, ICraftingProvider, PatternContainer, ServerTickingBlockEntity
 {
 
     // 样板槽 - 只允许UI存取
@@ -121,12 +120,6 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     {
         event.registerBlockEntity(
                 AECapabilities.IN_WORLD_GRID_NODE_HOST,
-                APBlockEntities.ME_AMADRON_PROCESS_STATION_BLOCK_ENTITY.get(),
-                (be, unused) -> be
-        );
-
-        event.registerBlockEntity(
-                AECapabilities.CRAFTING_MACHINE,
                 APBlockEntities.ME_AMADRON_PROCESS_STATION_BLOCK_ENTITY.get(),
                 (be, unused) -> be
         );
@@ -315,19 +308,11 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
             return;
         }
 
-        // 1 将不带资源和带资源的部分分成两组，再按offerId汇聚
-        Map<ResourceLocation, List<Job>> noSelfByOffer = new HashMap<>();
+        // 1 将job按offerId汇聚
         Map<ResourceLocation, List<Job>> withSelfByOffer = new HashMap<>();
         for (Job j : this.jobs)
         {
-            if (j.selfResource() == null)
-            {
-                noSelfByOffer.computeIfAbsent(j.offerId(), k -> new ArrayList<>()).add(j);
-            }
-            else
-            {
-                withSelfByOffer.computeIfAbsent(j.offerId(), k -> new ArrayList<>()).add(j);
-            }
+            withSelfByOffer.computeIfAbsent(j.offerId(), k -> new ArrayList<>()).add(j);
         }
 
         List<Job> pending = new ArrayList<>(); // 本轮无法完成的暂存在这里，等处理结束后下一轮继续
@@ -350,14 +335,15 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
             }
         };
 
-        // 3 无自带资源：优先处理，不同 offerId 最多一批；一批一次叫一台无人机，单位数做合并
-        for (var e : noSelfByOffer.entrySet())
+        // 3 逐 job 插入资源，凑成一批后叫一台；失败则将资源整批送回ME，job不重入队
+        for (var entry : withSelfByOffer.entrySet())
         {
-            final ResourceLocation offerId = e.getKey();
-            final List<Job> list = e.getValue();
+            final ResourceLocation offerId = entry.getKey();
+            final List<Job> list = entry.getValue();
 
-            // FIX: 不再 break；额度用尽时把整组丢回 pending
-            if (dispatched >= maxDronesPerTick) {
+            // 如果额度用尽，整组入队，等待下一轮，同时不break，确保剩下所有订单都能入队
+            if (dispatched >= maxDronesPerTick)
+            {
                 pending.addAll(list);
                 continue;
             }
@@ -370,13 +356,50 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
 
             if (!AmadronOfferManager.getInstance().isActive(offerId))
             {
-                // 报价失效：整批丢弃（按你的原意保留此行为）
+                // 报价失效：本轮丢弃
                 continue;
             }
 
-            int units = Math.min(list.size(), maxUnitsPerOfferPerDispatch);
-            var offer = AmadronOfferManager.getInstance().getOffer(offerId);
-            var here = new GlobalPos(this.level.dimension(), this.worldPosition);
+            // 逐 job 尝试插入资源；成功的累到 selected
+            List<Job> selected = new ArrayList<>();
+            Map<AEKey, Long> insertedTotals = new HashMap<>(); // 回滚用：汇总已插入的各 AEKey 数量
+
+            // 记录访问了多少条，用于把“未访问尾部”补回 pending
+            int visited = 0;
+
+            for (int i = 0; i < list.size() && selected.size() < maxUnitsPerOfferPerDispatch; i++)
+            {
+                Job job = list.get(i);
+                visited++;
+
+                GenericStack self = job.selfResource();
+
+                long can = inputInv.insert(self.what(), self.amount(), Actionable.SIMULATE, src);
+                if (can < self.amount())
+                {
+                    // 输入仓位不足：该 job 留下轮
+                    pending.add(job);
+                }
+                else
+                {
+                    inputInv.insert(self.what(), self.amount(), Actionable.MODULATE, src);
+                    selected.add(job);
+                    insertedTotals.merge(self.what(), self.amount(), Long::sum);
+                }
+            }
+
+            if (selected.isEmpty())
+            {
+                // 这一报价本轮没凑成批；visited 可能等于 list.size()，尾部为空
+                // 把未访问的尾部补回 pending（如果有的话）
+                for (int i = visited; i < list.size(); i++) pending.add(list.get(i));
+                continue;
+            }
+
+            // 召唤无人机
+            int units = selected.size();
+            AmadronOffer offer = AmadronOfferManager.getInstance().getOffer(offerId);
+            GlobalPos here = new GlobalPos(this.level.dimension(), this.worldPosition);
 
             AmadroneEntity drone = retrieveOrder(AppliedPneumatics.MODID, offer, units, here, here);
             if (drone != null)
@@ -387,155 +410,63 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
                 drone.setHandlingOffer(offer.getOfferId(), units, tablet, AppliedPneumatics.MODID,
                         AmadroneEntity.AmadronAction.TAKING_PAYMENT);
 
-                // 成功：消费前 units 个 job；剩余入队
-                for (int i = units; i < list.size(); i++) pending.add(list.get(i));
                 usedThisRound.add(offerId);
                 dispatched++;
+
+                // 成功派发后，把“未访问的尾部”补回 pending
+                for (int i = visited; i < list.size(); i++) pending.add(list.get(i));
             }
             else
             {
-                // 无人机/库存暂不可用：整批入队重试
-                pending.addAll(list);
+                // 无人机失败：整批回滚 + 合并消息（按玩家统计失败数量），不重入队
+                // 1) 把已插入 inputInv 的资源抽回
+                for (var it : insertedTotals.entrySet())
+                {
+                    inputInv.extract(it.getKey(), it.getValue(), Actionable.MODULATE, src);
+                }
+
+                // 2) 再尽量塞回 ME，不行的物品才掉落
+                MEStorage me = getNetworkInventory();
+                for (var it : insertedTotals.entrySet())
+                {
+                    long back = (me != null) ? me.insert(it.getKey(), it.getValue(), Actionable.MODULATE, src) : 0;
+                    long remain = it.getValue() - back;
+                    if (remain > 0 && it.getKey() instanceof AEItemKey itemKey)
+                    {
+                        int drop = (int) Math.min(Integer.MAX_VALUE, remain);
+                        Block.popResource(level, worldPosition, itemKey.toStack(drop));
+                    }
+                }
+
+                // 3) 合并失败消息：A -> B 交易失败，资源已返还，失败数量 x
+                Map<UUID, Integer> failByPlayer = new HashMap<>();
+                for (Job job : selected)
+                {
+                    if (job.player() != null) failByPlayer.merge(job.player(), 1, Integer::sum);
+                }
+                if (level.getServer() != null)
+                {
+                    for (var ent : failByPlayer.entrySet())
+                    {
+                        var p = level.getServer().getPlayerList().getPlayer(ent.getKey());
+                        if (p != null)
+                        {
+                            p.sendSystemMessage(
+                                    Component.translatable("amadron.appliedpneumatics.process_fail",
+                                            offer.getInput().getName(), offer.getOutput().getName(), ent.getValue()));
+                        }
+                    }
+                }
+
+                // 失败时，同样把“未访问的尾部”补回 pending；selected 不重入队
+                for (int i = visited; i < list.size(); i++) pending.add(list.get(i));
             }
         }
 
-        // 4 携带资源：按 offerId 合并，逐 job 插入资源，凑成一批后叫一台；失败则整批回滚且不重入队
-        if (dispatched < maxDronesPerTick)
-        {
-            for (var e : withSelfByOffer.entrySet())
-            {
-                final ResourceLocation offerId = e.getKey();
-                final List<Job> list = e.getValue();
-
-                // FIX: 同上，不再因为额度用尽 break；而是整组入 pending
-                if (dispatched >= maxDronesPerTick) {
-                    pending.addAll(list);
-                    continue;
-                }
-
-                if (list.isEmpty() || usedThisRound.contains(offerId))
-                {
-                    pending.addAll(list);
-                    continue;
-                }
-
-                if (!AmadronOfferManager.getInstance().isActive(offerId))
-                {
-                    // 报价失效：本轮丢弃（保持原注释行为）
-                    continue;
-                }
-
-                // 逐 job 尝试插入资源；成功的累到 selected
-                List<Job> selected = new ArrayList<>();
-                Map<AEKey, Long> insertedTotals = new HashMap<>(); // 回滚用：汇总已插入的各 AEKey 数量
-
-                // FIX: 记录访问了多少条，用于把“未访问尾部”补回 pending
-                int visited = 0;
-
-                for (int i = 0; i < list.size() && selected.size() < maxUnitsPerOfferPerDispatch; i++)
-                {
-                    Job j = list.get(i);
-                    visited++;
-
-                    GenericStack self = j.selfResource();
-                    if (self == null) { // 容错：当成无自带资源 job 留到下一轮
-                        pending.add(j);
-                        continue;
-                    }
-
-                    long can = inputInv.insert(self.what(), self.amount(), Actionable.SIMULATE, src);
-                    if (can < self.amount())
-                    {
-                        // 输入仓位不足：该 job 留下轮
-                        pending.add(j);
-                    }
-                    else
-                    {
-                        inputInv.insert(self.what(), self.amount(), Actionable.MODULATE, src);
-                        selected.add(j);
-                        insertedTotals.merge(self.what(), self.amount(), Long::sum);
-                    }
-                }
-
-                if (selected.isEmpty())
-                {
-                    // 这一报价本轮没凑成批；visited 可能等于 list.size()，尾部为空
-                    // FIX: 把未访问的尾部补回 pending（如果有的话）
-                    for (int i = visited; i < list.size(); i++) pending.add(list.get(i));
-                    continue;
-                }
-
-                int units = selected.size();
-                var offer = AmadronOfferManager.getInstance().getOffer(offerId);
-                var here = new GlobalPos(this.level.dimension(), this.worldPosition);
-
-                AmadroneEntity drone = retrieveOrder(AppliedPneumatics.MODID, offer, units, here, here);
-                if (drone != null)
-                {
-                    ItemStack tablet = new ItemStack(ModItems.AMADRON_TABLET.get(), 1);
-                    tablet.set(ModDataComponents.AMADRON_ITEM_POS, here);
-                    tablet.set(ModDataComponents.AMADRON_FLUID_POS, here);
-                    drone.setHandlingOffer(offer.getOfferId(), units, tablet, AppliedPneumatics.MODID,
-                            AmadroneEntity.AmadronAction.TAKING_PAYMENT);
-
-                    usedThisRound.add(offerId);
-                    dispatched++;
-
-                    // FIX: 成功派发后，把“未访问的尾部”补回 pending
-                    for (int i = visited; i < list.size(); i++) pending.add(list.get(i));
-                }
-                else
-                {
-                    // 无人机失败：整批回滚 + 合并消息（按玩家统计失败数量），不重入队
-                    // 1) 把已插入 inputInv 的资源抽回
-                    for (var it : insertedTotals.entrySet())
-                    {
-                        inputInv.extract(it.getKey(), it.getValue(), Actionable.MODULATE, src);
-                    }
-
-                    // 2) 再尽量塞回 ME，不行的物品才掉落
-                    MEStorage me = getNetworkInventory();
-                    for (var it : insertedTotals.entrySet())
-                    {
-                        long back = (me != null) ? me.insert(it.getKey(), it.getValue(), Actionable.MODULATE, src) : 0;
-                        long remain = it.getValue() - back;
-                        if (remain > 0 && it.getKey() instanceof AEItemKey itemKey)
-                        {
-                            int drop = (int) Math.min(Integer.MAX_VALUE, remain);
-                            Block.popResource(level, worldPosition, itemKey.toStack(drop));
-                        }
-                    }
-
-                    // 3) 合并失败消息：A -> B 交易失败，资源已返还，失败数量 x
-                    Map<UUID, Integer> failByPlayer = new HashMap<>();
-                    for (Job j : selected)
-                    {
-                        if (j.player() != null) failByPlayer.merge(j.player(), 1, Integer::sum);
-                    }
-                    if (level.getServer() != null)
-                    {
-                        for (var ent : failByPlayer.entrySet())
-                        {
-                            var p = level.getServer().getPlayerList().getPlayer(ent.getKey());
-                            if (p != null)
-                            {
-                                p.sendSystemMessage(
-                                        Component.translatable("amadron.appliedpneumatics.process_fail",
-                                                offer.getInput().getName(), offer.getOutput().getName(), ent.getValue()));
-                            }
-                        }
-                    }
-
-                    // FIX: 失败时，同样把“未访问的尾部”补回 pending；selected 不重入队
-                    for (int i = visited; i < list.size(); i++) pending.add(list.get(i));
-                }
-            }
-        }
-
-        // 5) 刷一遍输出到 ME
+        // 4 刷一遍输出到 ME
         flushOutputs.accept(null);
 
-        // 6) 重建队列
+        // 5 重建队列
         this.jobs.clear();
         this.jobs.addAll(pending);
         setChanged();
@@ -601,7 +532,7 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
 
 
     @Override
-    public Component getDisplayName()
+    public @NotNull Component getDisplayName()
     {
         return Component.translatable("menu.title.appliedpneumatics.me_amadron_process_station");
     }
@@ -636,46 +567,7 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
         for (int i = 0; i < inputInv.size(); i++) toDrops.accept(inputInv.getStack(i));
         for (int i = 0; i < outputInv.size(); i++) toDrops.accept(outputInv.getStack(i));
 
-        // 处理 Job 自带资源：优先尝试塞回 ME，否则掉落
-        MEStorage me = getNetworkInventory();
-        IActionSource src = IActionSource.ofMachine(this);
-
-        Set<UUID> involvedPlayers = new HashSet<>();
-
-        for (Job job : jobs)
-        {
-            GenericStack res = job.selfResource();
-            if (res == null) continue;
-
-            long remain = res.amount();
-            if (me != null)
-            {
-                long inserted = me.insert(res.what(), remain, Actionable.MODULATE, src);
-                remain -= inserted;
-            }
-
-            if (remain > 0 && res.what() instanceof AEItemKey itemKey)
-            {
-                int drop = (int) Math.min(remain, Integer.MAX_VALUE);
-                drops.add(itemKey.toStack(drop));
-            }
-
-            if (job.player() != null)
-            {
-                involvedPlayers.add(job.player());
-            }
-        }
-
-        // 统一给相关玩家发一次告警
-        if (!involvedPlayers.isEmpty() && level.getServer() != null)
-        {
-            Component msg = Component.translatable("amadron.appliedpneumatics.process_fail.block_break", worldPosition.toShortString());
-            for (UUID uuid : involvedPlayers)
-            {
-                var p = level.getServer().getPlayerList().getPlayer(uuid);
-                if (p != null) p.sendSystemMessage(msg);
-            }
-        }
+        cancelAllJobs(Component.translatable("amadron.appliedpneumatics.process_fail.block_break", worldPosition.toShortString()));
     }
 
     // ICraftProvider实现---------------------------------------------------------------------------------------
@@ -717,42 +609,12 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
         return jobs.size() >= 512;
     }
 
-    // ICraftMachine实现-----------------------------------------------------------------------------------------------
-    @Override
-    public PatternContainerGroup getCraftingMachineInfo()
-    {
-        return new PatternContainerGroup(AEItemKey.of(APBlocks.ME_AMADRON_PROCESS_STATION), APBlocks.ME_AMADRON_PROCESS_STATION.get().getName(), List.of());
-    }
-
-    @Override
-    public boolean pushPattern(IPatternDetails patternDetails, KeyCounter[] inputs, Direction ejectionDirection)
-    {
-        if(isBusy()) return false;
-        if(patternDetails instanceof AmadronPatternDetails details)
-        {
-            // 必然仅有一个input
-            var entry = inputs[0].getFirstEntry();
-            if(entry != null)
-            {
-                addJob(details.getOfferId(), new GenericStack(entry.getKey(), entry.getLongValue()));
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean acceptsPlans()
-    {
-        return !isBusy();
-    }
-
-    public void addJob(ResourceLocation offerId, @Nullable GenericStack selfResource)
+    public void addJob(ResourceLocation offerId, @NotNull GenericStack selfResource)
     {
         this.jobs.add(new Job(offerId, selfResource, null));
     }
 
-    public void addJob(ResourceLocation offerId, @Nullable GenericStack selfResource, UUID player)
+    public void addJob(ResourceLocation offerId, @NotNull GenericStack selfResource, UUID player)
     {
         this.jobs.add(new Job(offerId, selfResource, player));
     }
@@ -775,7 +637,8 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
         return new PatternContainerGroup(AEItemKey.of(APBlocks.ME_AMADRON_PROCESS_STATION), APBlocks.ME_AMADRON_PROCESS_STATION.get().getName(), List.of());
     }
 
-    public void cancelAllJobs()
+    /** 将所有job携带的资源送回me网络或掉落，然后给相关玩家发生一次消息 */
+    public void cancelAllJobs(Component message)
     {
         // 处理 Job 自带资源：尝试塞回 ME，否则掉落
         MEStorage me = getNetworkInventory();
@@ -788,7 +651,6 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
         for (Job job : jobs)
         {
             GenericStack res = job.selfResource();
-            if (res == null) continue;
 
             long remain = res.amount();
             if (me != null)
@@ -821,11 +683,10 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
         // 统一给相关玩家发一次告警
         if (level != null && !involvedPlayers.isEmpty() && level.getServer() != null)
         {
-            Component msg = Component.translatable("amadron.appliedpneumatics.process_fail.order_cancel", worldPosition.toShortString());
             for (UUID uuid : involvedPlayers)
             {
                 var p = level.getServer().getPlayerList().getPlayer(uuid);
-                if (p != null) p.sendSystemMessage(msg);
+                if (p != null) p.sendSystemMessage(message);
             }
         }
 
@@ -839,15 +700,13 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     }
 
     /** selfResource表示该Job自己携带了一部分资源，只有这部分资源被插入仓库才执行实际job */
-    private record Job(ResourceLocation offerId, @Nullable GenericStack selfResource, @Nullable UUID player)
+    private record Job(ResourceLocation offerId, @NotNull GenericStack selfResource, @Nullable UUID player)
     {
         private CompoundTag writeToSubTag(HolderLookup.Provider registries)
         {
             CompoundTag tag = new CompoundTag();
             tag.putString("offer", this.offerId.toString());
-
-            if (this.selfResource != null)
-                tag.put("resource", GenericStack.writeTag(registries, this.selfResource));
+            tag.put("resource", GenericStack.writeTag(registries, this.selfResource));
 
             if(this.player != null)
                 tag.putString("player", this.player.toString());
@@ -858,16 +717,13 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
         public static Job readFromSubTag(CompoundTag tag, HolderLookup.Provider registries)
         {
             ResourceLocation offer = ResourceLocation.parse(tag.getString("offer"));
-
-            GenericStack resource = null;
-            if (tag.contains("resource"))
-                resource = GenericStack.readTag(registries, tag.getCompound("resource"));
+            GenericStack resource = GenericStack.readTag(registries, tag.getCompound("resource"));
 
             UUID player = null;
             if (tag.contains("player"))
                 player = UUID.fromString(tag.getString("player"));
 
-            return new Job(offer, resource, player);
+            return new Job(offer, Objects.requireNonNull(resource), player);
         }
     }
 }

@@ -8,6 +8,7 @@ import appeng.util.ConfigMenuInventory;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEAmadronProcessStationBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APMenus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -36,8 +37,9 @@ public class MEAmadronProcessStationMenu extends UpgradeableMenu<MEAmadronProces
 
     private void onJobCancel()
     {
-        if(getBlockEntity() != null)
-            getBlockEntity().cancelAllJobs();
+        MEAmadronProcessStationBlockEntity be = getBlockEntity();
+        if(be != null)
+            be.cancelAllJobs(Component.translatable("amadron.appliedpneumatics.process_fail.order_cancel", be.getBlockPos().toShortString()));
     }
 
     public void senCancelJobAction()

@@ -23,7 +23,7 @@ public class APBlocks
 {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(AppliedPneumatics.MODID);
 
-    public static final DeferredBlock<Block> ME_PRESSURE_INTERFACE_BLOCK = registerBlock("me_pressure_interface_block",
+    public static final DeferredBlock<MEPressureInterfaceBlock> ME_PRESSURE_INTERFACE_BLOCK = registerBlock("me_pressure_interface_block",
             ()-> new MEPressureInterfaceBlock(BlockBehaviour.Properties.of().strength(2f)));
 
     public static final DeferredBlock<Block> ME_PRESSURE_CHAMBER_VALVE = registerBlock("me_pressure_chamber_valve",
@@ -42,7 +42,7 @@ public class APBlocks
             () -> new MEPressureChamberGlass(IBlockPressureChamber.pressureChamberBlockProps().noOcclusion()));
 
     // ME亚马龙处理站
-    public static final DeferredBlock<Block> ME_AMADRON_PROCESS_STATION = registerBlock("me_amadron_process_station",
+    public static final DeferredBlock<MEAmadronProcessStation> ME_AMADRON_PROCESS_STATION = registerBlock("me_amadron_process_station",
             () -> new MEAmadronProcessStation(BlockBehaviour.Properties.of().strength(2f)));
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block)

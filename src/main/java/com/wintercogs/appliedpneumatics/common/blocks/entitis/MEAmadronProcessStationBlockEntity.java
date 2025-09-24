@@ -7,9 +7,9 @@ import appeng.api.crafting.PatternDetailsHelper;
 import appeng.api.implementations.blockentities.ICraftingMachine;
 import appeng.api.implementations.blockentities.PatternContainerGroup;
 import appeng.api.inventories.InternalInventory;
-import appeng.api.networking.*;
+import appeng.api.networking.GridFlags;
+import appeng.api.networking.IGrid;
 import appeng.api.networking.crafting.ICraftingProvider;
-import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEItemKey;
@@ -20,6 +20,8 @@ import appeng.api.storage.MEStorage;
 import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableObject;
 import appeng.api.upgrades.UpgradeInventories;
+import appeng.blockentity.ServerTickingBlockEntity;
+import appeng.blockentity.grid.AENetworkedBlockEntity;
 import appeng.core.definitions.AEItems;
 import appeng.helpers.externalstorage.GenericStackInv;
 import appeng.helpers.patternprovider.PatternContainer;
@@ -31,7 +33,6 @@ import com.wintercogs.appliedpneumatics.common.init.APBlockEntities;
 import com.wintercogs.appliedpneumatics.common.init.APBlocks;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
 import com.wintercogs.appliedpneumatics.common.me.crafting.AmadronPatternDetails;
-import com.wintercogs.appliedpneumatics.common.me.grid.SimpleBlockNodeListener;
 import com.wintercogs.appliedpneumatics.common.menu.MEAmadronProcessStationMenu;
 import me.desht.pneumaticcraft.common.amadron.AmadronOfferManager;
 import me.desht.pneumaticcraft.common.amadron.AmadronUtil;
@@ -53,11 +54,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -65,7 +62,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -75,20 +71,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class MEAmadronProcessStationBlockEntity extends BlockEntity implements MenuProvider,
-        IInWorldGridNodeHost, IActionHost, IUpgradeableObject, ICraftingProvider, ICraftingMachine,
-        PatternContainer
+public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity implements MenuProvider,
+        IUpgradeableObject, ICraftingProvider, ICraftingMachine, PatternContainer, ServerTickingBlockEntity
 {
-    // AE部分-------------------------------------------------------------------------------------------------------------------
-    // 受管节点
-    private final IManagedGridNode node = GridHelper.createManagedNode(this, SimpleBlockNodeListener.INSTANCE)
-            .setTagName("me_amadron_process_station_node") // 子标签名
-            .setIdlePowerUsage(8.0) // 待机消耗
-            .setFlags(GridFlags.REQUIRE_CHANNEL) // 需要频道
-            .setExposedOnSides(EnumSet.allOf(Direction.class)) // 可以用于连接的方向
-            .setInWorldNode(true) // 是世界内节点
-            .setVisualRepresentation(APBlocks.ME_AMADRON_PROCESS_STATION)
-            .addService(ICraftingProvider.class, this);
 
     // 样板槽 - 只允许UI存取
     private final AppEngInternalInventory patternInventory = new AppEngInternalInventory(9)
@@ -103,7 +88,7 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
         protected void onContentsChanged(int slot)
         {
             super.onContentsChanged(slot);
-            ICraftingProvider.requestUpdate(node);
+            ICraftingProvider.requestUpdate(getMainNode());
             setChanged();
         }
     };
@@ -125,6 +110,11 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
     public MEAmadronProcessStationBlockEntity(BlockPos pos, BlockState blockState)
     {
         super(APBlockEntities.ME_AMADRON_PROCESS_STATION_BLOCK_ENTITY.get(), pos, blockState);
+
+        getMainNode().setIdlePowerUsage(8.0) // 待机消耗
+                .setFlags(GridFlags.REQUIRE_CHANNEL) // 需要频道
+                .setExposedOnSides(EnumSet.allOf(Direction.class)) // 可以用于连接的方向
+                .addService(ICraftingProvider.class, this);
     }
 
     // 注册AE节点和空气容器能力
@@ -204,27 +194,11 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
         return outputInv;
     }
 
-    @Override
-    public void clearRemoved()
-    {
-        super.clearRemoved();
-        // 回调排队
-        GridHelper.onFirstTick(this, MEAmadronProcessStationBlockEntity::onFirstTick);
-    }
-
-    private void onFirstTick()
-    {
-        if (level instanceof ServerLevel server)
-        {
-            node.create(server, worldPosition);
-        }
-    }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries)
+    public void loadTag(CompoundTag tag, HolderLookup.Provider registries)
     {
-        super.loadAdditional(tag, registries);
-        node.loadFromNBT(tag);
+        super.loadTag(tag, registries);
         patternInventory.readFromNBT(tag,"pattern_inv", registries);
         inputInv.readFromChildTag(tag,"input_inv", registries);
         outputInv.readFromChildTag(tag,"output_inv", registries);
@@ -241,10 +215,9 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries)
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries)
     {
         super.saveAdditional(tag, registries);
-        node.saveToNBT(tag);
         patternInventory.writeToNBT(tag,"pattern_inv", registries);
         inputInv.writeToChildTag(tag,"input_inv", registries);
         outputInv.writeToChildTag(tag,"output_inv", registries);
@@ -257,53 +230,15 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
         tag.put("Jobs", jobList);
     }
 
-    // 提供基础的网络同步
-    @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries)
-    {
-        CompoundTag tag = new CompoundTag();
-        saveAdditional(tag,registries);
-        return tag;
-    }
-
-    @Override
-    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket()
-    {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    // 卸载/移除：销毁节点，断开连接 ===
-
-    @Override
-    public void onChunkUnloaded()
-    {
-        super.onChunkUnloaded();
-        if (level != null && !level.isClientSide) node.destroy();
-    }
-
-    @Override
-    public void setRemoved()
-    {
-        super.setRemoved();
-        if (level != null && !level.isClientSide) node.destroy();
-    }
-
-
     /**
      * 取当前网络的MEStorage
      */
     public @Nullable MEStorage getNetworkInventory()
     {
-        IGrid grid = node.getGrid();
+        IGrid grid = getMainNode().getGrid();
         if (grid == null) return null;
         IStorageService ss = grid.getStorageService();
         return ss != null ? ss.getInventory() : null;
-    }
-
-    @Override
-    public @Nullable IGridNode getGridNode(Direction dir)
-    {
-        return node.isReady() ? node.getNode() : null;
     }
 
     @Override
@@ -312,38 +247,41 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
         return upgrades;
     }
 
-    // 执行ME系统以及空气容器的交互
-    public static void serverTick(Level level, BlockPos pos, BlockState state, MEAmadronProcessStationBlockEntity be)
+    @Override
+    public void serverTick()
     {
-        if (level.isClientSide) return;
+        if (level == null || level.isClientSide) return;
 
-        if (be.needAmadronRefresh
-                && be.node.isReady()
+        if (this.needAmadronRefresh
+                && this.getMainNode().isReady()
                 && (level.getGameTime() & 20) == 0) // 每 20 tick轻量检查一次
         {
             if (!AmadronOfferManager.getInstance().getActiveOffers().isEmpty()) {
-                ICraftingProvider.requestUpdate(be.node);
-                be.needAmadronRefresh = false; // 只刷一次，随后停掉轮询
+                ICraftingProvider.requestUpdate(this.getMainNode());
+                this.needAmadronRefresh = false; // 只刷一次，随后停掉轮询
             }
         }
 
-        // 每 tick 把 outputInv 往 ME 塞
-        be.flushOutputToME();
-
-        // 每 200 tick 下发订单
-        if (level.getGameTime() % 200 == 0)
+        if(getMainNode().isActive())
         {
-            int maxDrones = 1 + Math.max(0, be.getInstalledUpgrades(AEItems.SPEED_CARD) - 1);
-            int maxUnitsPerDrone = switch (be.getInstalledUpgrades(AEItems.SPEED_CARD))
+            // 每 tick 把 outputInv 往 ME 塞
+            this.flushOutputToME();
+
+            // 每 200 tick 下发订单
+            if (level.getGameTime() % 200 == 0)
             {
-                case 1 -> 32;
-                case 2 -> 64;
-                case 3 -> 128;
-                case 4 -> 256;
-                
-                default -> 16;
-            };
-            be.doJob(maxDrones, maxUnitsPerDrone);
+                int maxDrones = 1 + Math.max(0, this.getInstalledUpgrades(AEItems.SPEED_CARD) - 1);
+                int maxUnitsPerDrone = switch (this.getInstalledUpgrades(AEItems.SPEED_CARD))
+                {
+                    case 1 -> 32;
+                    case 2 -> 64;
+                    case 3 -> 128;
+                    case 4 -> 256;
+
+                    default -> 16;
+                };
+                this.doJob(maxDrones, maxUnitsPerDrone);
+            }
         }
     }
 
@@ -676,12 +614,12 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
         return new MEAmadronProcessStationMenu(id, inventory, this);
     }
 
-    public void dropContent()
+    @Override
+    public void addAdditionalDrops(Level level, BlockPos pos, List<ItemStack> drops)
     {
-        if (level == null || level.isClientSide) return;
+        super.addAdditionalDrops(level, pos, drops);
 
         // 收集掉落物：样板槽、升级槽、两个仓库位
-        List<ItemStack> drops = new ArrayList<>();
         for (int i = 0; i < patternInventory.size(); i++) {
             ItemStack s = patternInventory.getStackInSlot(i);
             if (!s.isEmpty()) drops.add(s.copy());
@@ -730,16 +668,9 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
             }
         }
 
-        // 掉落所有剩余物品
-        for (ItemStack s : drops)
-        {
-            Block.popResource(level, worldPosition, s);
-        }
-
         // 统一给相关玩家发一次告警
         if (!involvedPlayers.isEmpty() && level.getServer() != null)
         {
-
             Component msg = Component.translatable("amadron.appliedpneumatics.process_fail.block_break", worldPosition.toShortString());
             for (UUID uuid : involvedPlayers)
             {
@@ -747,13 +678,6 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
                 if (p != null) p.sendSystemMessage(msg);
             }
         }
-    }
-
-
-    @Override
-    public @Nullable IGridNode getActionableNode()
-    {
-        return node.isReady() ? node.getNode() : null;
     }
 
     // ICraftProvider实现---------------------------------------------------------------------------------------
@@ -860,7 +784,7 @@ public class MEAmadronProcessStationBlockEntity extends BlockEntity implements M
     @Override
     public @Nullable IGrid getGrid()
     {
-        return node.isReady() ? node.getGrid() : null;
+        return getMainNode().isReady() ? getMainNode().getGrid() : null;
     }
 
     @Override

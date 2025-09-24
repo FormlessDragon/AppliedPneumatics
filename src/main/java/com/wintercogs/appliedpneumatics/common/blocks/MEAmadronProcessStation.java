@@ -28,15 +28,4 @@ public class MEAmadronProcessStation extends AEBaseEntityBlock<MEAmadronProcessS
         return InteractionResult.SUCCESS_NO_ITEM_USED;
     }
 
-//    @Override
-//    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston)
-//    {
-//        if (!state.is(newState.getBlock())) {
-//            if (level.getBlockEntity(pos) instanceof MEAmadronProcessStationBlockEntity blockEntity) {
-//                level.updateNeighbourForOutputSignal(pos, this);
-//                blockEntity.dropContent();
-//            }
-//            super.onRemove(state, level, pos, newState, movedByPiston);
-//        }
-//    }
 }

@@ -202,6 +202,12 @@ public class MEPressureInterfaceBlockEntity extends AENetworkedBlockEntity imple
         airHandler.setBaseVolume(BASE_VOLUME_UNIT * (1 << upgradeVolumeCount));
         interactWithMESystem(this.level, worldPosition, getBlockState(), this); // 重设升级卡后立刻与ME系统进行一次交互
 
+        // 立刻重新设置有关安全卡的效果
+        if(getUpgrades().isInstalled(APItems.SECURITY_CARD))
+            airHandler.enableSafetyVenting(p -> p >= 20, Direction.UP);
+        else
+            airHandler.disableSafetyVenting();
+
         setChanged();
     }
 
@@ -308,7 +314,6 @@ public class MEPressureInterfaceBlockEntity extends AENetworkedBlockEntity imple
                 }
             }
         }
-
     }
 
     @Override

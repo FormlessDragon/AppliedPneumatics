@@ -61,9 +61,10 @@ public class AEPlugin
         P2PTunnelAttunement.registerAttunementTag(APItems.HEAT_P2P_TUNEL); // 用P2PTunnelAttunement.getAttunementTag(APItems.HEAT_P2P_TUNEL.get());获取此标签来标记物品
 
         // 升级卡支持
-        // ME接口
+        // ME气压接口
         Upgrades.add(APItems.VOLUME_CARD, APBlocks.ME_PRESSURE_INTERFACE_BLOCK, 4);
         Upgrades.add(APItems.VACUUM_CARD, APBlocks.ME_PRESSURE_INTERFACE_BLOCK, 1);
+        Upgrades.add(APItems.SECURITY_CARD, APBlocks.ME_PRESSURE_INTERFACE_BLOCK, 1);
 
         // 存储元件支持的升级卡（安全卡、真空卡） 其中真空卡为气体版溢出销毁卡
         // 1k ~ 256M

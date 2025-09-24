@@ -37,6 +37,7 @@ public class ModItemModelProvider extends ItemModelProvider
         basicItem(APItems.AMADRON_WIRELESS_TERMINAL.get());
         basicItem(APItems.AMADRON_PATTERN.get());
         basicItem(APItems.AIR_CELL_SHELL.get());
+        basicItem(APItems.MEGA_AIR_CELL_SHELL.get());
     }
 
     // 快速注册带led灯状态的存储元件模型

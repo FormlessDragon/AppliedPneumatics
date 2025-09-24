@@ -26,5 +26,13 @@
       "text": { "translate": "menu.title.appliedpneumatics.me_amadron_process_station_menu" },
       "position": { "left": 8, "top": 6 }
     }
+  },
+  "widgets": {
+    "cancel_jobs_button": {
+      "right": 55,
+      "top": 37,
+      "width": 48,
+      "height": 14
+    }
   }
 }

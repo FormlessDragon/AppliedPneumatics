@@ -60,9 +60,14 @@ public class AmadronWirelessTerminalMenu extends UpgradeableMenu<AmadronWireless
         }
         MEAmadronProcessStationBlockEntity processBE =
                 AmadronWirelessTerminalItem.getLinkWithAmadronProcess(getHost().getItemStack(), getPlayer().level());
-        if (processBE == null)
+        if (processBE == null || processBE.isRemoved())
         {
             getPlayer().sendSystemMessage(Component.translatable("amadron.appliedpneumatics.order_fail.cant_find_process_station"));
+            return;
+        }
+        if(!processBE.getMainNode().isActive())
+        {
+            getPlayer().sendSystemMessage(Component.translatable("amadron.appliedpneumatics.order_fail.process_station_not_active"));
             return;
         }
         if (basket.isEmpty())
@@ -109,6 +114,12 @@ public class AmadronWirelessTerminalMenu extends UpgradeableMenu<AmadronWireless
         if (totalNeed.isEmpty())
         {
             getPlayer().sendSystemMessage(Component.translatable("amadron.appliedpneumatics.order_fail.have_not_vaild_order"));
+            return;
+        }
+
+        if(jobsToCreate.size() + processBE.getJobAmount() >= 512)
+        {
+            getPlayer().sendSystemMessage(Component.translatable("amadron.appliedpneumatics.order_fail.order_too_much"));
             return;
         }
 

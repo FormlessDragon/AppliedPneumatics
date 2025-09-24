@@ -105,7 +105,6 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     private boolean needAmadronRefresh = true;
 
     private final List<Job> jobs = new ArrayList<>();
-    private boolean isBusy = false;
 
     public MEAmadronProcessStationBlockEntity(BlockPos pos, BlockState blockState)
     {
@@ -310,7 +309,6 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     {
         if (this.level == null || this.level.isClientSide) return;
 
-        this.isBusy = false;
         IActionSource src = IActionSource.ofMachine(this);
         if (this.jobs.isEmpty())
         {
@@ -699,26 +697,15 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     @Override
     public boolean pushPattern(IPatternDetails patternDetails, KeyCounter[] inputHolder)
     {
-        if(isBusy) return false;
+        if(isBusy()) return false;
         if(patternDetails instanceof AmadronPatternDetails details)
         {
             // 必然仅有一个input
             var entry = inputHolder[0].getFirstEntry();
             if(entry != null)
             {
-                long inserted = inputInv.insert(entry.getKey(), entry.getLongValue(), Actionable.SIMULATE, IActionSource.ofMachine(this));
-                if(inserted == entry.getLongValue()) // 能被完全插入
-                {
-                    inputInv.insert(entry.getKey(), entry.getLongValue(), Actionable.MODULATE, IActionSource.ofMachine(this));
-                    addJob(details.getOfferId(), null);
-
-                    return true;
-                }
-                else
-                {
-                    isBusy = true;
-                    return false;
-                }
+                addJob(details.getOfferId(), new GenericStack(entry.getKey(), entry.getLongValue()));
+                return true;
             }
         }
         return false;
@@ -727,7 +714,7 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     @Override
     public boolean isBusy()
     {
-        return isBusy;
+        return jobs.size() >= 512;
     }
 
     // ICraftMachine实现-----------------------------------------------------------------------------------------------
@@ -740,26 +727,15 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     @Override
     public boolean pushPattern(IPatternDetails patternDetails, KeyCounter[] inputs, Direction ejectionDirection)
     {
-        if(isBusy) return false;
+        if(isBusy()) return false;
         if(patternDetails instanceof AmadronPatternDetails details)
         {
             // 必然仅有一个input
             var entry = inputs[0].getFirstEntry();
             if(entry != null)
             {
-                long inserted = inputInv.insert(entry.getKey(), entry.getLongValue(), Actionable.SIMULATE, IActionSource.ofMachine(this));
-                if(inserted == entry.getLongValue()) // 能被完全插入
-                {
-                    inputInv.insert(entry.getKey(), entry.getLongValue(), Actionable.MODULATE, IActionSource.ofMachine(this));
-                    addJob(details.getOfferId(), null); // 静态任务不可能失败，无需传入onFailure
-
-                    return true;
-                }
-                else
-                {
-                    isBusy = true;
-                    return false;
-                }
+                addJob(details.getOfferId(), new GenericStack(entry.getKey(), entry.getLongValue()));
+                return true;
             }
         }
         return false;
@@ -768,7 +744,7 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     @Override
     public boolean acceptsPlans()
     {
-        return !isBusy;
+        return !isBusy();
     }
 
     public void addJob(ResourceLocation offerId, @Nullable GenericStack selfResource)
@@ -797,6 +773,69 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     public PatternContainerGroup getTerminalGroup()
     {
         return new PatternContainerGroup(AEItemKey.of(APBlocks.ME_AMADRON_PROCESS_STATION), APBlocks.ME_AMADRON_PROCESS_STATION.get().getName(), List.of());
+    }
+
+    public void cancelAllJobs()
+    {
+        // 处理 Job 自带资源：尝试塞回 ME，否则掉落
+        MEStorage me = getNetworkInventory();
+        IActionSource src = IActionSource.ofMachine(this);
+
+        Set<UUID> involvedPlayers = new HashSet<>();
+
+        List<ItemStack> drops = new ArrayList<>();
+
+        for (Job job : jobs)
+        {
+            GenericStack res = job.selfResource();
+            if (res == null) continue;
+
+            long remain = res.amount();
+            if (me != null)
+            {
+                long inserted = me.insert(res.what(), remain, Actionable.MODULATE, src);
+                remain -= inserted;
+            }
+
+            if (remain > 0 && res.what() instanceof AEItemKey itemKey)
+            {
+                int drop = (int) Math.min(remain, Integer.MAX_VALUE);
+                drops.add(itemKey.toStack(drop));
+            }
+
+            if (job.player() != null)
+            {
+                involvedPlayers.add(job.player());
+            }
+        }
+
+        if(level != null && !drops.isEmpty())
+        {
+            for(ItemStack stack : drops)
+            {
+                Block.popResource(level, worldPosition, stack);
+            }
+        }
+
+
+        // 统一给相关玩家发一次告警
+        if (level != null && !involvedPlayers.isEmpty() && level.getServer() != null)
+        {
+            Component msg = Component.translatable("amadron.appliedpneumatics.process_fail.order_cancel", worldPosition.toShortString());
+            for (UUID uuid : involvedPlayers)
+            {
+                var p = level.getServer().getPlayerList().getPlayer(uuid);
+                if (p != null) p.sendSystemMessage(msg);
+            }
+        }
+
+        jobs.clear();
+        setChanged();
+    }
+
+    public int getJobAmount()
+    {
+        return jobs.size();
     }
 
     /** selfResource表示该Job自己携带了一部分资源，只有这部分资源被插入仓库才执行实际job */

@@ -1,6 +1,7 @@
 package com.wintercogs.appliedpneumatics.common.menu;
 
 import appeng.menu.SlotSemantics;
+import appeng.menu.guisync.GuiSync;
 import appeng.menu.implementations.UpgradeableMenu;
 import appeng.menu.slot.AppEngSlot;
 import appeng.util.ConfigMenuInventory;
@@ -15,6 +16,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class MEAmadronProcessStationMenu extends UpgradeableMenu<MEAmadronProcessStationBlockEntity>
 {
+    private static String cancelAllJobsAction = "cancel_all_jobs";
+
+    @GuiSync(10) public int latestJobs = 0;
 
     // 构造：客户端
     public MEAmadronProcessStationMenu(int id, Inventory playerInv, RegistryFriendlyByteBuf buf) {
@@ -26,6 +30,19 @@ public class MEAmadronProcessStationMenu extends UpgradeableMenu<MEAmadronProces
     public MEAmadronProcessStationMenu(int id, Inventory playerInv, @NotNull MEAmadronProcessStationBlockEntity host)
     {
         super(APMenus.ME_AMADRON_PROCESS_STATION_MENU.get(), id, playerInv, host);
+
+        registerClientAction(cancelAllJobsAction, this::onJobCancel);
+    }
+
+    private void onJobCancel()
+    {
+        if(getBlockEntity() != null)
+            getBlockEntity().cancelAllJobs();
+    }
+
+    public void senCancelJobAction()
+    {
+        sendClientAction(cancelAllJobsAction);
     }
 
     // 放除了升级槽之外的其他真实库存
@@ -57,6 +74,13 @@ public class MEAmadronProcessStationMenu extends UpgradeableMenu<MEAmadronProces
             };
             this.addSlot(slot, SlotSemantics.MACHINE_OUTPUT);
         }
+    }
+
+    @Override
+    public void broadcastChanges()
+    {
+        latestJobs = getBlockEntity() == null ? 0 : getBlockEntity().getJobAmount();
+        super.broadcastChanges();
     }
 
     public @Nullable MEAmadronProcessStationBlockEntity getBlockEntity()

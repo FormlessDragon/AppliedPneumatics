@@ -18,7 +18,7 @@ public class APCreativeModeTabs
     public static final Supplier<CreativeModeTab> AP_CREATIVE_MODE_TAB = CREATIVE_MODE_TAB.register(
             "ap_creative_mode_tab",
             ()->CreativeModeTab.builder()
-                    .icon(()->new ItemStack(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get()))
+                    .icon(()->new ItemStack(APBlocks.ME_AMADRON_PROCESS_STATION.get()))
                     .title(Component.translatable("creativetab.appliedpneumatics.items"))
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(APItems.AIR_CELL_SHELL.get());

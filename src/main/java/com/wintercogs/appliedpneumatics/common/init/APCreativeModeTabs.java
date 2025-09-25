@@ -1,6 +1,11 @@
 package com.wintercogs.appliedpneumatics.common.init;
 
+import appeng.api.config.Actionable;
+import appeng.api.upgrades.IUpgradeableItem;
+import appeng.items.tools.powered.PoweredContainerItem;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
+import com.wintercogs.appliedpneumatics.common.items.IAirStorageCell;
+import com.wintercogs.appliedpneumatics.common.me.keys.types.AirKeyType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -8,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class APCreativeModeTabs
@@ -21,34 +27,76 @@ public class APCreativeModeTabs
                     .icon(()->new ItemStack(APBlocks.ME_AMADRON_PROCESS_STATION.get()))
                     .title(Component.translatable("creativetab.appliedpneumatics.items"))
                     .displayItems((itemDisplayParameters, output) -> {
+                        // 存储元件
                         output.accept(APItems.AIR_CELL_SHELL.get());
-                        output.accept(APItems.AIR_CELL_1K.get());
-                        output.accept(APItems.AIR_CELL_4K.get());
-                        output.accept(APItems.AIR_CELL_16K.get());
-                        output.accept(APItems.AIR_CELL_64K.get());
-                        output.accept(APItems.AIR_CELL_256K.get());
-                        // 大宗存储仅在Mega元件加载时启用
                         if(AppliedPneumatics.MEGA_CELL_LOADED)
                         {
                             output.accept(APItems.MEGA_AIR_CELL_SHELL.get());
-                            output.accept(APItems.AIR_CELL_1M.get());
-                            output.accept(APItems.AIR_CELL_4M.get());
-                            output.accept(APItems.AIR_CELL_16M.get());
-                            output.accept(APItems.AIR_CELL_64M.get());
-                            output.accept(APItems.AIR_CELL_256M.get());
                         }
-                        output.accept(APItems.PORTABLE_AIR_CELL_1K.get());
-                        output.accept(APItems.PORTABLE_AIR_CELL_4K.get());
-                        output.accept(APItems.PORTABLE_AIR_CELL_16K.get());
-                        output.accept(APItems.PORTABLE_AIR_CELL_64K.get());
-                        output.accept(APItems.PORTABLE_AIR_CELL_256K.get());
-                        if(AppliedPneumatics.MEGA_CELL_LOADED)
+                        ArrayList<ItemStack> cells = new ArrayList<>();
+                        cells.add(new ItemStack(APItems.AIR_CELL_1K.get()));
+                        cells.add(new ItemStack(APItems.AIR_CELL_4K.get()));
+                        cells.add(new ItemStack(APItems.AIR_CELL_16K.get()));
+                        cells.add(new ItemStack(APItems.AIR_CELL_64K.get()));
+                        cells.add(new ItemStack(APItems.AIR_CELL_256K.get()));
+                        cells.add(new ItemStack(APItems.AIR_CELL_1M.get()));
+                        cells.add(new ItemStack(APItems.AIR_CELL_4M.get()));
+                        cells.add(new ItemStack(APItems.AIR_CELL_16M.get()));
+                        cells.add(new ItemStack(APItems.AIR_CELL_64M.get()));
+                        cells.add(new ItemStack(APItems.AIR_CELL_256M.get()));
+                        cells.add(new ItemStack(APItems.PORTABLE_AIR_CELL_1K.get()));
+                        cells.add(new ItemStack(APItems.PORTABLE_AIR_CELL_4K.get()));
+                        cells.add(new ItemStack(APItems.PORTABLE_AIR_CELL_16K.get()));
+                        cells.add(new ItemStack(APItems.PORTABLE_AIR_CELL_64K.get()));
+                        cells.add(new ItemStack(APItems.PORTABLE_AIR_CELL_256K.get()));
+                        cells.add(new ItemStack(APItems.PORTABLE_AIR_CELL_1M.get()));
+                        cells.add(new ItemStack(APItems.PORTABLE_AIR_CELL_4M.get()));
+                        cells.add(new ItemStack(APItems.PORTABLE_AIR_CELL_16M.get()));
+                        cells.add(new ItemStack(APItems.PORTABLE_AIR_CELL_64M.get()));
+                        cells.add(new ItemStack(APItems.PORTABLE_AIR_CELL_256M.get()));
+                        // 空的存储元件
+                        for(ItemStack cellStack : cells)
                         {
-                            output.accept(APItems.PORTABLE_AIR_CELL_1M.get());
-                            output.accept(APItems.PORTABLE_AIR_CELL_4M.get());
-                            output.accept(APItems.PORTABLE_AIR_CELL_16M.get());
-                            output.accept(APItems.PORTABLE_AIR_CELL_64M.get());
-                            output.accept(APItems.PORTABLE_AIR_CELL_256M.get());
+                            if(cellStack.getItem() instanceof IAirStorageCell cell)
+                            {
+                                if(cell.getTotalBytes() <= 270000)
+                                {
+                                    output.accept(cellStack.copy());
+                                }
+                                else if(AppliedPneumatics.MEGA_CELL_LOADED) // 超过256k需要安装mega元件，这里给一些冗余
+                                    output.accept(cellStack.copy());
+                            }
+                        }
+                        // 满的存储元件
+                        for(ItemStack cellStack : cells)
+                        {
+                            // 仅满电状态
+                            if(cellStack.getItem() instanceof PoweredContainerItem poweredContainerItem)
+                            {
+                                ItemStack copy = cellStack.copy();
+                                poweredContainerItem.injectAEPower(copy, Double.MAX_VALUE, Actionable.MODULATE);
+                                if(copy.getItem() instanceof IUpgradeableItem upgradeableItem)
+                                    upgradeableItem.getUpgrades(copy).addItems(APItems.SECURITY_CARD.toStack());
+                                output.accept(copy);
+                            }
+
+                            // 满电满空气状态
+                            if(cellStack.getItem() instanceof IAirStorageCell cell)
+                            {
+                                ItemStack copy = cellStack.copy();
+                                copy.set(APDataComponents.AIR_STORED, (long) cell.getTotalBytes() * AirKeyType.INSTANCE.getAmountPerByte());
+                                if(copy.getItem() instanceof PoweredContainerItem poweredContainerItem)
+                                    poweredContainerItem.injectAEPower(copy, Double.MAX_VALUE, Actionable.MODULATE);
+                                if(copy.getItem() instanceof IUpgradeableItem upgradeableItem)
+                                    upgradeableItem.getUpgrades(copy).addItems(APItems.SECURITY_CARD.toStack());
+
+                                if(cell.getTotalBytes() <= 270000)
+                                {
+                                    output.accept(copy);
+                                }
+                                else if(AppliedPneumatics.MEGA_CELL_LOADED) // 超过256k需要安装mega元件，这里给一些冗余
+                                    output.accept(copy);
+                            }
                         }
                         output.accept(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get());
                         output.accept(APBlocks.ME_TEMPERATURE_INTERFACE.get());
@@ -61,7 +109,13 @@ public class APCreativeModeTabs
                         output.accept(APItems.VOLUME_CARD.get());
                         output.accept(APItems.SECURITY_CARD.get());
                         output.accept(APItems.VACUUM_CARD.get());
+
+                        // 亚马龙终端以及其满电状态
                         output.accept(APItems.AMADRON_WIRELESS_TERMINAL.get());
+                        ItemStack amadronWirelessTerminalFull = new ItemStack(APItems.AMADRON_WIRELESS_TERMINAL.get());
+                        ((PoweredContainerItem)amadronWirelessTerminalFull.getItem()).injectAEPower(amadronWirelessTerminalFull, Double.MAX_VALUE, Actionable.MODULATE);
+                        output.accept(amadronWirelessTerminalFull);
+
                         output.accept(APBlocks.ME_AMADRON_PROCESS_STATION.get());
                         output.accept(APItems.AMADRON_PATTERN.get());
                     })

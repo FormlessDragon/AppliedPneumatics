@@ -11,6 +11,7 @@ import appeng.core.AppEng;
 import appeng.core.localization.Tooltips;
 import appeng.items.storage.StorageCellTooltipComponent;
 import appeng.items.tools.powered.AbstractPortableCell;
+import appeng.items.tools.powered.PoweredContainerItem;
 import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
 import appeng.util.Platform;
 import com.wintercogs.appliedpneumatics.common.air.PortableAirCellItemStackHandler;
@@ -143,6 +144,11 @@ public class PortableAirStorageCell extends AbstractPortableCell implements IAir
     {
         if (tintIndex == 1)
         {
+            if(stack.getItem() instanceof PoweredContainerItem poweredContainer)
+            {
+                if(poweredContainer.getAECurrentPower(stack) <= 0)
+                    return CellState.ABSENT.getStateColor();;
+            }
             long stored = IAirStorageCell.getStoredAir(stack);
             CellState state = IAirStorageCell.calcState(((IAirStorageCell) stack.getItem()).getTotalBytes(), stored);
             return state.getStateColor();

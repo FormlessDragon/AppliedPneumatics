@@ -67,7 +67,7 @@ public class APCreativeModeTabs
                                     output.accept(cellStack.copy());
                             }
                         }
-                        // 满的存储元件
+                        // 满的存储元件并加上安全卡升级
                         for(ItemStack cellStack : cells)
                         {
                             // 仅满电状态

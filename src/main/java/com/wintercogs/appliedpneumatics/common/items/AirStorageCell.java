@@ -14,9 +14,7 @@ import appeng.items.storage.StorageCellTooltipComponent;
 import appeng.recipes.game.StorageCellDisassemblyRecipe;
 import appeng.util.InteractionUtil;
 import appeng.util.Platform;
-import com.wintercogs.appliedpneumatics.common.init.APDataComponents;
 import com.wintercogs.appliedpneumatics.common.me.keys.AirKey;
-import com.wintercogs.appliedpneumatics.common.me.keys.types.AirKeyType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -35,7 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class AirStorageCell extends Item implements ICellWorkbenchItem
+public class AirStorageCell extends Item implements ICellWorkbenchItem, IAirStorageCell
 {
     private final double idleDrain;
     private final int totalBytes;
@@ -51,8 +49,8 @@ public class AirStorageCell extends Item implements ICellWorkbenchItem
     {
         if (tintIndex != 1) return 0xFFFFFF; // 白
 
-        long stored = getStoredAir(stack);
-        CellState state = calcState(((AirStorageCell) stack.getItem()).getTotalBytes(), stored);
+        long stored = IAirStorageCell.getStoredAir(stack);
+        CellState state = IAirStorageCell.calcState(((IAirStorageCell) stack.getItem()).getTotalBytes(), stored);
         return state.getStateColor();
     }
 
@@ -64,8 +62,8 @@ public class AirStorageCell extends Item implements ICellWorkbenchItem
     {
         if (Platform.isClient()) {
             // 基础容量/使用
-            long stored = getStoredAir(stack);
-            long used   = usedBytes(stored);
+            long stored = IAirStorageCell.getStoredAir(stack);
+            long used   = IAirStorageCell.usedBytes(stored);
             lines.add(Tooltips.bytesUsed(used, getTotalBytes()));
             // 单类型：0 或 1
             int typesUsed = stored > 0 ? 1 : 0;
@@ -87,7 +85,7 @@ public class AirStorageCell extends Item implements ICellWorkbenchItem
         List<GenericStack> content = Collections.emptyList();
         boolean hasMore = false;
         if (showCnt) {
-            long stored = getStoredAir(stack);
+            long stored = IAirStorageCell.getStoredAir(stack);
             if (stored > 0) {
                 content = List.of(new GenericStack(AirKey.INSTANCE, stored));
             }
@@ -98,12 +96,13 @@ public class AirStorageCell extends Item implements ICellWorkbenchItem
         ));
     }
 
-
+    @Override
     public int getTotalBytes()
     {
         return this.totalBytes;
     }
 
+    @Override
     public double getIdleDrain()
     {
         return idleDrain;
@@ -171,37 +170,4 @@ public class AirStorageCell extends Item implements ICellWorkbenchItem
                 ? InteractionResult.sidedSuccess(context.getLevel().isClientSide())
                 : InteractionResult.PASS;
     }
-
-    // AirStorageCell 内部辅助（直接读组件）
-    private static long getStoredAir(ItemStack stack) {
-        return stack.getOrDefault(APDataComponents.AIR_STORED, 0L);
-    }
-    private static long amountPerByte() {
-        return AirKeyType.INSTANCE.getAmountPerByte();
-    }
-    private static long usedBytes(long storedAir) {
-        long apb = amountPerByte();
-        return apb <= 0 ? 0 : (storedAir + apb - 1) / apb;
-    }
-    private static long freeBytes(int totalBytes, long usedBytes) {
-        long f = totalBytes - usedBytes;
-        return Math.max(0, f);
-    }
-    private static long unusedInCurrentByte(long storedAir) {
-        long apb = amountPerByte();
-        if (apb <= 0) return 0;
-        long mod = storedAir % apb;
-        return mod == 0 ? 0 : (apb - mod);
-    }
-    public static long remainingAmount(int totalBytes, long storedAir) {
-        long apb = amountPerByte();
-        if (apb <= 0) return 0;
-        long fb = freeBytes(totalBytes, usedBytes(storedAir));
-        return fb * apb + unusedInCurrentByte(storedAir);
-    }
-    private static CellState calcState(int totalBytes, long storedAir) {
-        if (storedAir <= 0) return CellState.EMPTY;
-        return remainingAmount(totalBytes, storedAir) > 0 ? CellState.TYPES_FULL : CellState.FULL;
-    }
-
 }

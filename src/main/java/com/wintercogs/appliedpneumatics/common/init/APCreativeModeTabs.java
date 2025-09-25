@@ -37,6 +37,19 @@ public class APCreativeModeTabs
                             output.accept(APItems.AIR_CELL_64M.get());
                             output.accept(APItems.AIR_CELL_256M.get());
                         }
+                        output.accept(APItems.PORTABLE_AIR_CELL_1K.get());
+                        output.accept(APItems.PORTABLE_AIR_CELL_4K.get());
+                        output.accept(APItems.PORTABLE_AIR_CELL_16K.get());
+                        output.accept(APItems.PORTABLE_AIR_CELL_64K.get());
+                        output.accept(APItems.PORTABLE_AIR_CELL_256K.get());
+                        if(AppliedPneumatics.MEGA_CELL_LOADED)
+                        {
+                            output.accept(APItems.PORTABLE_AIR_CELL_1M.get());
+                            output.accept(APItems.PORTABLE_AIR_CELL_4M.get());
+                            output.accept(APItems.PORTABLE_AIR_CELL_16M.get());
+                            output.accept(APItems.PORTABLE_AIR_CELL_64M.get());
+                            output.accept(APItems.PORTABLE_AIR_CELL_256M.get());
+                        }
                         output.accept(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get());
                         output.accept(APBlocks.ME_TEMPERATURE_INTERFACE.get());
                         output.accept(APBlocks.ME_PRESSURE_CHAMBER_VALVE.get());

@@ -1,6 +1,10 @@
 package com.wintercogs.appliedpneumatics.common.init;
 
+import appeng.api.implementations.menuobjects.IPortableTerminal;
+import appeng.client.gui.me.common.MEStorageScreen;
+import appeng.init.client.InitScreens;
 import appeng.menu.implementations.MenuTypeBuilder;
+import appeng.menu.me.common.MEStorageMenu;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.client.gui.AmadronWirelessTerminalGUI;
 import com.wintercogs.appliedpneumatics.client.gui.MEAmadronProcessStationGUI;
@@ -45,6 +49,10 @@ public class APMenus
     public static final Supplier<MenuType<METemperatureInterfaceMenu>> ME_TEMPERATURE_INTERFACE_MENU = MENU_TYPES.register("me_temperature_interface_menu",
             () -> IMenuTypeExtension.create(METemperatureInterfaceMenu::new));
 
+    public static final MenuType<MEStorageMenu> PORTABLE_AIR_CELL_TYPE = MenuTypeBuilder
+            .<MEStorageMenu, IPortableTerminal>create(MEStorageMenu::new, IPortableTerminal.class)
+            .build("portable_air_cell");
+
     public static void registerMenus(IEventBus eventBus)
     {
         MENU_TYPES.register(eventBus);
@@ -57,5 +65,10 @@ public class APMenus
         event.register(ME_AMADRON_PROCESS_STATION_MENU.get(), MEAmadronProcessStationGUI::new);
         event.register(AMADRON_WIRELESS_TERMINAL_MENU.get(), AmadronWirelessTerminalGUI::new);
         event.register(ME_TEMPERATURE_INTERFACE_MENU.get(), METemperatureInterfaceGUI::new);
+        InitScreens.<MEStorageMenu, MEStorageScreen<MEStorageMenu>>register(event,
+                PORTABLE_AIR_CELL_TYPE,
+                MEStorageScreen::new,
+                "/screens/terminals/portable_air_cell.json"
+                );
     }
 }

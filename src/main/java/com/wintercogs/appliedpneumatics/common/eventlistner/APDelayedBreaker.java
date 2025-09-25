@@ -3,7 +3,7 @@ package com.wintercogs.appliedpneumatics.common.eventlistner;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.init.APDataComponents;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
-import com.wintercogs.appliedpneumatics.common.items.AirStorageCell;
+import com.wintercogs.appliedpneumatics.common.items.IAirStorageCell;
 import me.desht.pneumaticcraft.common.particle.AirParticleData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
@@ -77,10 +77,10 @@ public class APDelayedBreaker
             {
                 ItemStack stack = itemHandler.getStackInSlot(i);
                 if(stack.isEmpty()) continue;
-                if(stack.getItem() instanceof AirStorageCell cell)
+                if(stack.getItem() instanceof IAirStorageCell cell)
                 {
                     // 剩余容量小于等于0，且没有安装安全卡或者真空卡
-                    if(AirStorageCell.remainingAmount(cell.getTotalBytes(), stack.getOrDefault(APDataComponents.AIR_STORED, 0L)) <= 0
+                    if(IAirStorageCell.remainingAmount(cell.getTotalBytes(), stack.getOrDefault(APDataComponents.AIR_STORED, 0L)) <= 0
                     && !cell.getUpgrades(stack).isInstalled(APItems.SECURITY_CARD) && !cell.getUpgrades(stack).isInstalled(APItems.VACUUM_CARD))
                     {
                         ItemStack extracted = itemHandler.extractItem(i, 1, false);

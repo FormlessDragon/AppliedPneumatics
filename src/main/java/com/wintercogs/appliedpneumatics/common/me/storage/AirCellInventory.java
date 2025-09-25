@@ -15,7 +15,7 @@ import appeng.util.Platform;
 import com.wintercogs.appliedpneumatics.common.eventlistner.APDelayedBreaker;
 import com.wintercogs.appliedpneumatics.common.init.APDataComponents;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
-import com.wintercogs.appliedpneumatics.common.items.AirStorageCell;
+import com.wintercogs.appliedpneumatics.common.items.IAirStorageCell;
 import com.wintercogs.appliedpneumatics.common.me.keys.AirKey;
 import com.wintercogs.appliedpneumatics.common.me.keys.types.AirKeyType;
 import net.minecraft.network.chat.Component;
@@ -31,7 +31,7 @@ public class AirCellInventory implements StorageCell
     private long storedAir; // 内部缓存，操作时立即写回到 itemStack，persist 基本是空操作
 
     private final ItemStack itemStack;      // 实际存储载体
-    private final AirStorageCell cellType;  // 提供 idleDrain / totalBytes / upgrades
+    private final IAirStorageCell cellType;  // 提供 idleDrain / totalBytes / upgrades
     @Nullable
     private final ISaveProvider host; // 新增
     @Nullable
@@ -42,7 +42,7 @@ public class AirCellInventory implements StorageCell
 
     private boolean isPersisted = true;
 
-    public AirCellInventory(ItemStack stack, AirStorageCell cell, @Nullable ISaveProvider host)
+    public AirCellInventory(ItemStack stack, IAirStorageCell cell, @Nullable ISaveProvider host)
     {
         this.itemStack = stack;
         this.cellType = cell;

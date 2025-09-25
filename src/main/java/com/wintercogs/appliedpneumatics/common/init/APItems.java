@@ -9,6 +9,7 @@ import appeng.items.parts.PartModelsHelper;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.items.AirStorageCell;
 import com.wintercogs.appliedpneumatics.common.items.AmadronWirelessTerminalItem;
+import com.wintercogs.appliedpneumatics.common.items.PortableAirStorageCell;
 import com.wintercogs.appliedpneumatics.common.me.crafting.AmadronPatternDetails;
 import com.wintercogs.appliedpneumatics.common.me.p2p.AirP2PTunnelPart;
 import com.wintercogs.appliedpneumatics.common.me.p2p.HeatP2PTunnelPart;
@@ -79,6 +80,77 @@ public class APItems
 
     public static final DeferredItem<AirStorageCell> AIR_CELL_256M = ITEMS.register("air_cell_256m",
             () -> new AirStorageCell(new Item.Properties().stacksTo(1),
+                    5.0f,
+                    262144));
+
+    // 便携元件
+    public static final DeferredItem<PortableAirStorageCell> PORTABLE_AIR_CELL_1K = ITEMS.register("portable_air_cell_1k",
+            () -> new PortableAirStorageCell(APMenus.PORTABLE_AIR_CELL_TYPE,
+                    new Item.Properties().stacksTo(1),
+                    0x80caff, // 默认颜色
+                    0.5f,     // 待机能耗
+                    1));      // 千字节容量
+
+    public static final DeferredItem<PortableAirStorageCell> PORTABLE_AIR_CELL_4K = ITEMS.register("portable_air_cell_4k",
+            () -> new PortableAirStorageCell(APMenus.PORTABLE_AIR_CELL_TYPE,
+                    new Item.Properties().stacksTo(1),
+                    0x80caff,
+                    1.0f,
+                    4));
+
+    public static final DeferredItem<PortableAirStorageCell> PORTABLE_AIR_CELL_16K = ITEMS.register("portable_air_cell_16k",
+            () -> new PortableAirStorageCell(APMenus.PORTABLE_AIR_CELL_TYPE,
+                    new Item.Properties().stacksTo(1),
+                    0x80caff,
+                    1.5f,
+                    16));
+
+    public static final DeferredItem<PortableAirStorageCell> PORTABLE_AIR_CELL_64K = ITEMS.register("portable_air_cell_64k",
+            () -> new PortableAirStorageCell(APMenus.PORTABLE_AIR_CELL_TYPE,
+                    new Item.Properties().stacksTo(1),
+                    0x80caff,
+                    2.0f,
+                    64));
+
+    public static final DeferredItem<PortableAirStorageCell> PORTABLE_AIR_CELL_256K = ITEMS.register("portable_air_cell_256k",
+            () -> new PortableAirStorageCell(APMenus.PORTABLE_AIR_CELL_TYPE,
+                    new Item.Properties().stacksTo(1),
+                    0x80caff,
+                    2.5f,
+                    256));
+
+    public static final DeferredItem<PortableAirStorageCell> PORTABLE_AIR_CELL_1M = ITEMS.register("portable_air_cell_1m",
+            () -> new PortableAirStorageCell(APMenus.PORTABLE_AIR_CELL_TYPE,
+                    new Item.Properties().stacksTo(1),
+                    0x80caff,
+                    3.0f,
+                    1024));
+
+    public static final DeferredItem<PortableAirStorageCell> PORTABLE_AIR_CELL_4M = ITEMS.register("portable_air_cell_4m",
+            () -> new PortableAirStorageCell(APMenus.PORTABLE_AIR_CELL_TYPE,
+                    new Item.Properties().stacksTo(1),
+                    0x80caff,
+                    3.5f,
+                    4096));
+
+    public static final DeferredItem<PortableAirStorageCell> PORTABLE_AIR_CELL_16M = ITEMS.register("portable_air_cell_16m",
+            () -> new PortableAirStorageCell(APMenus.PORTABLE_AIR_CELL_TYPE,
+                    new Item.Properties().stacksTo(1),
+                    0x80caff,
+                    4.0f,
+                    16384));
+
+    public static final DeferredItem<PortableAirStorageCell> PORTABLE_AIR_CELL_64M = ITEMS.register("portable_air_cell_64m",
+            () -> new PortableAirStorageCell(APMenus.PORTABLE_AIR_CELL_TYPE,
+                    new Item.Properties().stacksTo(1),
+                    0x80caff,
+                    4.5f,
+                    65536));
+
+    public static final DeferredItem<PortableAirStorageCell> PORTABLE_AIR_CELL_256M = ITEMS.register("portable_air_cell_256m",
+            () -> new PortableAirStorageCell(APMenus.PORTABLE_AIR_CELL_TYPE,
+                    new Item.Properties().stacksTo(1),
+                    0x80caff,
                     5.0f,
                     262144));
 

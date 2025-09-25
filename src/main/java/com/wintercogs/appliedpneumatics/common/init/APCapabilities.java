@@ -6,6 +6,7 @@ import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEAmadronProcessSt
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.METemperatureInterfaceBlockEntity;
 import com.wintercogs.appliedpneumatics.common.items.AmadronWirelessTerminalItem;
+import com.wintercogs.appliedpneumatics.common.items.PortableAirStorageCell;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -20,5 +21,6 @@ public class APCapabilities
         AmadronWirelessTerminalItem.onRegisterCaps(event);
         MEAmadronProcessStationBlockEntity.onRegisterCaps(event);
         METemperatureInterfaceBlockEntity.onRegisterCaps(event);
+        PortableAirStorageCell.onRegisterCaps(event);
     }
 }

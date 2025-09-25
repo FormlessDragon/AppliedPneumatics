@@ -77,7 +77,14 @@ public class APCreativeModeTabs
                                 poweredContainerItem.injectAEPower(copy, Double.MAX_VALUE, Actionable.MODULATE);
                                 if(copy.getItem() instanceof IUpgradeableItem upgradeableItem)
                                     upgradeableItem.getUpgrades(copy).addItems(APItems.SECURITY_CARD.toStack());
-                                output.accept(copy);
+
+                                if(copy.getItem() instanceof IAirStorageCell cell)
+                                {
+                                    if(cell.getTotalBytes() <= 270000)
+                                        output.accept(copy);
+                                    else if(AppliedPneumatics.MEGA_CELL_LOADED) // 超过256k需要安装mega元件，这里给一些冗余
+                                        output.accept(copy);
+                                }
                             }
 
                             // 满电满空气状态
@@ -91,9 +98,7 @@ public class APCreativeModeTabs
                                     upgradeableItem.getUpgrades(copy).addItems(APItems.SECURITY_CARD.toStack());
 
                                 if(cell.getTotalBytes() <= 270000)
-                                {
                                     output.accept(copy);
-                                }
                                 else if(AppliedPneumatics.MEGA_CELL_LOADED) // 超过256k需要安装mega元件，这里给一些冗余
                                     output.accept(copy);
                             }

@@ -44,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.List;
 
+/** 注意，这里所有的温度单位都是开尔文，而不是摄氏度 */
 public class METemperatureInterfaceBlockEntity extends AENetworkedBlockEntity implements IUpgradeableObject,
         ServerTickingBlockEntity, MenuProvider
 {
@@ -99,7 +100,7 @@ public class METemperatureInterfaceBlockEntity extends AENetworkedBlockEntity im
 
     public void setExpectedTemperature(double expectedTemperature)
     {
-        this.expectedTemperature = Math.min(2000, Math.max(-273, expectedTemperature));
+        this.expectedTemperature = Math.min(2273, Math.max(0, expectedTemperature));
     }
 
     /**
@@ -136,9 +137,9 @@ public class METemperatureInterfaceBlockEntity extends AENetworkedBlockEntity im
 
             // 顺便更新状态
             BlockState state = getBlockState();
-            if(lastTemperature > 200)
+            if(lastTemperature > 200 + 273)
                 level.setBlock(worldPosition, state.setValue(APBlockStates.TEMP_STATE, APBlockStates.TemperatureState.HIGH_TEMPERATURE), SOFT_FLAGS);
-            else if(lastTemperature < -100)
+            else if(lastTemperature < -100 + 273)
                 level.setBlock(worldPosition, state.setValue(APBlockStates.TEMP_STATE, APBlockStates.TemperatureState.LOW_TEMPERATURE), SOFT_FLAGS);
             else
                 level.setBlock(worldPosition, state.setValue(APBlockStates.TEMP_STATE, APBlockStates.TemperatureState.ROOM_TEMPERATURE), SOFT_FLAGS);

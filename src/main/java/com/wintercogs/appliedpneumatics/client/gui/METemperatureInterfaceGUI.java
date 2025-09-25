@@ -37,14 +37,15 @@ public class METemperatureInterfaceGUI extends UpgradeableScreen<METemperatureIn
     @Override
     public void drawFG(GuiGraphics guiGraphics, int offsetX, int offsetY, int mouseX, int mouseY)
     {
+        /** 有关温度的部分，减去273，转为摄氏度 */
         super.drawFG(guiGraphics, offsetX, offsetY, mouseX, mouseY);
-        String temperatureStr = String.format(Locale.ROOT, "%.1f", menu.latestTemperature);
+        String temperatureStr = String.format(Locale.ROOT, "%.1f", menu.latestTemperature - 273) + "℃";
         String heatCapStr = String.format(Locale.ROOT, "%.0f", menu.latestHeatCap);
-        String expectedTemperatureStr = String.format(Locale.ROOT, "%.1f", menu.latestExpectedTemperature);
+        String expectedTemperatureStr = String.format(Locale.ROOT, "%.1f", menu.latestExpectedTemperature - 273);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_temperature_interface.temperature",temperatureStr), 13, 168, 22, 4210752, false);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_temperature_interface.heat_cap", heatCapStr), 13, 168, 38, 4210752, false);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.literal(expectedTemperatureStr), 13, 168, 82, 4210752, false);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_temperature_interface.expected_temperature_text"), 13, 168, 60, 4210752, false);
-        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_temperature_interface.expected_temperature_change_mult_text"), 13, 168, 98, 4210752, false);
+        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_temperature_interface.expected_temperature_change_mult_text"), 13, 168, 100, 4210752, false);
     }
 }

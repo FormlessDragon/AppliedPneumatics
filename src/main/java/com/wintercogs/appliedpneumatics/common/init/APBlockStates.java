@@ -32,5 +32,25 @@ public class APBlockStates
             return name;
         }
     }
+
+    public enum TemperatureState implements StringRepresentable
+    {
+        HIGH_TEMPERATURE("high_temperature"),
+        LOW_TEMPERATURE("low_temperature"),
+        ROOM_TEMPERATURE("room_temperature");
+
+        private final String name;
+        TemperatureState(String name)
+        {
+            this.name = name;
+        }
+
+        @Override
+        public @NotNull String getSerializedName()
+        {
+            return name;
+        }
+    }
     public static final EnumProperty<WallState> WALL_STATE = EnumProperty.create("wall_state", WallState.class);
+    public static final EnumProperty<TemperatureState> TEMP_STATE = EnumProperty.create("temperature_state", TemperatureState.class);
 }

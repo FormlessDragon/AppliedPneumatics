@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEAmadronProcessStationBlockEntity;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
+import com.wintercogs.appliedpneumatics.common.blocks.entitis.METemperatureInterfaceBlockEntity;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberGlassBlockEntity;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberValveBlockEntity;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberVibrantGlassBlockEntity;
@@ -90,6 +91,14 @@ public class APBlockEntities
             MEAmadronProcessStationBlockEntity.class,
             MEAmadronProcessStationBlockEntity::new,
             APBlocks.ME_AMADRON_PROCESS_STATION
+    );
+
+    // ME温控接口
+    public static final DeferredBlockEntityType<METemperatureInterfaceBlockEntity> ME_TEMPERATURE_INTERFACE_BLOCK_ENTITY = create(
+            "me_temperature_interface_block_entity",
+            METemperatureInterfaceBlockEntity.class,
+            METemperatureInterfaceBlockEntity::new,
+            APBlocks.ME_TEMPERATURE_INTERFACE
     );
 
     public static void register(IEventBus eventBus)

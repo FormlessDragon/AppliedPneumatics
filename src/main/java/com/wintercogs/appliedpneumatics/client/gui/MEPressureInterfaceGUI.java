@@ -18,10 +18,22 @@ public class MEPressureInterfaceGUI extends UpgradeableScreen<MEPressureInterfac
     {
         super(menu, inv, title, StyleManager.loadStyleDoc("/screens/me_pressure_interface.json"));
 
-        widgets.addButton("add_button_1", Component.literal("+1"), () -> menu.sendExpectedPressureActionToServer(1.0f));
-        widgets.addButton("add_button_01", Component.literal("+0.1"), () -> menu.sendExpectedPressureActionToServer(0.1f));
-        widgets.addButton("reduce_button_01", Component.literal("-0.1"), () -> menu.sendExpectedPressureActionToServer(-0.1f));
-        widgets.addButton("reduce_button_1", Component.literal("-1"), () -> menu.sendExpectedPressureActionToServer(-1.0f));
+        widgets.addButton("add_button_1", Component.literal("+1"), () -> {
+            float mult = hasShiftDown() ? 5 : 1;
+            menu.sendExpectedPressureActionToServer(1 * mult);
+        });
+        widgets.addButton("add_button_01", Component.literal("+0.1"), () -> {
+            float mult = hasShiftDown() ? 5 : 1;
+            menu.sendExpectedPressureActionToServer(0.1f * mult);
+        });
+        widgets.addButton("reduce_button_01", Component.literal("-0.1"), () -> {
+            float mult = hasShiftDown() ? 5 : 1;
+            menu.sendExpectedPressureActionToServer(-0.1f * mult);
+        });
+        widgets.addButton("reduce_button_1", Component.literal("-1"), () -> {
+            float mult = hasShiftDown() ? 5 : 1;
+            menu.sendExpectedPressureActionToServer(-1 * mult);
+        });
     }
 
     // 代码中写一些文本绘制
@@ -38,12 +50,6 @@ public class MEPressureInterfaceGUI extends UpgradeableScreen<MEPressureInterfac
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.max_pressure", menu.latestDangerPressure), 13, 148, 38, 4210752, false);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.literal(pressureStr), 13, 168, 82, 4210752, false);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text"), 13, 168, 60, 4210752, false);
-    }
-
-    // 按钮：用 sendClientAction 走 AE 菜单动作通道
-    @Override
-    protected void init()
-    {
-        super.init();
+        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_change_mult_text"), 13, 168, 98, 4210752, false);
     }
 }

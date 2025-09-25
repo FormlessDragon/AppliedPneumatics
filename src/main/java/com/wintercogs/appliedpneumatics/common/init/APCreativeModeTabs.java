@@ -38,6 +38,7 @@ public class APCreativeModeTabs
                             output.accept(APItems.AIR_CELL_256M.get());
                         }
                         output.accept(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get());
+                        output.accept(APBlocks.ME_TEMPERATURE_INTERFACE.get());
                         output.accept(APBlocks.ME_PRESSURE_CHAMBER_VALVE.get());
                         output.accept(APBlocks.ME_PRESSURE_CHAMBER_WALL.get());
                         output.accept(APBlocks.ME_PRESSURE_CHAMBER_GLASS.get());

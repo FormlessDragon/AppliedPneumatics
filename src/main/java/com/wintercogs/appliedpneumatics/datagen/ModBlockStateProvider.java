@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -36,6 +37,7 @@ public class ModBlockStateProvider extends BlockStateProvider
     protected void registerStatesAndModels()
     {
         blockWithItem(APBlocks.ME_PRESSURE_INTERFACE_BLOCK);
+        cubeAllPerState(APBlocks.ME_TEMPERATURE_INTERFACE, APBlockStates.TEMP_STATE);
         blockWithItem(APBlocks.ME_AMADRON_PROCESS_STATION);
         genCubeAllWithFormedToggle(APBlocks.ME_PRESSURE_CHAMBER_VALVE);
         genWallLike13States(APBlocks.ME_PRESSURE_CHAMBER_WALL);
@@ -47,6 +49,45 @@ public class ModBlockStateProvider extends BlockStateProvider
     {
         simpleBlockWithItem(deferredBlock.get(), cubeAll(deferredBlock.get()));
     }
+
+    /**
+     * 为某个方块的枚举属性生成：
+     * - blockstates/<id>.json（每个取值一个 variant）
+     * - models/block/<id>/<state>.json（cube_all）
+     * - models/item/<id>.json（指向默认状态对应的 block 模型）
+     *
+     * 贴图路径：textures/block/<id>/<state>.png
+     */
+    public <E extends Enum<E> & StringRepresentable>
+    void cubeAllPerState(DeferredBlock<? extends Block> defBlock, EnumProperty<E> prop) {
+        Block block = defBlock.get();
+
+        var def = block.getStateDefinition();
+        if (!def.getProperties().contains(prop)) {
+            throw new IllegalArgumentException("Block " + block + " does not contain property " + prop.getName());
+        }
+
+        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
+        VariantBlockStateBuilder builder = getVariantBuilder(block);
+
+        E defaultVal = block.defaultBlockState().getValue(prop);
+        ModelFile defaultModel = null;
+
+        for (E value : prop.getPossibleValues()) {
+            String state = value.getSerializedName();
+            String name  = id.getPath() + "/" + state; // 模型 ID（注意：不带 "block/" 前缀）
+            // 方块模型：models/block/<name>.json，纹理：textures/block/<name>.png
+            ModelFile model = models().cubeAll(name, modLoc("block/" + name));
+
+            builder.partialState().with(prop, value).addModels(new ConfiguredModel(model));
+
+            if (value == defaultVal) defaultModel = model;         // 记住默认状态的模型
+        }
+
+        // 物品模型指向默认方块模型
+        simpleBlockItem(block, defaultModel);
+    }
+
 
     /**
      * 为具有 13 种 wall-like 状态（common/center/xedge/yedge/zedge/8 corners）的方块生成：

@@ -32,7 +32,8 @@ public class ModBlockTagProvider extends BlockTagsProvider
                 .add(APBlocks.ME_PRESSURE_CHAMBER_WALL.get())
                 .add(APBlocks.ME_PRESSURE_CHAMBER_GLASS.get())
                 .add(APBlocks.ME_PRESSURE_CHAMBER_VIBRANT_GLASS.get())
-                .add(APBlocks.ME_AMADRON_PROCESS_STATION.get());
+                .add(APBlocks.ME_AMADRON_PROCESS_STATION.get())
+                .add(APBlocks.ME_TEMPERATURE_INTERFACE.get());
 
         // 这些方块可以作为气压室的外壳
         tag(APBlockTags.CHAMBER_FRAME_TAG)

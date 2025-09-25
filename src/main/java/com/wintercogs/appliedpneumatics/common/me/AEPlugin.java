@@ -66,6 +66,10 @@ public class AEPlugin
         Upgrades.add(APItems.VACUUM_CARD, APBlocks.ME_PRESSURE_INTERFACE_BLOCK, 1);
         Upgrades.add(APItems.SECURITY_CARD, APBlocks.ME_PRESSURE_INTERFACE_BLOCK, 1);
 
+        // ME温控接口
+        Upgrades.add(APItems.VOLUME_CARD, APBlocks.ME_TEMPERATURE_INTERFACE, 4);
+        Upgrades.add(AEItems.SPEED_CARD, APBlocks.ME_TEMPERATURE_INTERFACE, 4);
+
         // 存储元件支持的升级卡（安全卡、真空卡） 其中真空卡为气体版溢出销毁卡
         // 1k ~ 256M
         Upgrades.add(APItems.SECURITY_CARD, APItems.AIR_CELL_1K, 1 ,CELL_UPGRADE_GROUP);

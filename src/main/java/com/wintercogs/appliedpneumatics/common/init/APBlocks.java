@@ -4,6 +4,7 @@ import appeng.block.AEBaseBlock;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.blocks.MEAmadronProcessStation;
 import com.wintercogs.appliedpneumatics.common.blocks.MEPressureInterfaceBlock;
+import com.wintercogs.appliedpneumatics.common.blocks.METemperatureInterface;
 import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberGlass;
 import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberValve;
 import com.wintercogs.appliedpneumatics.common.blocks.me_pressure_chamber.MEPressureChamberVibrantGlass;
@@ -44,6 +45,10 @@ public class APBlocks
     // ME亚马龙处理站
     public static final DeferredBlock<MEAmadronProcessStation> ME_AMADRON_PROCESS_STATION = registerBlock("me_amadron_process_station",
             () -> new MEAmadronProcessStation(BlockBehaviour.Properties.of().strength(2f)));
+
+    // ME温控接口
+    public static final DeferredBlock<METemperatureInterface> ME_TEMPERATURE_INTERFACE = registerBlock("me_temperature_interface",
+            () -> new METemperatureInterface(BlockBehaviour.Properties.of().strength(2f)));
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block)
     {

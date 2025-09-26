@@ -28,7 +28,7 @@
   },
   "text": {
     "title": {
-      "text": { "translate": "menu.title.appliedpneumatics.amadron_wireless_terminal" },
+      "text": { "translate": "item.appliedpneumatics.amadron_wireless_terminal" },
       "position": { "left": 8, "top": 6 }
     }
   },

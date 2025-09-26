@@ -20,7 +20,7 @@
   },
   "text": {
     "title": {
-      "text": { "translate": "menu.title.appliedpneumatics.me_temperature_interface_menu" },
+      "text": { "translate": "block.appliedpneumatics.me_temperature_interface" },
       "position": { "left": 8, "top": 6 }
     }
   },

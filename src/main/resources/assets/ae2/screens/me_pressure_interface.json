@@ -21,7 +21,7 @@
   },
   "text": {
     "title": {
-      "text": { "translate": "menu.title.appliedpneumatics.me_pressure_interface_menu" },
+      "text": { "translate": "block.appliedpneumatics.me_pressure_interface_block" },
       "position": { "left": 8, "top": 6 }
     }
   },

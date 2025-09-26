@@ -38,11 +38,11 @@ public class ModItemModelProvider extends ItemModelProvider
         portableAirCell(APItems.PORTABLE_AIR_CELL_16K, "appliedpneumatics:item/portable_cell_air_housing", "ae2:item/portable_cell_side_16k");
         portableAirCell(APItems.PORTABLE_AIR_CELL_64K, "appliedpneumatics:item/portable_cell_air_housing", "ae2:item/portable_cell_side_64k");
         portableAirCell(APItems.PORTABLE_AIR_CELL_256K, "appliedpneumatics:item/portable_cell_air_housing", "ae2:item/portable_cell_side_256k");
-        portableAirCell(APItems.PORTABLE_AIR_CELL_1M, "appliedpneumatics:item/portable_mega_cell_air_housing", "megacells:item/portable_cell_side_1m");
-        portableAirCell(APItems.PORTABLE_AIR_CELL_4M, "appliedpneumatics:item/portable_mega_cell_air_housing", "megacells:item/portable_cell_side_4m");
-        portableAirCell(APItems.PORTABLE_AIR_CELL_16M, "appliedpneumatics:item/portable_mega_cell_air_housing", "megacells:item/portable_cell_side_16m");
-        portableAirCell(APItems.PORTABLE_AIR_CELL_64M, "appliedpneumatics:item/portable_mega_cell_air_housing", "megacells:item/portable_cell_side_64m");
-        portableAirCell(APItems.PORTABLE_AIR_CELL_256M, "appliedpneumatics:item/portable_mega_cell_air_housing", "megacells:item/portable_cell_side_256m");
+        portableAirCell(APItems.PORTABLE_AIR_CELL_1M, "appliedpneumatics:item/portable_mega_cell_air_housing", "appliedpneumatics:item/portable_cell_side_1m");
+        portableAirCell(APItems.PORTABLE_AIR_CELL_4M, "appliedpneumatics:item/portable_mega_cell_air_housing", "appliedpneumatics:item/portable_cell_side_4m");
+        portableAirCell(APItems.PORTABLE_AIR_CELL_16M, "appliedpneumatics:item/portable_mega_cell_air_housing", "appliedpneumatics:item/portable_cell_side_16m");
+        portableAirCell(APItems.PORTABLE_AIR_CELL_64M, "appliedpneumatics:item/portable_mega_cell_air_housing", "appliedpneumatics:item/portable_cell_side_64m");
+        portableAirCell(APItems.PORTABLE_AIR_CELL_256M, "appliedpneumatics:item/portable_mega_cell_air_housing", "appliedpneumatics:item/portable_cell_side_256m");
         basicItem(APItems.VOLUME_CARD.get());
         basicItem(APItems.SECURITY_CARD.get());
         basicItem(APItems.VACUUM_CARD.get());

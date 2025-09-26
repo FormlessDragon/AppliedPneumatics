@@ -23,7 +23,7 @@
   },
   "text": {
     "title": {
-      "text": { "translate": "menu.title.appliedpneumatics.me_amadron_extended_process_station_menu" },
+      "text": { "translate": "block.appliedpneumatics.me_amadron_extended_process_station" },
       "position": { "left": 8, "top": 6 }
     }
   },

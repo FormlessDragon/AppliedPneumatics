@@ -2,6 +2,7 @@ package com.wintercogs.appliedpneumatics.common.blocks.entitis;
 
 import appeng.api.AECapabilities;
 import appeng.api.config.Actionable;
+import appeng.api.config.PowerMultiplier;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.IGrid;
@@ -45,6 +46,10 @@ import java.util.List;
 public class MEPressureInterfaceBlockEntity extends AENetworkedBlockEntity implements IAirListener,
         IUpgradeableObject, ServerTickingBlockEntity
 {
+
+    /** 与ME系统每交互1ml空气消耗1.25AE能量，期望气压非负时，此消耗为十分之一。
+     * 这是为了保证使用其产生压缩气体时，能耗为满配通量压缩机的一半左右 */
+    private static final double AE_ENERGY_COST_PER_ML = 1.25;
 
     // 升级卡仓 5卡槽 包含四个容量卡和一个真空卡
     private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(APBlocks.ME_PRESSURE_INTERFACE_BLOCK, 5, this::onUpgradesChanged);
@@ -281,30 +286,62 @@ public class MEPressureInterfaceBlockEntity extends AENetworkedBlockEntity imple
 
     private static void interactWithMESystem(Level level, BlockPos pos, BlockState state, MEPressureInterfaceBlockEntity be)
     {
-        // ME交互
-        MEStorage storage = be.getNetworkInventory();
-        if (storage != null && be.expectedPressure != be.airHandler.getPressure())
-        {
-            // 用double尽可能确保精度
-            double difference = be.expectedPressure - be.airHandler.getPressure();
-            int wantedAir = (int) (difference * be.getVolume());
-            if (wantedAir > 0)
-            {
-                int extracted = (int) storage.extract(AirKey.INSTANCE, wantedAir, Actionable.MODULATE, IActionSource.ofMachine(be));
-                if(extracted > 0)
-                {
-                    be.airHandler.addAir(extracted);
-                }
-            }
-            else if(wantedAir < 0)
-            {
-                wantedAir = -wantedAir; // 反转数值
-                int inserted = (int) storage.insert(AirKey.INSTANCE, wantedAir, Actionable.MODULATE, IActionSource.ofMachine(be));
-                if(inserted > 0)
-                {
-                    be.airHandler.addAir(-inserted);
-                }
-            }
+        // 取 ME 存储 电力服务
+        final MEStorage storage = be.getNetworkInventory();
+        final var grid = be.getMainNode().getGrid();
+        if (storage == null || grid == null) return;
+        final var energy = grid.getEnergyService();
+        if (energy == null) return;
+
+        // 压差
+        final float currentPressure = be.airHandler.getPressure();
+        final float targetPressure = be.expectedPressure;
+        final float diffP = targetPressure - currentPressure;
+        if (Math.abs(diffP) < 0.005f) return;
+
+        // 需要的空气量（以 air 单位计，1 bar ~= volume air）
+        final int wantedAir = (int) (diffP * be.getVolume());
+        final int demand = Math.abs(wantedAir);
+        if (demand <= 0) return;
+
+        // 成本：期望气压 >= 0 时成本降为十分之一
+        final double costPerAir = AE_ENERGY_COST_PER_ML * (wantedAir >= 0f ? 0.1d : 1.0d);
+
+        // 预估存储侧的可行量
+        final IActionSource src = IActionSource.ofMachine(be);
+        final int byStorage;
+        if (wantedAir > 0) {
+            // ME -> 接口
+            byStorage = (int) storage.extract(AirKey.INSTANCE, demand, Actionable.SIMULATE, src);
+        } else {
+            // 接口 -> ME
+            byStorage = (int) storage.insert(AirKey.INSTANCE, demand, Actionable.SIMULATE, src);
+        }
+        if (byStorage <= 0) return;
+
+        // 预估能量侧的可行量
+        final double aeAvail = energy.getStoredPower();
+        final int byEnergy = (int) Math.floor(aeAvail / costPerAir);
+        if (byEnergy <= 0) return;
+
+        // 最终计划量
+        int movePlan = Math.min(demand, Math.min(byStorage, byEnergy));
+
+        // 先实际扣电，再按能量折算最终可移动量
+        final double aeNeed = movePlan * costPerAir;
+        final double aeSpent = energy.extractAEPower(aeNeed, Actionable.MODULATE, PowerMultiplier.CONFIG);
+        final int moveByEnergy = (int) Math.floor(aeSpent / costPerAir);
+        if (moveByEnergy <= 0) return;
+
+        // 最终执行
+        if (wantedAir > 0) {
+            // ME -> 接口
+            final int extracted = (int) storage.extract(AirKey.INSTANCE, moveByEnergy, Actionable.MODULATE, src);
+            if (extracted > 0) be.airHandler.addAir(extracted);
+        } else {
+            // 接口 -> ME
+            final int inserted = (int) storage.insert(AirKey.INSTANCE, moveByEnergy, Actionable.MODULATE, src);
+            if (inserted > 0) be.airHandler.addAir(-inserted);
         }
     }
 

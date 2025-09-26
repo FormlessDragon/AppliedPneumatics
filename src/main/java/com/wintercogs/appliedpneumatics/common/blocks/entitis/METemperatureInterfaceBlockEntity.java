@@ -47,8 +47,9 @@ public class METemperatureInterfaceBlockEntity extends AENetworkedBlockEntity im
 
     // 温度接口----------------------------------------------------------------------------------
     private static final int BASE_HEAT_CAP = 1000; // 无任何升级下的基础热容
-    private static final int AIR_COST_PER_1000J = 1000; // 每改变1000J热量所需要的空气量
-    private static final int AE_ENERGY_COST_PER_1000J = 1000; // 每改变1000J热量所需要的AE能量
+    // 以下两数值为使温控接口维持极端温度时消耗0.25L/t空气以及0.65KFE/t的数值
+    private static final int AIR_COST_PER_1000J = 19145; // 每改变1000J热量所需要的空气量
+    private static final int AE_ENERGY_COST_PER_1000J = 24889; // 每改变1000J热量所需要的AE能量
 
     private double expectedTemperature = 27f + 273;
     private final IHeatExchangerLogic heatHandler = HeatExchangerManager.getInstance().makeHeatExchangerLogic();

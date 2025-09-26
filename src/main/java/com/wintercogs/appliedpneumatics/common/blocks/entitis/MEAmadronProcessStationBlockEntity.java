@@ -61,6 +61,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -75,23 +76,7 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
 {
 
     // 样板槽 - 只允许UI存取
-    private final AppEngInternalInventory patternInventory = new AppEngInternalInventory(9)
-    {
-        @Override
-        public boolean isItemValid(int slot, ItemStack stack)
-        {
-            return super.isItemValid(slot, stack) && stack.getItem() == APItems.AMADRON_PATTERN.get();
-        }
-
-        @Override
-        protected void onContentsChanged(int slot)
-        {
-            super.onContentsChanged(slot);
-            ICraftingProvider.requestUpdate(getMainNode());
-            setChanged();
-        }
-    };
-
+    private final AppEngInternalInventory patternInventory;
     /** 升级卡仓，最多四个加速卡 */
     private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(APBlocks.ME_AMADRON_PROCESS_STATION, 4, () -> {});
 
@@ -105,9 +90,26 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
 
     private final List<Job> jobs = new ArrayList<>();
 
-    public MEAmadronProcessStationBlockEntity(BlockPos pos, BlockState blockState)
+    public MEAmadronProcessStationBlockEntity(BlockEntityType<? extends MEAmadronProcessStationBlockEntity> blockEntityType , BlockPos pos, BlockState blockState, int patternSize)
     {
-        super(APBlockEntities.ME_AMADRON_PROCESS_STATION_BLOCK_ENTITY.get(), pos, blockState);
+        super(blockEntityType, pos, blockState);
+
+        this.patternInventory = new AppEngInternalInventory(patternSize)
+        {
+            @Override
+            public boolean isItemValid(int slot, ItemStack stack)
+            {
+                return super.isItemValid(slot, stack) && stack.getItem() == APItems.AMADRON_PATTERN.get();
+            }
+
+            @Override
+            protected void onContentsChanged(int slot)
+            {
+                super.onContentsChanged(slot);
+                ICraftingProvider.requestUpdate(getMainNode());
+                setChanged();
+            }
+        };
 
         getMainNode().setIdlePowerUsage(8.0) // 待机消耗
                 .setFlags(GridFlags.REQUIRE_CHANNEL) // 需要频道
@@ -123,11 +125,60 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
                 APBlockEntities.ME_AMADRON_PROCESS_STATION_BLOCK_ENTITY.get(),
                 (be, unused) -> be
         );
+        event.registerBlockEntity(
+                AECapabilities.IN_WORLD_GRID_NODE_HOST,
+                APBlockEntities.ME_AMADRON_EXTENDED_PROCESS_STATION_BLOCK_ENTITY.get(),
+                (be, unused) -> be
+        );
 
         // 对外暴露GENERIC_INTERNAL_INV即可，AE会自动再注册物品、流体的适配器
         event.registerBlockEntity(
                 AECapabilities.GENERIC_INTERNAL_INV,
                 APBlockEntities.ME_AMADRON_PROCESS_STATION_BLOCK_ENTITY.get(),
+                (be, direction) -> {
+                    GenericStackInvWrapper inputWrapper = new GenericStackInvWrapper(be.inputInv)
+                    {
+                        // 防止无人机从外部塞入交易结果
+                        @Override
+                        public long insert(int slot, AEKey what, long amount, Actionable mode)
+                        {
+                            return 0;
+                        }
+                    };
+                    GenericStackInvWrapper outputWrapper = new GenericStackInvWrapper(be.outputInv)
+                    {
+                        @Override
+                        public long insert(int slot, AEKey what, long amount, Actionable mode)
+                        {
+                            // 任何意图塞入的物品，首先会尝试直接塞入ae内，剩余物塞入outputWrapper
+                            MEStorage storage = be.getNetworkInventory();
+                            long remaining = amount;
+                            long firstInsert = 0;
+                            if(storage != null)
+                            {
+                                firstInsert = storage.insert(what, amount, mode, IActionSource.ofMachine(be));
+                                remaining = amount - firstInsert;
+                                if(remaining <= 0)
+                                    return amount;
+                            }
+
+                            return firstInsert + super.insert(slot, what, remaining, mode);
+                        }
+
+                        // 防止被无人机从中取出内容物
+                        @Override
+                        public long extract(int slot, AEKey what, long amount, Actionable mode)
+                        {
+                            return 0;
+                        }
+                    };
+
+                    return new CombinedGenericInternalInventory(inputWrapper, outputWrapper);
+                }
+        );
+        event.registerBlockEntity(
+                AECapabilities.GENERIC_INTERNAL_INV,
+                APBlockEntities.ME_AMADRON_EXTENDED_PROCESS_STATION_BLOCK_ENTITY.get(),
                 (be, direction) -> {
                     GenericStackInvWrapper inputWrapper = new GenericStackInvWrapper(be.inputInv)
                     {
@@ -534,7 +585,7 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     @Override
     public @NotNull Component getDisplayName()
     {
-        return Component.translatable("menu.title.appliedpneumatics.me_amadron_process_station");
+        return getBlockState().getBlock().getName();
     }
 
     @Override

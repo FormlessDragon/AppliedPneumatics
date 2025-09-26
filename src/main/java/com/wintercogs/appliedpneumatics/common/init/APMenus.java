@@ -62,7 +62,7 @@ public class APMenus
     public static void registerScreens(RegisterMenuScreensEvent event)
     {
         event.register(ME_PRESSURE_INTERFACE_MENU.get(), MEPressureInterfaceGUI::new);
-        event.register(ME_AMADRON_PROCESS_STATION_MENU.get(), MEAmadronProcessStationGUI::new);
+        event.<MEAmadronProcessStationMenu, MEAmadronProcessStationGUI>register(ME_AMADRON_PROCESS_STATION_MENU.get(), (menu, inv, title) -> new MEAmadronProcessStationGUI(menu, inv, title, menu.getScreenStyle()));
         event.register(AMADRON_WIRELESS_TERMINAL_MENU.get(), AmadronWirelessTerminalGUI::new);
         event.register(ME_TEMPERATURE_INTERFACE_MENU.get(), METemperatureInterfaceGUI::new);
         InitScreens.<MEStorageMenu, MEStorageScreen<MEStorageMenu>>register(event,

@@ -46,6 +46,10 @@ public class APBlocks
     public static final DeferredBlock<MEAmadronProcessStation> ME_AMADRON_PROCESS_STATION = registerBlock("me_amadron_process_station",
             () -> new MEAmadronProcessStation(BlockBehaviour.Properties.of().strength(2f)));
 
+    // 扩展亚马龙处理站
+    public static final DeferredBlock<MEAmadronProcessStation> ME_AMADRON_EXTENDED_PROCESS_STATION = registerBlock("me_amadron_extended_process_station",
+            () -> new MEAmadronProcessStation(BlockBehaviour.Properties.of().strength(2f)));
+
     // ME温控接口
     public static final DeferredBlock<METemperatureInterface> ME_TEMPERATURE_INTERFACE = registerBlock("me_temperature_interface",
             () -> new METemperatureInterface(BlockBehaviour.Properties.of().strength(2f)));

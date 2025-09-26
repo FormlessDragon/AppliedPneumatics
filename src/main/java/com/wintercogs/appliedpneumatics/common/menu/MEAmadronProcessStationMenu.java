@@ -5,6 +5,7 @@ import appeng.menu.guisync.GuiSync;
 import appeng.menu.implementations.UpgradeableMenu;
 import appeng.menu.slot.AppEngSlot;
 import appeng.util.ConfigMenuInventory;
+import com.wintercogs.appliedpneumatics.client.gui.MEAmadronProcessStationGUI;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEAmadronProcessStationBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APMenus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -47,11 +48,25 @@ public class MEAmadronProcessStationMenu extends UpgradeableMenu<MEAmadronProces
         sendClientAction(cancelAllJobsAction);
     }
 
+    public String getScreenStyle()
+    {
+        if(getBlockEntity() != null)
+        {
+            if(getBlockEntity().getPatternInventory().size() > 9)
+                return MEAmadronProcessStationGUI.EXTENDED;
+            else
+                return MEAmadronProcessStationGUI.COMMON;
+        }
+        return MEAmadronProcessStationGUI.COMMON;
+    }
+
     // 放除了升级槽之外的其他真实库存
     // 注：玩家槽位已经由UpgradeableMenu处理，不必再写
     @Override
     protected void setupInventorySlots()
     {
+        if(getBlockEntity() == null) return;
+
         for(int i = 0; i<getBlockEntity().getPatternInventory().size(); i++)
         {
             AppEngSlot slot = new AppEngSlot(getHost().getPatternInventory(), i);

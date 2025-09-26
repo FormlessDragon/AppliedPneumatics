@@ -139,6 +139,9 @@ dependencies {
     // Mage存储元件
     compileOnly "maven.modrinth:mega:4.10.1"
     runtimeOnly "maven.modrinth:mega:4.10.1"
+    // EAE联动
+    compileOnly "maven.modrinth:extended-ae:1.21-2.2.12-neoforge"
+    runtimeOnly "maven.modrinth:extended-ae:1.21-2.2.12-neoforge"
 
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

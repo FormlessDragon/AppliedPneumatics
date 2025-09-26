@@ -28,6 +28,9 @@ public class AppliedPneumatics
     public static final String MEGA_CELL_MODID = "megacells";
     public static boolean MEGA_CELL_LOADED = false;
 
+    public static final String EAE_MODID = "extendedae";
+    public static boolean EAE_LOADED = false;
+
 
     public AppliedPneumatics(IEventBus modEventBus, ModContainer modContainer)
     {
@@ -54,6 +57,10 @@ public class AppliedPneumatics
         if(ModList.get().isLoaded(MEGA_CELL_MODID))
         {
             MEGA_CELL_LOADED = true;
+        }
+        if(ModList.get().isLoaded(EAE_MODID))
+        {
+            EAE_LOADED = true;
         }
     }
 

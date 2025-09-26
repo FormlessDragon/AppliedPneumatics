@@ -122,6 +122,10 @@ public class APCreativeModeTabs
                         output.accept(amadronWirelessTerminalFull);
 
                         output.accept(APBlocks.ME_AMADRON_PROCESS_STATION.get());
+                        if(AppliedPneumatics.EAE_LOADED)
+                        {
+                            output.accept(APBlocks.ME_AMADRON_EXTENDED_PROCESS_STATION.get());
+                        }
                         output.accept(APItems.AMADRON_PATTERN.get());
                     })
                     .build());

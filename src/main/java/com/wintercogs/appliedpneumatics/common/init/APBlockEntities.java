@@ -89,8 +89,16 @@ public class APBlockEntities
     public static final DeferredBlockEntityType<MEAmadronProcessStationBlockEntity> ME_AMADRON_PROCESS_STATION_BLOCK_ENTITY = create(
             "me_amadron_process_station_block_entity",
             MEAmadronProcessStationBlockEntity.class,
-            MEAmadronProcessStationBlockEntity::new,
+            (blockEntityType, blockPos, blockState) -> new MEAmadronProcessStationBlockEntity(blockEntityType, blockPos, blockState, 9),
             APBlocks.ME_AMADRON_PROCESS_STATION
+    );
+
+    // ME扩展亚马龙处理站
+    public static final DeferredBlockEntityType<MEAmadronProcessStationBlockEntity> ME_AMADRON_EXTENDED_PROCESS_STATION_BLOCK_ENTITY = create(
+            "me_amadron_extended_process_station_block_entity",
+            MEAmadronProcessStationBlockEntity.class,
+            (blockEntityType, blockPos, blockState) -> new MEAmadronProcessStationBlockEntity(blockEntityType, blockPos, blockState, 27),
+            APBlocks.ME_AMADRON_EXTENDED_PROCESS_STATION
     );
 
     // ME温控接口

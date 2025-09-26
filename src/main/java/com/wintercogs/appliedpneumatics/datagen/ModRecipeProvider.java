@@ -7,13 +7,17 @@ import com.wintercogs.appliedpneumatics.common.init.APBlocks;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
 import com.wintercogs.appliedpneumatics.datagen.builder.CellDisassemblyRecipeBuilder;
 import gripe._90.megacells.definition.MEGAItems;
+import me.desht.pneumaticcraft.api.crafting.AmadronTradeResource;
 import me.desht.pneumaticcraft.common.registry.ModBlocks;
 import me.desht.pneumaticcraft.common.registry.ModItems;
 import me.desht.pneumaticcraft.common.upgrades.ModUpgrades;
+import me.desht.pneumaticcraft.datagen.recipe.AmadronRecipeBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
@@ -516,5 +520,56 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('C', AEItems.ADVANCED_CARD)
                 .unlockedBy("unlock_vacuum_card", has(AEItems.ADVANCED_CARD))
                 .save(recipeOutput);
+
+        // 绿宝石到物品
+        amadronStatic(AmadronTradeResource.of(new ItemStack(Items.EMERALD)),
+                AmadronTradeResource.of(new ItemStack(AEItems.CERTUS_QUARTZ_CRYSTAL, 8)))
+                .save(recipeOutput, AppliedPneumatics.makeId("amadron/emerald_to_certus_quartz_crystal"));
+
+        amadronStatic(AmadronTradeResource.of(new ItemStack(Items.EMERALD)),
+                AmadronTradeResource.of(new ItemStack(AEItems.FLUIX_CRYSTAL, 2)))
+                .save(recipeOutput, AppliedPneumatics.makeId("amadron/emerald_to_fluix_crystal"));
+
+        amadronStatic(AmadronTradeResource.of(new ItemStack(Items.EMERALD)),
+                AmadronTradeResource.of(new ItemStack(AEItems.CERTUS_QUARTZ_CRYSTAL_CHARGED, 2)))
+                .save(recipeOutput, AppliedPneumatics.makeId("amadron/emerald_to_certus_quartz_crystal_charged"));
+
+        amadronStatic(AmadronTradeResource.of(new ItemStack(Items.EMERALD)),
+                AmadronTradeResource.of(new ItemStack(AEBlocks.SKY_STONE_BLOCK, 16)))
+                .save(recipeOutput, AppliedPneumatics.makeId("amadron/emerald_to_sky_stone_block"));
+
+        amadronStatic(AmadronTradeResource.of(new ItemStack(Items.EMERALD, 14)),
+                AmadronTradeResource.of(new ItemStack(AEItems.ITEM_CELL_HOUSING)))
+                .save(recipeOutput, AppliedPneumatics.makeId("amadron/emerald_to_item_cell_housing"));
+
+        amadronStatic(AmadronTradeResource.of(new ItemStack(Items.EMERALD, 10)),
+                AmadronTradeResource.of(new ItemStack(AEItems.FLUID_CELL_HOUSING)))
+                .save(recipeOutput, AppliedPneumatics.makeId("amadron/emerald_to_fluid_cell_housing"));
+
+        amadronStatic(AmadronTradeResource.of(new ItemStack(Items.EMERALD, 20)),
+                AmadronTradeResource.of(new ItemStack(APItems.AIR_CELL_SHELL.get())))
+                .save(recipeOutput, AppliedPneumatics.makeId("amadron/emerald_to_air_cell_shell"));
+
+        // 物品到绿宝石
+        amadronStatic(AmadronTradeResource.of(new ItemStack(AEItems.CERTUS_QUARTZ_CRYSTAL, 16)),
+                AmadronTradeResource.of(new ItemStack(Items.EMERALD)))
+                .save(recipeOutput, AppliedPneumatics.makeId("amadron/certus_quartz_crystal_to_emerald"));
+
+        amadronStatic(AmadronTradeResource.of(new ItemStack(AEItems.FLUIX_CRYSTAL, 4)),
+                AmadronTradeResource.of(new ItemStack(Items.EMERALD)))
+                .save(recipeOutput, AppliedPneumatics.makeId("amadron/fluix_crystal_to_emerald"));
+
+        amadronStatic(AmadronTradeResource.of(new ItemStack(AEItems.CERTUS_QUARTZ_CRYSTAL_CHARGED, 4)),
+                AmadronTradeResource.of(new ItemStack(Items.EMERALD)))
+                .save(recipeOutput, AppliedPneumatics.makeId("amadron/certus_quartz_crystal_charged_to_emerald"));
+
+        amadronStatic(AmadronTradeResource.of(new ItemStack(AEBlocks.SKY_STONE_BLOCK, 32)),
+                AmadronTradeResource.of(new ItemStack(Items.EMERALD)))
+                .save(recipeOutput, AppliedPneumatics.makeId("amadron/sky_stone_block_to_emerald"));
+    }
+
+    // 用于快速添加亚马龙交易
+    private RecipeBuilder amadronStatic(AmadronTradeResource in, AmadronTradeResource out) {
+        return (new AmadronRecipeBuilder(in, out, true, 0)).unlockedBy(getHasName((ItemLike)ModItems.AMADRON_TABLET.get()), has((ItemLike)ModItems.AMADRON_TABLET.get()));
     }
 }

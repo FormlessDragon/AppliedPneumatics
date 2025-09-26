@@ -7,7 +7,9 @@ import com.wintercogs.appliedpneumatics.common.init.APBlocks;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
 import com.wintercogs.appliedpneumatics.datagen.builder.CellDisassemblyRecipeBuilder;
 import gripe._90.megacells.definition.MEGAItems;
+import me.desht.pneumaticcraft.common.registry.ModBlocks;
 import me.desht.pneumaticcraft.common.registry.ModItems;
+import me.desht.pneumaticcraft.common.upgrades.ModUpgrades;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
@@ -154,9 +156,10 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.MEGA_AIR_CELL_SHELL.get())
                     .pattern("ABA")
                     .pattern("B B")
-                    .pattern("DDD")
+                    .pattern("DCD")
                     .define('A', AEItems.SKY_DUST)
                     .define('B', AEBlocks.QUARTZ_VIBRANT_GLASS)
+                    .define('C', ModItems.PRINTED_CIRCUIT_BOARD)
                     .define('D', ModItems.COMPRESSED_IRON_INGOT)
                     .unlockedBy("unlock_mega_air_cell_shell", has(AEItems.SKY_DUST))
                     .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
@@ -164,11 +167,12 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_1M.get())
                     .pattern("ABA")
                     .pattern("BCB")
-                    .pattern("DDD")
+                    .pattern("DED")
                     .define('A', AEItems.SKY_DUST)
                     .define('B', AEBlocks.QUARTZ_VIBRANT_GLASS)
                     .define('C', MEGAItems.CELL_COMPONENT_1M)
                     .define('D', ModItems.COMPRESSED_IRON_INGOT)
+                    .define('E', ModItems.PRINTED_CIRCUIT_BOARD)
                     .unlockedBy("unlock_air_cell_1m", has(MEGAItems.CELL_COMPONENT_1M))
                     .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_1M.get())
@@ -186,11 +190,12 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_4M.get())
                     .pattern("ABA")
                     .pattern("BCB")
-                    .pattern("DDD")
+                    .pattern("DED")
                     .define('A', AEItems.SKY_DUST)
                     .define('B', AEBlocks.QUARTZ_VIBRANT_GLASS)
                     .define('C', MEGAItems.CELL_COMPONENT_4M)
                     .define('D', ModItems.COMPRESSED_IRON_INGOT)
+                    .define('E', ModItems.PRINTED_CIRCUIT_BOARD)
                     .unlockedBy("unlock_air_cell_4m", has(MEGAItems.CELL_COMPONENT_4M))
                     .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_4M.get())
@@ -208,11 +213,12 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_16M.get())
                     .pattern("ABA")
                     .pattern("BCB")
-                    .pattern("DDD")
+                    .pattern("DED")
                     .define('A', AEItems.SKY_DUST)
                     .define('B', AEBlocks.QUARTZ_VIBRANT_GLASS)
                     .define('C', MEGAItems.CELL_COMPONENT_16M)
                     .define('D', ModItems.COMPRESSED_IRON_INGOT)
+                    .define('E', ModItems.PRINTED_CIRCUIT_BOARD)
                     .unlockedBy("unlock_air_cell_16m", has(MEGAItems.CELL_COMPONENT_16M))
                     .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_16M.get())
@@ -230,11 +236,12 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_64M.get())
                     .pattern("ABA")
                     .pattern("BCB")
-                    .pattern("DDD")
+                    .pattern("DED")
                     .define('A', AEItems.SKY_DUST)
                     .define('B', AEBlocks.QUARTZ_VIBRANT_GLASS)
                     .define('C', MEGAItems.CELL_COMPONENT_64M)
                     .define('D', ModItems.COMPRESSED_IRON_INGOT)
+                    .define('E', ModItems.PRINTED_CIRCUIT_BOARD)
                     .unlockedBy("unlock_air_cell_64m", has(MEGAItems.CELL_COMPONENT_64M))
                     .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_64M.get())
@@ -252,11 +259,12 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_256M.get())
                     .pattern("ABA")
                     .pattern("BCB")
-                    .pattern("DDD")
+                    .pattern("DED")
                     .define('A', AEItems.SKY_DUST)
                     .define('B', AEBlocks.QUARTZ_VIBRANT_GLASS)
                     .define('C', MEGAItems.CELL_COMPONENT_256M)
                     .define('D', ModItems.COMPRESSED_IRON_INGOT)
+                    .define('E', ModItems.PRINTED_CIRCUIT_BOARD)
                     .unlockedBy("unlock_air_cell_256m", has(MEGAItems.CELL_COMPONENT_256M))
                     .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_256M.get())
@@ -424,13 +432,89 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         // ME气压接口
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APBlocks.ME_PRESSURE_INTERFACE_BLOCK)
                 .pattern("ABA")
-                .pattern("C D")
+                .pattern("CED")
                 .pattern("ABA")
                 .define('A', ModItems.COMPRESSED_IRON_INGOT)
                 .define('B', Tags.Items.GLASS_BLOCKS)
                 .define('C', AEItems.ANNIHILATION_CORE)
                 .define('D', AEItems.FORMATION_CORE)
+                .define('E', ModBlocks.AIR_COMPRESSOR)
                 .unlockedBy("unlock_me_pressure_interface_block", has(AEItems.CELL_COMPONENT_256K))
+                .save(recipeOutput);
+
+        // ME温控接口
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APBlocks.ME_TEMPERATURE_INTERFACE)
+                .pattern("ABA")
+                .pattern("DCE")
+                .pattern("ABA")
+                .define('A', ModBlocks.COMPRESSED_IRON_BLOCK)
+                .define('B', ModBlocks.VORTEX_TUBE)
+                .define('C', ModBlocks.ADVANCED_AIR_COMPRESSOR)
+                .define('D', AEItems.ANNIHILATION_CORE)
+                .define('E', AEItems.FORMATION_CORE)
+                .unlockedBy("unlock_me_temperature_interface_block", has(ModBlocks.ADVANCED_AIR_COMPRESSOR))
+                .save(recipeOutput);
+
+        // 亚马龙无线终端
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AMADRON_WIRELESS_TERMINAL)
+                .pattern(" A ")
+                .pattern(" B ")
+                .pattern(" C ")
+                .define('A', AEItems.WIRELESS_RECEIVER)
+                .define('B', ModItems.AMADRON_TABLET)
+                .define('C', AEBlocks.DENSE_ENERGY_CELL)
+                .unlockedBy("unlock_amadron_wireless_terminal", has(ModItems.AMADRON_TABLET))
+                .save(recipeOutput);
+
+        // 亚马龙处理站
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APBlocks.ME_AMADRON_PROCESS_STATION)
+                .pattern("EAE")
+                .pattern("CBC")
+                .pattern("EDE")
+                .define('A', ModBlocks.CHARGING_STATION)
+                .define('B', AEBlocks.PATTERN_PROVIDER)
+                .define('C', AEBlocks.INTERFACE)
+                .define('D', ModItems.PRINTED_CIRCUIT_BOARD)
+                .define('E', Tags.Items.GLASS_BLOCKS)
+                .unlockedBy("unlock_me_amadron_process_station", has(APItems.AMADRON_WIRELESS_TERMINAL))
+                .save(recipeOutput);
+
+        // 扩展亚马龙处理站
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APBlocks.ME_AMADRON_EXTENDED_PROCESS_STATION)
+                .requires(APBlocks.ME_AMADRON_PROCESS_STATION, 4)
+                .unlockedBy("unlock_me_amadron_extended_process_station", has(APBlocks.ME_AMADRON_PROCESS_STATION))
+                .save(recipeOutput.withConditions(modLoaded(AppliedPneumatics.EAE_MODID)));
+
+        // 安全卡
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.SECURITY_CARD)
+                .requires(AEItems.ADVANCED_CARD)
+                .requires(ModUpgrades.SECURITY.get().getItem())
+                .unlockedBy("unlock_security_card", has(AEItems.ADVANCED_CARD))
+                .save(recipeOutput);
+
+        // 容积卡
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.VOLUME_CARD)
+                .requires(AEItems.ADVANCED_CARD)
+                .requires(ModUpgrades.VOLUME.get().getItem())
+                .unlockedBy("unlock_volume_card", has(AEItems.ADVANCED_CARD))
+                .save(recipeOutput);
+
+        // 充气卡
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.CHARGING_CARD)
+                .requires(AEItems.ADVANCED_CARD)
+                .requires(ModUpgrades.CHARGING.get().getItem())
+                .unlockedBy("unlock_charge_card", has(AEItems.ADVANCED_CARD))
+                .save(recipeOutput);
+
+        // 真空卡
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.VACUUM_CARD)
+                .pattern("ABA")
+                .pattern("BCB")
+                .pattern("ABA")
+                .define('A', ModItems.PRINTED_CIRCUIT_BOARD)
+                .define('B', ModBlocks.VACUUM_PUMP)
+                .define('C', AEItems.ADVANCED_CARD)
+                .unlockedBy("unlock_vacuum_card", has(AEItems.ADVANCED_CARD))
                 .save(recipeOutput);
     }
 }

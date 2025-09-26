@@ -4,6 +4,7 @@ import appeng.api.config.Actionable;
 import appeng.api.upgrades.IUpgradeableItem;
 import appeng.items.tools.powered.PoweredContainerItem;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
+import com.wintercogs.appliedpneumatics.Config;
 import com.wintercogs.appliedpneumatics.common.items.IAirStorageCell;
 import com.wintercogs.appliedpneumatics.common.me.keys.types.AirKeyType;
 import net.minecraft.core.registries.Registries;
@@ -29,7 +30,7 @@ public class APCreativeModeTabs
                     .displayItems((itemDisplayParameters, output) -> {
                         // 存储元件
                         output.accept(APItems.AIR_CELL_SHELL.get());
-                        if(AppliedPneumatics.MEGA_CELL_LOADED)
+                        if(AppliedPneumatics.MEGA_CELL_LOADED || Config.alwaysShowExtendedContent)
                         {
                             output.accept(APItems.MEGA_AIR_CELL_SHELL.get());
                         }
@@ -63,7 +64,7 @@ public class APCreativeModeTabs
                                 {
                                     output.accept(cellStack.copy());
                                 }
-                                else if(AppliedPneumatics.MEGA_CELL_LOADED) // 超过256k需要安装mega元件，这里给一些冗余
+                                else if(AppliedPneumatics.MEGA_CELL_LOADED || Config.alwaysShowExtendedContent) // 超过256k需要安装mega元件，这里给一些冗余
                                     output.accept(cellStack.copy());
                             }
                             // 满电的
@@ -78,7 +79,7 @@ public class APCreativeModeTabs
                                 {
                                     if(cell.getTotalBytes() <= 270000)
                                         output.accept(copy);
-                                    else if(AppliedPneumatics.MEGA_CELL_LOADED) // 超过256k需要安装mega元件，这里给一些冗余
+                                    else if(AppliedPneumatics.MEGA_CELL_LOADED || Config.alwaysShowExtendedContent) // 超过256k需要安装mega元件，这里给一些冗余
                                         output.accept(copy);
                                 }
                             }
@@ -94,7 +95,7 @@ public class APCreativeModeTabs
 
                                 if(cell.getTotalBytes() <= 270000)
                                     output.accept(copy);
-                                else if(AppliedPneumatics.MEGA_CELL_LOADED) // 超过256k需要安装mega元件，这里给一些冗余
+                                else if(AppliedPneumatics.MEGA_CELL_LOADED || Config.alwaysShowExtendedContent) // 超过256k需要安装mega元件，这里给一些冗余
                                     output.accept(copy);
                             }
                         }
@@ -114,7 +115,7 @@ public class APCreativeModeTabs
                         output.accept(amadronWirelessTerminalFull);
 
                         output.accept(APBlocks.ME_AMADRON_PROCESS_STATION.get());
-                        if(AppliedPneumatics.EAE_LOADED)
+                        if(AppliedPneumatics.EAE_LOADED || Config.alwaysShowExtendedContent)
                         {
                             output.accept(APBlocks.ME_AMADRON_EXTENDED_PROCESS_STATION.get());
                         }

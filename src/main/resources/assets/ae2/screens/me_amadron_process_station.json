@@ -28,6 +28,12 @@
     }
   },
   "widgets": {
+    "openPriority": {
+      "left": 152,
+      "top": -5,
+      "width": 20,
+      "height": 20
+    },
     "cancel_jobs_button": {
       "right": 55,
       "top": 37,

@@ -1,5 +1,6 @@
 package com.wintercogs.appliedpneumatics.client.gui;
 
+import appeng.client.gui.WidgetContainer;
 import appeng.client.gui.implementations.UpgradeableScreen;
 import appeng.client.gui.style.StyleManager;
 import com.wintercogs.appliedpneumatics.client.gui.widgets.AE2TinyButton;
@@ -23,6 +24,7 @@ public class MEAmadronProcessStationGUI extends UpgradeableScreen<MEAmadronProce
         cancelButton = new AE2TinyButton(Component.translatable("menu.appliedpneumatics.button.cancel_jobs"), button -> menu.senCancelJobAction());
         cancelButton.setTooltip(Tooltip.create(Component.translatable("menu.appliedpneumatics.button.cancel_jobs.tooltip")));
         widgets.add("cancel_jobs_button", this.cancelButton);
+        widgets.addOpenPriorityButton();
         usingStyle = stylePath;
     }
 

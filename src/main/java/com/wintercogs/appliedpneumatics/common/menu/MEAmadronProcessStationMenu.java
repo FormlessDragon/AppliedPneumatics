@@ -3,6 +3,8 @@ package com.wintercogs.appliedpneumatics.common.menu;
 import appeng.menu.SlotSemantics;
 import appeng.menu.guisync.GuiSync;
 import appeng.menu.implementations.UpgradeableMenu;
+import appeng.menu.locator.MenuHostLocator;
+import appeng.menu.locator.MenuLocators;
 import appeng.menu.slot.AppEngSlot;
 import appeng.util.ConfigMenuInventory;
 import com.wintercogs.appliedpneumatics.client.gui.MEAmadronProcessStationGUI;
@@ -32,7 +34,7 @@ public class MEAmadronProcessStationMenu extends UpgradeableMenu<MEAmadronProces
     public MEAmadronProcessStationMenu(int id, Inventory playerInv, @NotNull MEAmadronProcessStationBlockEntity host)
     {
         super(APMenus.ME_AMADRON_PROCESS_STATION_MENU.get(), id, playerInv, host);
-
+        setLocator(MenuLocators.forBlockEntity(host));
         registerClientAction(cancelAllJobsAction, this::onJobCancel);
     }
 

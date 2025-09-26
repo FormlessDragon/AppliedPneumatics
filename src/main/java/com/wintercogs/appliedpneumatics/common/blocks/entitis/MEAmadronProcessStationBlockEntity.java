@@ -22,8 +22,10 @@ import appeng.api.upgrades.UpgradeInventories;
 import appeng.blockentity.ServerTickingBlockEntity;
 import appeng.blockentity.grid.AENetworkedBlockEntity;
 import appeng.core.definitions.AEItems;
+import appeng.helpers.IPriorityHost;
 import appeng.helpers.externalstorage.GenericStackInv;
 import appeng.helpers.patternprovider.PatternContainer;
+import appeng.menu.ISubMenu;
 import appeng.util.inv.AppEngInternalInventory;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.api.GenericInv.CombinedGenericInternalInventory;
@@ -72,7 +74,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity implements MenuProvider,
-        IUpgradeableObject, ICraftingProvider, PatternContainer, ServerTickingBlockEntity
+        IUpgradeableObject, ICraftingProvider, PatternContainer, ServerTickingBlockEntity, IPriorityHost
 {
 
     // 样板槽 - 只允许UI存取
@@ -84,6 +86,7 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     private final GenericStackInv inputInv = new GenericStackInv(this::setChanged, 9);
     // 输出槽 - 缓存，一旦收到物品，直接送回AE，允许能力系统输入，不允许能力系统输出
     private final GenericStackInv outputInv = new GenericStackInv(this::setChanged, 9);
+    private int priority = 0;
 
     // 用来判断亚马龙样版是否准备就绪
     private boolean needAmadronRefresh = true;
@@ -246,6 +249,7 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
         inputInv.readFromChildTag(tag,"input_inv", registries);
         outputInv.readFromChildTag(tag,"output_inv", registries);
         upgrades.readFromNBT(tag,"upgrade_inv", registries);
+        this.priority = tag.getInt("priority");
 
         this.jobs.clear();
         if (tag.contains("Jobs", Tag.TAG_LIST)) {
@@ -265,6 +269,7 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
         inputInv.writeToChildTag(tag,"input_inv", registries);
         outputInv.writeToChildTag(tag,"output_inv", registries);
         upgrades.writeToNBT(tag,"upgrade_inv", registries);
+        tag.putInt("priority", priority);
 
         ListTag jobList = new ListTag();
         for (Job j : this.jobs) {
@@ -660,6 +665,25 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
         return jobs.size() >= 512;
     }
 
+    @Override
+    public int getPatternPriority() {
+        return getPriority();
+    }
+
+    @Override
+    public int getPriority()
+    {
+        return priority;
+    }
+
+    @Override
+    public void setPriority(int priority)
+    {
+        this.priority = priority;
+        ICraftingProvider.requestUpdate(getMainNode());
+        setChanged();
+    }
+
     public void addJob(ResourceLocation offerId, @NotNull GenericStack selfResource)
     {
         this.jobs.add(new Job(offerId, selfResource, null));
@@ -748,6 +772,18 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     public int getJobAmount()
     {
         return jobs.size();
+    }
+
+    @Override
+    public void returnToMainMenu(Player player, ISubMenu subMenu)
+    {
+        player.openMenu(this, worldPosition);
+    }
+
+    @Override
+    public ItemStack getMainMenuIcon()
+    {
+        return new ItemStack(getBlockState().getBlock());
     }
 
     /** selfResource表示该Job自己携带了一部分资源，只有这部分资源被插入仓库才执行实际job */

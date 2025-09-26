@@ -54,9 +54,9 @@ public class APCreativeModeTabs
                         cells.add(new ItemStack(APItems.PORTABLE_AIR_CELL_16M.get()));
                         cells.add(new ItemStack(APItems.PORTABLE_AIR_CELL_64M.get()));
                         cells.add(new ItemStack(APItems.PORTABLE_AIR_CELL_256M.get()));
-                        // 空的存储元件
                         for(ItemStack cellStack : cells)
                         {
+                            // 空的
                             if(cellStack.getItem() instanceof IAirStorageCell cell)
                             {
                                 if(cell.getTotalBytes() <= 270000)
@@ -66,11 +66,7 @@ public class APCreativeModeTabs
                                 else if(AppliedPneumatics.MEGA_CELL_LOADED) // 超过256k需要安装mega元件，这里给一些冗余
                                     output.accept(cellStack.copy());
                             }
-                        }
-                        // 满的存储元件并加上安全卡升级
-                        for(ItemStack cellStack : cells)
-                        {
-                            // 仅满电状态
+                            // 满电的
                             if(cellStack.getItem() instanceof PoweredContainerItem poweredContainerItem)
                             {
                                 ItemStack copy = cellStack.copy();
@@ -86,7 +82,6 @@ public class APCreativeModeTabs
                                         output.accept(copy);
                                 }
                             }
-
                             // 满电满空气状态
                             if(cellStack.getItem() instanceof IAirStorageCell cell)
                             {

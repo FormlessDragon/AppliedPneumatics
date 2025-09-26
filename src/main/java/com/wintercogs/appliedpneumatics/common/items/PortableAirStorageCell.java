@@ -22,14 +22,18 @@ import me.desht.pneumaticcraft.api.tileentity.IAirHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -232,7 +236,7 @@ public class PortableAirStorageCell extends AbstractPortableCell implements IAir
     @Override
     public IUpgradeInventory getUpgrades(ItemStack is)
     {
-        return UpgradeInventories.forItem(is, 4, super::onUpgradesChanged);
+        return UpgradeInventories.forItem(is, 5, super::onUpgradesChanged);
     }
 
     @Override
@@ -243,4 +247,95 @@ public class PortableAirStorageCell extends AbstractPortableCell implements IAir
 
     @Override
     public void setFuzzyMode(ItemStack is, FuzzyMode fzMode) {}
+
+    @Override
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected)
+    {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+        // 仅服务端执行，且需要安装充气卡与自身还有电
+        if (level.isClientSide) return;
+        if (level.getGameTime() % 20 != 0) return;
+        if (!(entity instanceof Player player)) return;
+        if (!getUpgrades(stack).isInstalled(APItems.CHARGING_CARD)) return;
+        if (this.getAECurrentPower(stack) <= 0) return;
+
+        // 本便携空气单元的空气接口
+        final IAirHandler src = stack.getCapability(PNCCapabilities.AIR_HANDLER_ITEM);
+        if (src == null) return;
+
+        final float DEAD_BAND_BAR = 0.05f;     // 压差死区，防抖
+        final int   BASE_AIR_PER_TICK = 20000;  // 基础每 tick 最大传输空气量（单位：air）
+        final double AE_PER_AIR = 0.02d;       // 每 1 air 消耗的 AE 能量
+
+        // 逐个物品尝试充气：主物品栏 + 盔甲栏 + 副手
+        // 注意：不对其它便携空气存储单元充气（避免环路/套娃）
+        Iterable<ItemStack> loops = () -> new Iterator<>()
+        {
+            final List<ItemStack> all = new ArrayList<>();
+            {   // 主物品栏
+                all.addAll(player.getInventory().items);
+                // 盔甲栏
+                all.addAll(player.getInventory().armor);
+                // 副手
+                all.addAll(player.getInventory().offhand);
+            }
+            int idx = 0;
+            @Override public boolean hasNext() { return idx < all.size(); }
+            @Override public ItemStack next()  { return all.get(idx++); }
+        };
+
+        for (ItemStack other : loops)
+        {
+            if (other.isEmpty()) continue;
+            if (other == stack) continue; // 自身
+            if (other.getItem() instanceof IAirStorageCell) continue; // 不给其它空气“存储单元/元件”充气
+
+            IAirHandler dst = other.getCapability(PNCCapabilities.AIR_HANDLER_ITEM);
+            if (dst == null) continue;
+
+            // 单向：只有当本单元气压高于目标物品气压，且超出死区时，才推进空气
+            float pSrc = src.getPressure();
+            float pDst = dst.getPressure();
+            float diff = pSrc - pDst;
+            if (diff <= DEAD_BAND_BAR) continue;
+
+            // 目标可用空间 maxAir - currentAir
+            int dstMaxAir = (int) (dst.maxPressure() * dst.getVolume());
+            int dstAir = dst.getAir();
+            int dstFreeAir  = Math.max(0, dstMaxAir - dstAir);
+            if (dstFreeAir <= 0) continue;
+
+            // 源可用空气
+            int srcAir = src.getAir();
+            if (srcAir <= 0) break; // 源没气了，直接结束
+
+            // 速率限制 + 压差限流（半差 * 目标体积）
+            int byRate = BASE_AIR_PER_TICK;
+            int byDelta = (int) ((diff / 2.0f) * dst.getVolume());
+            if (byDelta <= 0) continue;
+
+            // 能量限制（先模拟可用 AE，再折算成能支持的 air）
+            double aeAvail = this.extractAEPower(stack, Double.MAX_VALUE, appeng.api.config.Actionable.SIMULATE);
+            int byEnergy = (int) Math.floor(aeAvail / AE_PER_AIR);
+            if (byEnergy <= 0) break; // 没电了
+
+            // 计算本次可移动的空气量
+            int moveWant = Math.min(Math.min(byRate, byDelta), Math.min(srcAir, dstFreeAir));
+            moveWant = Math.min(moveWant, byEnergy);
+
+            // 真正扣电：按 moveWant 对应的 AE
+            double aeNeed = moveWant * AE_PER_AIR;
+            double aeSpent = this.extractAEPower(stack, aeNeed, appeng.api.config.Actionable.MODULATE);
+            int move = (int) Math.floor(aeSpent / AE_PER_AIR);
+            if (move <= 0) continue;
+
+            // 执行充气
+            dst.addAir(move);
+            src.addAir(-move);
+
+            // 如果电或气已经基本用尽，就提前结束
+            if (this.getAECurrentPower(stack) <= 0) break;
+            if (src.getAir() <= 0) break;
+        }
+    }
 }

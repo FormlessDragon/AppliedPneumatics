@@ -105,6 +105,7 @@ public class APCreativeModeTabs
                         output.accept(APItems.VOLUME_CARD.get());
                         output.accept(APItems.SECURITY_CARD.get());
                         output.accept(APItems.VACUUM_CARD.get());
+                        output.accept(APItems.CHARGING_CARD.get());
 
                         // 亚马龙终端以及其满电状态
                         output.accept(APItems.AMADRON_WIRELESS_TERMINAL.get());

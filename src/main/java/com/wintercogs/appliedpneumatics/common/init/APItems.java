@@ -182,6 +182,10 @@ public class APItems
     public static final DeferredItem<Item> VACUUM_CARD = ITEMS.register("vacuum_card",
             () -> Upgrades.createUpgradeCardItem(new Item.Properties()));
 
+    // 充气卡
+    public static final DeferredItem<Item> CHARGING_CARD = ITEMS.register("charging_card",
+            () -> Upgrades.createUpgradeCardItem(new Item.Properties()));
+
     // 亚马龙无线终端
     public static final DeferredItem<AmadronWirelessTerminalItem> AMADRON_WIRELESS_TERMINAL = ITEMS.register("amadron_wireless_terminal",
             () -> new AmadronWirelessTerminalItem(AEConfig.instance().getWirelessTerminalBattery(),new Item.Properties().stacksTo(1)));

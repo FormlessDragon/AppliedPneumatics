@@ -30,7 +30,7 @@ public class PortableAirCellItemStackHandler implements IAirHandlerItem
     @Override
     public float getPressure()
     {
-        return (float) IAirStorageCell.getStoredAir(container) / getVolume();
+        return (float) IAirStorageCell.getStoredAir(container) / ((storageCell.getTotalBytes() * IAirStorageCell.amountPerByte()) / maxPressure());
     }
 
     @Override

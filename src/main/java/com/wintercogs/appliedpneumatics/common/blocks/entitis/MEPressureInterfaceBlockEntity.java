@@ -239,7 +239,7 @@ public class MEPressureInterfaceBlockEntity extends AENetworkedBlockEntity imple
                 else if (itemPressure > bePressure + 0.01F && itemPressure > 0F)
                 {
                     int move = Math.min(Math.min(airPerTick, airInItem),
-                            (int) (delta * this.getMaxVolume())); // 还要受接口自身体积*半差限制
+                            (int) (delta * this.getVolume())); // 还要受接口自身体积*半差限制
                     if (move > 0)
                     {
                         itemAirHandler.addAir(-move);

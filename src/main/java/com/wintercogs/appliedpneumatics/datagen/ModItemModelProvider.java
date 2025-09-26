@@ -46,6 +46,7 @@ public class ModItemModelProvider extends ItemModelProvider
         basicItem(APItems.VOLUME_CARD.get());
         basicItem(APItems.SECURITY_CARD.get());
         basicItem(APItems.VACUUM_CARD.get());
+        basicItem(APItems.CHARGING_CARD.get());
         basicItem(APItems.AMADRON_WIRELESS_TERMINAL.get());
         basicItem(APItems.AMADRON_PATTERN.get());
         basicItem(APItems.AIR_CELL_SHELL.get());

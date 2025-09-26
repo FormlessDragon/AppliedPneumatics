@@ -50,7 +50,7 @@ public class METemperatureInterfaceBlockEntity extends AENetworkedBlockEntity im
     private static final int AIR_COST_PER_1000J = 1000; // 每改变1000J热量所需要的空气量
     private static final int AE_ENERGY_COST_PER_1000J = 1000; // 每改变1000J热量所需要的AE能量
 
-    private double expectedTemperature = 38f;
+    private double expectedTemperature = 27f + 273;
     private final IHeatExchangerLogic heatHandler = HeatExchangerManager.getInstance().makeHeatExchangerLogic();
 
     private int maxTemperatureChangePerTick = 1; // 每tick与ME系统交互时，最大温度改变量

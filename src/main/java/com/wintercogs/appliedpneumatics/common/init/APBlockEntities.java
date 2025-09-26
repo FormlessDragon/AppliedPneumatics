@@ -9,10 +9,6 @@ import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEAmadronProcessStationBlockEntity;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.METemperatureInterfaceBlockEntity;
-import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberGlassBlockEntity;
-import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberValveBlockEntity;
-import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberVibrantGlassBlockEntity;
-import com.wintercogs.appliedpneumatics.common.blocks.entitis.me_pressure_chamber.MEPressureChamberWallBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
@@ -39,50 +35,12 @@ public class APBlockEntities
     // 维护一个列表，提供和 AE 一样的检索功能（按父类/接口查询）
     private static final List<DeferredBlockEntityType<?>> ALL = new ArrayList<>();
 
+    // ME气压接口
     public static final DeferredBlockEntityType<MEPressureInterfaceBlockEntity> ME_PRESSURE_INTERFACE_BLOCK_ENTITY = create(
             "me_pressure_interface_block_entity",
             MEPressureInterfaceBlockEntity.class,
             MEPressureInterfaceBlockEntity::new,
             APBlocks.ME_PRESSURE_INTERFACE_BLOCK
-    );
-
-    public static final Supplier<BlockEntityType<MEPressureChamberValveBlockEntity>> ME_PRESSURE_CHAMBER_VALVE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
-            "me_pressure_chamber_valve_block_entity",
-            () -> BlockEntityType.Builder.of(
-                            MEPressureChamberValveBlockEntity::new,
-                            APBlocks.ME_PRESSURE_CHAMBER_VALVE.get()
-                    )
-                    .build(null)
-    );
-
-    // 压力室墙壁
-    public static final Supplier<BlockEntityType<MEPressureChamberWallBlockEntity>> ME_PRESSURE_CHAMBER_WALL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
-            "me_pressure_chamber_wall_block_entity",
-            () -> BlockEntityType.Builder.of(
-                            MEPressureChamberWallBlockEntity::new,
-                            APBlocks.ME_PRESSURE_CHAMBER_WALL.get()
-                    )
-                    .build(null)
-    );
-
-    // 压力室玻璃
-    public static final Supplier<BlockEntityType<MEPressureChamberGlassBlockEntity>> ME_PRESSURE_CHAMBER_GLASS_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
-            "me_pressure_chamber_glass_block_entity",
-            () -> BlockEntityType.Builder.of(
-                            MEPressureChamberGlassBlockEntity::new,
-                            APBlocks.ME_PRESSURE_CHAMBER_GLASS.get()
-                    )
-                    .build(null)
-    );
-
-    // 压力室聚能玻璃
-    public static final Supplier<BlockEntityType<MEPressureChamberVibrantGlassBlockEntity>> ME_PRESSURE_CHAMBER_VIBRANT_GLASS_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
-            "me_pressure_chamber_vibrant_glass_block_entity",
-            () -> BlockEntityType.Builder.of(
-                            MEPressureChamberVibrantGlassBlockEntity::new,
-                            APBlocks.ME_PRESSURE_CHAMBER_VIBRANT_GLASS.get()
-                    )
-                    .build(null)
     );
 
     // ME亚马龙处理站

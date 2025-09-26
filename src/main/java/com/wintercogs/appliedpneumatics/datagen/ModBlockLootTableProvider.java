@@ -22,10 +22,6 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider
     protected void generate()
     {
         dropSelf(APBlocks.ME_PRESSURE_INTERFACE_BLOCK.get());
-        dropSelf(APBlocks.ME_PRESSURE_CHAMBER_VALVE.get());
-        dropSelf(APBlocks.ME_PRESSURE_CHAMBER_WALL.get());
-        dropSelf(APBlocks.ME_PRESSURE_CHAMBER_GLASS.get());
-        dropSelf(APBlocks.ME_PRESSURE_CHAMBER_VIBRANT_GLASS.get());
         dropSelf(APBlocks.ME_AMADRON_PROCESS_STATION.get());
         dropSelf(APBlocks.ME_TEMPERATURE_INTERFACE.get());
         dropSelf(APBlocks.ME_AMADRON_EXTENDED_PROCESS_STATION.get());

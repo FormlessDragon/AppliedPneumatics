@@ -6,7 +6,6 @@ import appeng.menu.implementations.UpgradeableMenu;
 import appeng.menu.slot.AppEngSlot;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APMenus;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
@@ -24,13 +23,6 @@ public class MEPressureInterfaceMenu extends UpgradeableMenu<MEPressureInterface
     @GuiSync(12) public double latestExpectedPressure = 0f;
     @GuiSync(13) public double latestDangerPressure = 0f;
 
-    // 构造：客户端
-    public MEPressureInterfaceMenu(int id, Inventory playerInv, RegistryFriendlyByteBuf buf) {
-        this(id, playerInv, (MEPressureInterfaceBlockEntity)
-                playerInv.player.level().getBlockEntity(buf.readBlockPos()));
-    }
-
-    // 构造：服务端
     public MEPressureInterfaceMenu(int id, Inventory playerInv, @NotNull MEPressureInterfaceBlockEntity host)
     {
         super(APMenus.ME_PRESSURE_INTERFACE_MENU.get(), id, playerInv, host);

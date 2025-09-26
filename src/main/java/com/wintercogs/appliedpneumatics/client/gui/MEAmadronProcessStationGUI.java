@@ -1,6 +1,5 @@
 package com.wintercogs.appliedpneumatics.client.gui;
 
-import appeng.client.gui.WidgetContainer;
 import appeng.client.gui.implementations.UpgradeableScreen;
 import appeng.client.gui.style.StyleManager;
 import com.wintercogs.appliedpneumatics.client.gui.widgets.AE2TinyButton;

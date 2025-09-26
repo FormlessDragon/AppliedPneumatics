@@ -1,8 +1,11 @@
 package com.wintercogs.appliedpneumatics.common.blocks;
 
 import appeng.block.AEBaseEntityBlock;
+import appeng.menu.MenuOpener;
+import appeng.menu.locator.MenuLocators;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.METemperatureInterfaceBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APBlockStates;
+import com.wintercogs.appliedpneumatics.common.init.APMenus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +38,8 @@ public class METemperatureInterface extends AEBaseEntityBlock<METemperatureInter
         super.useWithoutItem(state,level,pos,player,hitResult);
         if(!level.isClientSide()&&!player.isShiftKeyDown())
         {
-            player.openMenu((METemperatureInterfaceBlockEntity)level.getBlockEntity(pos),pos);
+            if(level.getBlockEntity(pos) instanceof METemperatureInterfaceBlockEntity be)
+                MenuOpener.open(APMenus.ME_TEMPERATURE_INTERFACE_MENU.get(), player, MenuLocators.forBlockEntity(be));
         }
         return InteractionResult.SUCCESS_NO_ITEM_USED;
     }

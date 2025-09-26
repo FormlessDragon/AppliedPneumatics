@@ -4,7 +4,6 @@ import appeng.menu.guisync.GuiSync;
 import appeng.menu.implementations.UpgradeableMenu;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.METemperatureInterfaceBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APMenus;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
@@ -21,14 +20,6 @@ public class METemperatureInterfaceMenu extends UpgradeableMenu<METemperatureInt
     @GuiSync(11) public double latestHeatCap = 0;
     @GuiSync(12) public double latestExpectedTemperature = 0f;
 
-
-    // 构造：客户端
-    public METemperatureInterfaceMenu(int id, Inventory playerInv, RegistryFriendlyByteBuf buf) {
-        this(id, playerInv, (METemperatureInterfaceBlockEntity)
-                playerInv.player.level().getBlockEntity(buf.readBlockPos()));
-    }
-
-    // 构造：服务端
     public METemperatureInterfaceMenu(int id, Inventory playerInv, @NotNull METemperatureInterfaceBlockEntity host)
     {
         super(APMenus.ME_TEMPERATURE_INTERFACE_MENU.get(), id, playerInv, host);

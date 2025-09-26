@@ -1,7 +1,10 @@
 package com.wintercogs.appliedpneumatics.common.blocks;
 
 import appeng.block.AEBaseEntityBlock;
+import appeng.menu.MenuOpener;
+import appeng.menu.locator.MenuLocators;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEPressureInterfaceBlockEntity;
+import com.wintercogs.appliedpneumatics.common.init.APMenus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +30,8 @@ public class MEPressureInterfaceBlock extends AEBaseEntityBlock<MEPressureInterf
         super.useWithoutItem(state,level,pos,player,hitResult);
         if(!level.isClientSide()&&!player.isShiftKeyDown())
         {
-            player.openMenu((MEPressureInterfaceBlockEntity)level.getBlockEntity(pos),pos);
+            if(level.getBlockEntity(pos) instanceof MEPressureInterfaceBlockEntity be)
+                MenuOpener.open(APMenus.ME_PRESSURE_INTERFACE_MENU.get(), player, MenuLocators.forBlockEntity(be));
         }
         return InteractionResult.SUCCESS_NO_ITEM_USED;
     }

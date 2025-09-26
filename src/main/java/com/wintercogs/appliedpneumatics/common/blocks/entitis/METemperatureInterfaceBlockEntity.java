@@ -20,7 +20,6 @@ import com.wintercogs.appliedpneumatics.common.init.APBlockStates;
 import com.wintercogs.appliedpneumatics.common.init.APBlocks;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
 import com.wintercogs.appliedpneumatics.common.me.keys.AirKey;
-import com.wintercogs.appliedpneumatics.common.menu.METemperatureInterfaceMenu;
 import me.desht.pneumaticcraft.api.PNCCapabilities;
 import me.desht.pneumaticcraft.api.heat.IHeatExchangerLogic;
 import me.desht.pneumaticcraft.common.heat.HeatExchangerManager;
@@ -28,17 +27,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -46,7 +39,7 @@ import java.util.List;
 
 /** 注意，这里所有的温度单位都是开尔文，而不是摄氏度 */
 public class METemperatureInterfaceBlockEntity extends AENetworkedBlockEntity implements IUpgradeableObject,
-        ServerTickingBlockEntity, MenuProvider
+        ServerTickingBlockEntity
 {
     private static final int SOFT_FLAGS = Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE;
 
@@ -252,17 +245,5 @@ public class METemperatureInterfaceBlockEntity extends AENetworkedBlockEntity im
             if(slotContent.isEmpty()) continue;
             drops.add(slotContent.copy());
         }
-    }
-
-    @Override
-    public @NotNull Component getDisplayName()
-    {
-        return Component.translatable("menu.title.appliedpneumatics.me_temperature_interface_menu");
-    }
-
-    @Override
-    public @Nullable AbstractContainerMenu createMenu(int id, Inventory inventory, Player player)
-    {
-        return new METemperatureInterfaceMenu(id, inventory, this);
     }
 }

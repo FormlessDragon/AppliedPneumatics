@@ -19,7 +19,6 @@ import com.wintercogs.appliedpneumatics.common.init.APBlockEntities;
 import com.wintercogs.appliedpneumatics.common.init.APBlocks;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
 import com.wintercogs.appliedpneumatics.common.me.keys.AirKey;
-import com.wintercogs.appliedpneumatics.common.menu.MEPressureInterfaceMenu;
 import me.desht.pneumaticcraft.api.PNCCapabilities;
 import me.desht.pneumaticcraft.api.tileentity.IAirHandler;
 import me.desht.pneumaticcraft.api.tileentity.IAirHandlerMachine;
@@ -30,17 +29,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -49,7 +42,7 @@ import java.util.List;
 /**
  * ME气压接口，作为ME网络与气动工艺的最佳通道使用
  */
-public class MEPressureInterfaceBlockEntity extends AENetworkedBlockEntity implements MenuProvider, IAirListener,
+public class MEPressureInterfaceBlockEntity extends AENetworkedBlockEntity implements IAirListener,
         IUpgradeableObject, ServerTickingBlockEntity
 {
 
@@ -147,6 +140,23 @@ public class MEPressureInterfaceBlockEntity extends AENetworkedBlockEntity imple
         setChanged();
     }
 
+    /**
+     * 取当前网络的MEStorage
+     */
+    public @Nullable MEStorage getNetworkInventory()
+    {
+        IGrid grid = getMainNode().getGrid();
+        if (grid == null) return null;
+        IStorageService ss = grid.getStorageService();
+        return ss != null ? ss.getInventory() : null;
+    }
+
+    /* 对外返回升级仓 */
+    @Override
+    public IUpgradeInventory getUpgrades()
+    {
+        return upgrades;
+    }
 
     @Override
     public void loadTag(CompoundTag tag, HolderLookup.Provider registries)
@@ -174,24 +184,6 @@ public class MEPressureInterfaceBlockEntity extends AENetworkedBlockEntity imple
         this.inventory.writeToNBT(tag,"inv", registries);
         tag.putFloat("expected_pressure", expectedPressure);
         this.upgrades.writeToNBT(tag, "interface_upgrades", registries);
-    }
-
-    /**
-     * 取当前网络的MEStorage
-     */
-    public @Nullable MEStorage getNetworkInventory()
-    {
-        IGrid grid = getMainNode().getGrid();
-        if (grid == null) return null;
-        IStorageService ss = grid.getStorageService();
-        return ss != null ? ss.getInventory() : null;
-    }
-
-    /* 对外返回升级仓 */
-    @Override
-    public IUpgradeInventory getUpgrades()
-    {
-        return upgrades;
     }
 
     private void onUpgradesChanged()
@@ -314,18 +306,6 @@ public class MEPressureInterfaceBlockEntity extends AENetworkedBlockEntity imple
                 }
             }
         }
-    }
-
-    @Override
-    public Component getDisplayName()
-    {
-        return Component.translatable("menu.title.appliedpneumatics.me_pressure_interface_menu");
-    }
-
-    @Override
-    public @Nullable AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player player)
-    {
-        return new MEPressureInterfaceMenu(id, inventory, this);
     }
 
     /** 由AEBasebBlock调用，把需要掉落的item放进列表即可，这里也能处理一些其他方块中onRemove时需要的操作 */

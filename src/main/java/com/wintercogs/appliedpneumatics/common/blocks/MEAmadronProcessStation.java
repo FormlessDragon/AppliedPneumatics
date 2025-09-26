@@ -1,7 +1,10 @@
 package com.wintercogs.appliedpneumatics.common.blocks;
 
 import appeng.block.AEBaseEntityBlock;
+import appeng.menu.MenuOpener;
+import appeng.menu.locator.MenuLocators;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEAmadronProcessStationBlockEntity;
+import com.wintercogs.appliedpneumatics.common.init.APMenus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -23,7 +26,8 @@ public class MEAmadronProcessStation extends AEBaseEntityBlock<MEAmadronProcessS
         super.useWithoutItem(state,level,pos,player,hitResult);
         if(!level.isClientSide()&&!player.isShiftKeyDown())
         {
-            player.openMenu((MEAmadronProcessStationBlockEntity)level.getBlockEntity(pos),pos);
+            if(level.getBlockEntity(pos) instanceof MEAmadronProcessStationBlockEntity be)
+                MenuOpener.open(APMenus.ME_AMADRON_PROCESS_STATION_MENU.get(), player, MenuLocators.forBlockEntity(be));
         }
         return InteractionResult.SUCCESS_NO_ITEM_USED;
     }

@@ -3,14 +3,11 @@ package com.wintercogs.appliedpneumatics.common.menu;
 import appeng.menu.SlotSemantics;
 import appeng.menu.guisync.GuiSync;
 import appeng.menu.implementations.UpgradeableMenu;
-import appeng.menu.locator.MenuHostLocator;
-import appeng.menu.locator.MenuLocators;
 import appeng.menu.slot.AppEngSlot;
 import appeng.util.ConfigMenuInventory;
 import com.wintercogs.appliedpneumatics.client.gui.MEAmadronProcessStationGUI;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEAmadronProcessStationBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APMenus;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -24,17 +21,10 @@ public class MEAmadronProcessStationMenu extends UpgradeableMenu<MEAmadronProces
 
     @GuiSync(10) public int latestJobs = 0;
 
-    // 构造：客户端
-    public MEAmadronProcessStationMenu(int id, Inventory playerInv, RegistryFriendlyByteBuf buf) {
-        this(id, playerInv, (MEAmadronProcessStationBlockEntity)
-                playerInv.player.level().getBlockEntity(buf.readBlockPos()));
-    }
-
-    // 构造：服务端
+    // 双端构造，AE自动传递host
     public MEAmadronProcessStationMenu(int id, Inventory playerInv, @NotNull MEAmadronProcessStationBlockEntity host)
     {
         super(APMenus.ME_AMADRON_PROCESS_STATION_MENU.get(), id, playerInv, host);
-        setLocator(MenuLocators.forBlockEntity(host));
         registerClientAction(cancelAllJobsAction, this::onJobCancel);
     }
 
@@ -54,7 +44,7 @@ public class MEAmadronProcessStationMenu extends UpgradeableMenu<MEAmadronProces
     {
         if(getBlockEntity() != null)
         {
-            if(getBlockEntity().getPatternInventory().size() > 9)
+            if(getBlockEntity().getTerminalPatternInventory().size() > 9)
                 return MEAmadronProcessStationGUI.EXTENDED;
             else
                 return MEAmadronProcessStationGUI.COMMON;
@@ -69,9 +59,9 @@ public class MEAmadronProcessStationMenu extends UpgradeableMenu<MEAmadronProces
     {
         if(getBlockEntity() == null) return;
 
-        for(int i = 0; i<getBlockEntity().getPatternInventory().size(); i++)
+        for(int i = 0; i<getBlockEntity().getTerminalPatternInventory().size(); i++)
         {
-            AppEngSlot slot = new AppEngSlot(getHost().getPatternInventory(), i);
+            AppEngSlot slot = new AppEngSlot(getHost().getTerminalPatternInventory(), i);
             this.addSlot(slot, SlotSemantics.ENCODED_PATTERN);
         }
         ConfigMenuInventory inputWrapper = getBlockEntity().getInputInv().createMenuWrapper();

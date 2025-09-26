@@ -26,6 +26,8 @@ import appeng.helpers.IPriorityHost;
 import appeng.helpers.externalstorage.GenericStackInv;
 import appeng.helpers.patternprovider.PatternContainer;
 import appeng.menu.ISubMenu;
+import appeng.menu.MenuOpener;
+import appeng.menu.locator.MenuLocators;
 import appeng.util.inv.AppEngInternalInventory;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.api.GenericInv.CombinedGenericInternalInventory;
@@ -33,8 +35,8 @@ import com.wintercogs.appliedpneumatics.api.GenericInv.GenericStackInvWrapper;
 import com.wintercogs.appliedpneumatics.common.init.APBlockEntities;
 import com.wintercogs.appliedpneumatics.common.init.APBlocks;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
+import com.wintercogs.appliedpneumatics.common.init.APMenus;
 import com.wintercogs.appliedpneumatics.common.me.crafting.AmadronPatternDetails;
-import com.wintercogs.appliedpneumatics.common.menu.MEAmadronProcessStationMenu;
 import me.desht.pneumaticcraft.common.amadron.AmadronOfferManager;
 import me.desht.pneumaticcraft.common.amadron.AmadronUtil;
 import me.desht.pneumaticcraft.common.config.subconfig.AmadronPlayerOffers;
@@ -56,10 +58,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -73,25 +72,25 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity implements MenuProvider,
-        IUpgradeableObject, ICraftingProvider, PatternContainer, ServerTickingBlockEntity, IPriorityHost
+public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity implements IUpgradeableObject,
+        ICraftingProvider, PatternContainer, ServerTickingBlockEntity, IPriorityHost
 {
 
-    // 样板槽 - 只允许UI存取
+    /** 样板槽 - 只允许UI存取 */
     private final AppEngInternalInventory patternInventory;
     /** 升级卡仓，最多四个加速卡 */
     private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(APBlocks.ME_AMADRON_PROCESS_STATION, 4, () -> {});
-
-    // 输入槽 - 供无人机拿取，允许能力系统对外输入输出
+    /** 输入槽 - 供无人机拿取，允许能力系统对外输出 */
     private final GenericStackInv inputInv = new GenericStackInv(this::setChanged, 9);
-    // 输出槽 - 缓存，一旦收到物品，直接送回AE，允许能力系统输入，不允许能力系统输出
+    /** 输出槽 - 缓存，一旦收到物品，直接送回AE，允许能力系统输入 */
     private final GenericStackInv outputInv = new GenericStackInv(this::setChanged, 9);
+    /** 样板优先级 */
     private int priority = 0;
-
-    // 用来判断亚马龙样版是否准备就绪
-    private boolean needAmadronRefresh = true;
-
+    /** 当前所有运行中订单 */
     private final List<Job> jobs = new ArrayList<>();
+
+    /** 用来判断亚马龙样版是否准备就绪，准备就绪后要求AE更新一次样板状态 */
+    private boolean needAmadronRefresh = true;
 
     public MEAmadronProcessStationBlockEntity(BlockEntityType<? extends MEAmadronProcessStationBlockEntity> blockEntityType , BlockPos pos, BlockState blockState, int patternSize)
     {
@@ -120,7 +119,7 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
                 .addService(ICraftingProvider.class, this);
     }
 
-    // 注册AE节点和空气容器能力
+    /** 能力注册 */
     public static void onRegisterCaps(RegisterCapabilitiesEvent event)
     {
         event.registerBlockEntity(
@@ -225,22 +224,103 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
         );
     }
 
-    public AppEngInternalInventory getPatternInventory()
+    // getter----------------------------------------------------------------------------------
+
+    /** 获取样板仓 */
+    @Override
+    public InternalInventory getTerminalPatternInventory()
     {
         return patternInventory;
     }
-
+    /** 获取输入仓 */
     public GenericStackInv getInputInv()
     {
         return inputInv;
     }
-
+    /** 获取输出仓 */
     public GenericStackInv getOutputInv()
     {
         return outputInv;
     }
+    /** 获取升级卡仓 */
+    @Override
+    public IUpgradeInventory getUpgrades()
+    {
+        return upgrades;
+    }
+    /** 获取当前网络的MEStorage */
+    public @Nullable MEStorage getNetworkInventory()
+    {
+        IGrid grid = getMainNode().getGrid();
+        if (grid == null) return null;
+        IStorageService ss = grid.getStorageService();
+        return ss != null ? ss.getInventory() : null;
+    }
+    /** 获取当前节点网格 */
+    @Override
+    public @Nullable IGrid getGrid()
+    {
+        return getMainNode().isReady() ? getMainNode().getGrid() : null;
+    }
+    /** 获取样板仓组-即如何在样板管理终端中显示名称和图标 */
+    @Override
+    public PatternContainerGroup getTerminalGroup()
+    {
+        return new PatternContainerGroup(AEItemKey.of(APBlocks.ME_AMADRON_PROCESS_STATION), APBlocks.ME_AMADRON_PROCESS_STATION.get().getName(), List.of());
+    }
+    /** 获取当前样板优先级 */
+    @Override
+    public int getPriority()
+    {
+        return priority;
+    }
+    /** 获取正在处理中的订单总数 */
+    public int getJobAmount()
+    {
+        return jobs.size();
+    }
 
+    // setter -----------------------------------------------------------------------------------------------
 
+    /** 设置优先级 */
+    @Override
+    public void setPriority(int priority)
+    {
+        this.priority = priority;
+        ICraftingProvider.requestUpdate(getMainNode());
+        setChanged();
+    }
+
+    // 终端状态实现 ----------------------------------------------------------------------------------------------------
+    @Override
+    public void returnToMainMenu(Player player, ISubMenu subMenu)
+    {
+        MenuOpener.returnTo(APMenus.ME_AMADRON_PROCESS_STATION_MENU.get(), player, MenuLocators.forBlockEntity(this));
+    }
+
+    @Override
+    public ItemStack getMainMenuIcon()
+    {
+        return new ItemStack(getBlockState().getBlock());
+    }
+
+    // 持久化状态--------------------------------------------------------------------------------------------
+    @Override
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries)
+    {
+        super.saveAdditional(tag, registries);
+        patternInventory.writeToNBT(tag,"pattern_inv", registries);
+        inputInv.writeToChildTag(tag,"input_inv", registries);
+        outputInv.writeToChildTag(tag,"output_inv", registries);
+        upgrades.writeToNBT(tag,"upgrade_inv", registries);
+        tag.putInt("priority", priority);
+
+        ListTag jobList = new ListTag();
+        for (Job j : this.jobs) {
+            jobList.add(j.writeToSubTag(registries));
+        }
+        tag.put("Jobs", jobList);
+    }
     @Override
     public void loadTag(CompoundTag tag, HolderLookup.Provider registries)
     {
@@ -260,41 +340,80 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
             }
         }
     }
-
+    /** 方块破坏后掉落物处理 */
     @Override
-    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries)
+    public void addAdditionalDrops(Level level, BlockPos pos, List<ItemStack> drops)
     {
-        super.saveAdditional(tag, registries);
-        patternInventory.writeToNBT(tag,"pattern_inv", registries);
-        inputInv.writeToChildTag(tag,"input_inv", registries);
-        outputInv.writeToChildTag(tag,"output_inv", registries);
-        upgrades.writeToNBT(tag,"upgrade_inv", registries);
-        tag.putInt("priority", priority);
+        super.addAdditionalDrops(level, pos, drops);
 
-        ListTag jobList = new ListTag();
-        for (Job j : this.jobs) {
-            jobList.add(j.writeToSubTag(registries));
+        // 收集掉落物：样板槽、升级槽、两个仓库位
+        for (int i = 0; i < patternInventory.size(); i++) {
+            ItemStack s = patternInventory.getStackInSlot(i);
+            if (!s.isEmpty()) drops.add(s.copy());
         }
-        tag.put("Jobs", jobList);
+        for (int i = 0; i < upgrades.size(); i++) {
+            ItemStack slotContent = upgrades.getStackInSlot(i);
+            if (!slotContent.isEmpty()) drops.add(slotContent.copy());
+        }
+        Consumer<GenericStack> toDrops = (gs) -> {
+            if (gs == null) return;
+            if (gs.what() instanceof AEItemKey itemKey) {
+                int amt = Math.clamp(gs.amount(), 0, Integer.MAX_VALUE);
+                if (amt > 0) drops.add(itemKey.toStack(amt));
+            }
+        };
+        for (int i = 0; i < inputInv.size(); i++) toDrops.accept(inputInv.getStack(i));
+        for (int i = 0; i < outputInv.size(); i++) toDrops.accept(outputInv.getStack(i));
+
+        cancelAllJobs(Component.translatable("amadron.appliedpneumatics.process_fail.block_break", worldPosition.toShortString()));
     }
 
-    /**
-     * 取当前网络的MEStorage
-     */
-    public @Nullable MEStorage getNetworkInventory()
+    // ICraftProvider实现---------------------------------------------------------------------------------------
+    @Override
+    public List<IPatternDetails> getAvailablePatterns()
     {
-        IGrid grid = getMainNode().getGrid();
-        if (grid == null) return null;
-        IStorageService ss = grid.getStorageService();
-        return ss != null ? ss.getInventory() : null;
+        List<IPatternDetails> result = new ArrayList<>();
+        for(int i = 0; i < patternInventory.size(); i++)
+        {
+            ItemStack stack = patternInventory.getStackInSlot(i);
+            if(stack.isEmpty()) continue;
+            IPatternDetails patternDetails = PatternDetailsHelper.decodePattern(stack, level);
+            if(patternDetails instanceof AmadronPatternDetails)
+                result.add(patternDetails);
+        }
+        return result;
     }
 
     @Override
-    public IUpgradeInventory getUpgrades()
+    public boolean pushPattern(IPatternDetails patternDetails, KeyCounter[] inputHolder)
     {
-        return upgrades;
+        if(isBusy()) return false;
+        if(patternDetails instanceof AmadronPatternDetails details)
+        {
+            // 必然仅有一个input
+            var entry = inputHolder[0].getFirstEntry();
+            if(entry != null)
+            {
+                addJob(details.getOfferId(), new GenericStack(entry.getKey(), entry.getLongValue()));
+                return true;
+            }
+        }
+        return false;
     }
 
+    @Override
+    public boolean isBusy()
+    {
+        return jobs.size() >= 512;
+    }
+
+    @Override
+    public int getPatternPriority()
+    {
+        return getPriority();
+    }
+
+    // 订单处理相关------------------------------------------------------------------------------------------
     @Override
     public void serverTick()
     {
@@ -587,103 +706,8 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     }
 
 
-    @Override
-    public @NotNull Component getDisplayName()
-    {
-        return getBlockState().getBlock().getName();
-    }
 
-    @Override
-    public @Nullable AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player player)
-    {
-        return new MEAmadronProcessStationMenu(id, inventory, this);
-    }
-
-    @Override
-    public void addAdditionalDrops(Level level, BlockPos pos, List<ItemStack> drops)
-    {
-        super.addAdditionalDrops(level, pos, drops);
-
-        // 收集掉落物：样板槽、升级槽、两个仓库位
-        for (int i = 0; i < patternInventory.size(); i++) {
-            ItemStack s = patternInventory.getStackInSlot(i);
-            if (!s.isEmpty()) drops.add(s.copy());
-        }
-        for (int i = 0; i < upgrades.size(); i++) {
-            ItemStack slotContent = upgrades.getStackInSlot(i);
-            if (!slotContent.isEmpty()) drops.add(slotContent.copy());
-        }
-        Consumer<GenericStack> toDrops = (gs) -> {
-            if (gs == null) return;
-            if (gs.what() instanceof AEItemKey itemKey) {
-                int amt = Math.clamp(gs.amount(), 0, Integer.MAX_VALUE);
-                if (amt > 0) drops.add(itemKey.toStack(amt));
-            }
-        };
-        for (int i = 0; i < inputInv.size(); i++) toDrops.accept(inputInv.getStack(i));
-        for (int i = 0; i < outputInv.size(); i++) toDrops.accept(outputInv.getStack(i));
-
-        cancelAllJobs(Component.translatable("amadron.appliedpneumatics.process_fail.block_break", worldPosition.toShortString()));
-    }
-
-    // ICraftProvider实现---------------------------------------------------------------------------------------
-    @Override
-    public List<IPatternDetails> getAvailablePatterns()
-    {
-        List<IPatternDetails> result = new ArrayList<>();
-        for(int i = 0; i < patternInventory.size(); i++)
-        {
-            ItemStack stack = patternInventory.getStackInSlot(i);
-            if(stack.isEmpty()) continue;
-            IPatternDetails patternDetails = PatternDetailsHelper.decodePattern(stack, level);
-            if(patternDetails instanceof AmadronPatternDetails)
-                result.add(patternDetails);
-        }
-        return result;
-    }
-
-    @Override
-    public boolean pushPattern(IPatternDetails patternDetails, KeyCounter[] inputHolder)
-    {
-        if(isBusy()) return false;
-        if(patternDetails instanceof AmadronPatternDetails details)
-        {
-            // 必然仅有一个input
-            var entry = inputHolder[0].getFirstEntry();
-            if(entry != null)
-            {
-                addJob(details.getOfferId(), new GenericStack(entry.getKey(), entry.getLongValue()));
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isBusy()
-    {
-        return jobs.size() >= 512;
-    }
-
-    @Override
-    public int getPatternPriority() {
-        return getPriority();
-    }
-
-    @Override
-    public int getPriority()
-    {
-        return priority;
-    }
-
-    @Override
-    public void setPriority(int priority)
-    {
-        this.priority = priority;
-        ICraftingProvider.requestUpdate(getMainNode());
-        setChanged();
-    }
-
+    // 订单状态管理 -----------------------------------------------------------------------------------------------------
     public void addJob(ResourceLocation offerId, @NotNull GenericStack selfResource)
     {
         this.jobs.add(new Job(offerId, selfResource, null));
@@ -693,25 +717,6 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
     {
         this.jobs.add(new Job(offerId, selfResource, player));
     }
-
-    @Override
-    public @Nullable IGrid getGrid()
-    {
-        return getMainNode().isReady() ? getMainNode().getGrid() : null;
-    }
-
-    @Override
-    public InternalInventory getTerminalPatternInventory()
-    {
-        return patternInventory;
-    }
-
-    @Override
-    public PatternContainerGroup getTerminalGroup()
-    {
-        return new PatternContainerGroup(AEItemKey.of(APBlocks.ME_AMADRON_PROCESS_STATION), APBlocks.ME_AMADRON_PROCESS_STATION.get().getName(), List.of());
-    }
-
     /** 将所有job携带的资源送回me网络或掉落，然后给相关玩家发生一次消息 */
     public void cancelAllJobs(Component message)
     {
@@ -767,23 +772,6 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
 
         jobs.clear();
         setChanged();
-    }
-
-    public int getJobAmount()
-    {
-        return jobs.size();
-    }
-
-    @Override
-    public void returnToMainMenu(Player player, ISubMenu subMenu)
-    {
-        player.openMenu(this, worldPosition);
-    }
-
-    @Override
-    public ItemStack getMainMenuIcon()
-    {
-        return new ItemStack(getBlockState().getBlock());
     }
 
     /** selfResource表示该Job自己携带了一部分资源，只有这部分资源被插入仓库才执行实际job */

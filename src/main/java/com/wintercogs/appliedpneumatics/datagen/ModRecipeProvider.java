@@ -550,6 +550,10 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 AmadronTradeResource.of(new ItemStack(APItems.AIR_CELL_SHELL.get())))
                 .save(recipeOutput, AppliedPneumatics.makeId("amadron/emerald_to_air_cell_shell"));
 
+        amadronStatic(AmadronTradeResource.of(new ItemStack(Items.EMERALD, 10)),
+                AmadronTradeResource.of(new ItemStack(AEItems.BLANK_PATTERN)))
+                .save(recipeOutput, AppliedPneumatics.makeId("amadron/emerald_to_blank_pattern"));
+
         // 物品到绿宝石
         amadronStatic(AmadronTradeResource.of(new ItemStack(AEItems.CERTUS_QUARTZ_CRYSTAL, 16)),
                 AmadronTradeResource.of(new ItemStack(Items.EMERALD)))

@@ -41,14 +41,11 @@
   "item.appliedpneumatics.amadron_pattern": "Modèle de traitement Amadron",
 
   "block.appliedpneumatics.me_pressure_interface_block": "Interface de pression ME",
-  "block.appliedpneumatics.me_pressure_chamber_valve": "Valve de chambre de pression ME",
-  "block.appliedpneumatics.me_pressure_chamber_wall": "Mur de chambre de pression ME",
-  "block.appliedpneumatics.me_pressure_chamber_vibrant_glass": "Verre de quartz vibrant de chambre de pression ME",
-  "block.appliedpneumatics.me_pressure_chamber_glass": "Verre de chambre de pression ME",
   "block.appliedpneumatics.me_amadron_process_station": "Station de traitement Amadron ME",
   "block.appliedpneumatics.me_amadron_extended_process_station": "Station de traitement Amadron étendue",
   "block.appliedpneumatics.me_temperature_interface": "Interface de température ME",
 
+  "menu.title.appliedpneumatics.amadron_wireless_terminal": "Terminal",
   "menu.label.appliedpneumatics.me_pressure_interface.air_amount": "Volume : %s\\%sL %sbar",
   "menu.label.appliedpneumatics.me_pressure_interface.max_pressure": "Seuil de pression dangereuse : %s bar",
   "menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text": "Pression cible",

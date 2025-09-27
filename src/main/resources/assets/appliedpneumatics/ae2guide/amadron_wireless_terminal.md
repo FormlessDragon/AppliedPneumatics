@@ -1,22 +1,30 @@
 ---
 navigation:
   parent: index.md
-  title: 亚马龙无线终端
+  title: Amadron Wireless Terminal
   icon: appliedpneumatics:amadron_wireless_terminal
   position: 60
 item_ids:
   - appliedpneumatics:amadron_wireless_terminal
 ---
 
-# 亚马龙无线终端
+# Amadron Wireless Terminal
 
-亚马龙平板电脑的巨大升级！不再使用压缩空气，而是使用能量驱动。购物时可以调用ME网络内的一切资源！
+A huge upgrade to the Amadron Tablet!  
+It no longer runs on compressed air, but instead uses energy. While shopping, you can access all resources available in your ME network!
 
 <Row>
   <ItemImage id="amadron_wireless_terminal" scale="4" />
 </Row>
 
-要使用亚马龙无线终端，你至少要将其链接到一个ME无线访问点以及一个亚马龙处理站。你可以对着亚马龙处理站Shift右
-键来绑定。终端界面内，你可以像使用亚马龙平板电脑一样购物，右键增加购买量，Shift右键则翻倍购买量，左键反之。
-挑好心仪的商品，只需点击提交订单按钮即可完成你的购物之旅。如果你厌倦了手动购物和自己计算资源需求的繁琐，你可
-以将那些不限量供货的商品保存为样板，放入亚马龙处理站中，直接自动化交易！
+To use the Amadron Wireless Terminal, you must at least link it to one ME Wireless Access Point and one Amadron Processing Station.  
+You can bind it by Shift-right-clicking the Amadron Processing Station.
+
+Inside the terminal interface, you can shop just like with the Amadron Tablet:
+- Right-click to increase the purchase amount.
+- Shift-right-click to double the amount.
+- Left-click to decrease, with Shift-left-click halving it.
+
+Once you’ve selected your desired items, simply click the **Submit Order** button to complete your shopping journey.
+
+And if you’re tired of shopping manually and calculating resource needs yourself, you can save those unlimited-supply items as patterns, place them into the Amadron Processing Station, and automate the trades directly!

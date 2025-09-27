@@ -1,15 +1,16 @@
 ---
 navigation:
   parent: index.md
-  title: 基础支持
+  title: Basic Support
   icon: ae2:guide
   position: 10
 ---
 
-# 基础支持
+# Basic Support
 
-AE现在能够存储空气，输入总线、输出总线、存储总线均能识别空气容器，UI中能与气罐进行交互。并且添加了空气P2P
-和温度P2P。
+AE can now store air.  
+Import Buses, Export Buses, and Storage Buses can all recognize air containers, and the UI can interact with air tanks.  
+Additionally, **Air P2P** and **Temperature P2P** have been added.
 
 <Row>
     <ItemImage id="ae2:import_bus" scale="4" />
@@ -19,9 +20,9 @@ AE现在能够存储空气，输入总线、输出总线、存储总线均能识
     <ItemImage id="heat_p2p_tunel" scale="4" />
 </Row>
 
-详细介绍：
- - <ItemLink id="ae2:import_bus" />：向链接的空气容器中输出空气，自动限压，不会使对方爆炸；
- - <ItemLink id="ae2:export_bus" />：从链接的空气容器中抽取空气，最低抽到0bar，不能替代真空泵；
- - <ItemLink id="ae2:storage_bus" />：让ME网络识别其链接的空气容器，负压容器会被识别为0ml；
- - <ItemLink id="appliedpneumatics:air_p2p_tunel" />：接收输入的空气，分配到输出端。
- - <ItemLink id="appliedpneumatics:heat_p2p_tunel" />：接收输入的传递的热量，分配到输出端。
+Details:
+- <ItemLink id="ae2:import_bus" />: Outputs air into the linked air container. Automatically pressure-limited, will not cause the target to explode.
+- <ItemLink id="ae2:export_bus" />: Extracts air from the linked air container. Can reduce down to 0 bar, but cannot replace a vacuum pump.
+- <ItemLink id="ae2:storage_bus" />: Allows the ME network to recognize the linked air container. Negative-pressure containers are recognized as 0 mL.
+- <ItemLink id="appliedpneumatics:air_p2p_tunel" />: Receives input air and distributes it to the outputs.
+- <ItemLink id="appliedpneumatics:heat_p2p_tunel" />: Receives input heat and distributes it to the outputs.

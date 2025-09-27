@@ -41,14 +41,11 @@
   "item.appliedpneumatics.amadron_pattern": "Amadron-Verarbeitungsmuster",
 
   "block.appliedpneumatics.me_pressure_interface_block": "ME-Druckschnittstelle",
-  "block.appliedpneumatics.me_pressure_chamber_valve": "ME-Druckkammer-Ventil",
-  "block.appliedpneumatics.me_pressure_chamber_wall": "ME-Druckkammer-Wand",
-  "block.appliedpneumatics.me_pressure_chamber_vibrant_glass": "ME-Druckkammer-Vibrant-Quarzglas",
-  "block.appliedpneumatics.me_pressure_chamber_glass": "ME-Druckkammerglas",
   "block.appliedpneumatics.me_amadron_process_station": "ME-Amadron-Verarbeitungsstation",
   "block.appliedpneumatics.me_amadron_extended_process_station": "Erweiterte Amadron-Verarbeitungsstation",
   "block.appliedpneumatics.me_temperature_interface": "ME-Temperaturschnittstelle",
 
+  "menu.title.appliedpneumatics.amadron_wireless_terminal": "Terminal",
   "menu.label.appliedpneumatics.me_pressure_interface.air_amount": "Volumen: %s\\%sL %sBar",
   "menu.label.appliedpneumatics.me_pressure_interface.max_pressure": "Gefahren-Druckgrenzwert: %s Bar",
   "menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text": "Zieldruck",

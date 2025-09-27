@@ -41,14 +41,11 @@
   "item.appliedpneumatics.amadron_pattern": "Шаблон обработки Амадрона",
 
   "block.appliedpneumatics.me_pressure_interface_block": "МЭ интерфейс давления",
-  "block.appliedpneumatics.me_pressure_chamber_valve": "Клапан МЭ барокамеры",
-  "block.appliedpneumatics.me_pressure_chamber_wall": "Стена МЭ барокамеры",
-  "block.appliedpneumatics.me_pressure_chamber_vibrant_glass": "Светящееся кварцевое стекло МЭ барокамеры",
-  "block.appliedpneumatics.me_pressure_chamber_glass": "Стекло МЭ барокамеры",
   "block.appliedpneumatics.me_amadron_process_station": "МЭ станция обработки Амадрона",
   "block.appliedpneumatics.me_amadron_extended_process_station": "Расширенная станция обработки Амадрона",
   "block.appliedpneumatics.me_temperature_interface": "МЭ интерфейс температуры",
 
+  "menu.title.appliedpneumatics.amadron_wireless_terminal": "терминал",
   "menu.label.appliedpneumatics.me_pressure_interface.air_amount": "Объём: %s\\%sL %sбар",
   "menu.label.appliedpneumatics.me_pressure_interface.max_pressure": "Порог опасного давления: %s бар",
   "menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text": "Целевое давление",

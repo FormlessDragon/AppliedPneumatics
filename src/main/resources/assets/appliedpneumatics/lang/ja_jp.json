@@ -41,14 +41,11 @@
   "item.appliedpneumatics.amadron_pattern": "アマドロン処理パターン",
 
   "block.appliedpneumatics.me_pressure_interface_block": "ME圧力インターフェース",
-  "block.appliedpneumatics.me_pressure_chamber_valve": "ME圧力チャンバー用バルブ",
-  "block.appliedpneumatics.me_pressure_chamber_wall": "ME圧力チャンバーの壁",
-  "block.appliedpneumatics.me_pressure_chamber_vibrant_glass": "ME圧力チャンバーのバイブレント石英ガラス",
-  "block.appliedpneumatics.me_pressure_chamber_glass": "ME圧力チャンバー用ガラス",
   "block.appliedpneumatics.me_amadron_process_station": "MEアマドロン処理ステーション",
   "block.appliedpneumatics.me_amadron_extended_process_station": "拡張アマドロン処理ステーション",
   "block.appliedpneumatics.me_temperature_interface": "ME温度インターフェース",
 
+  "menu.title.appliedpneumatics.amadron_wireless_terminal": "無線端末",
   "menu.label.appliedpneumatics.me_pressure_interface.air_amount": "体積：%s\\%sL %sbar",
   "menu.label.appliedpneumatics.me_pressure_interface.max_pressure": "危険圧力しきい値：%s bar",
   "menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text": "目標圧力",

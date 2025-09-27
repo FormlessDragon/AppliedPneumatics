@@ -41,14 +41,11 @@
   "item.appliedpneumatics.amadron_pattern": "아마드론 처리 패턴",
 
   "block.appliedpneumatics.me_pressure_interface_block": "ME 압력 인터페이스",
-  "block.appliedpneumatics.me_pressure_chamber_valve": "ME 압력 챔버 밸브",
-  "block.appliedpneumatics.me_pressure_chamber_wall": "ME 압력 챔버 벽",
-  "block.appliedpneumatics.me_pressure_chamber_vibrant_glass": "ME 압력 챔버 바이브런트 석영 유리",
-  "block.appliedpneumatics.me_pressure_chamber_glass": "ME 압력 챔버 유리",
   "block.appliedpneumatics.me_amadron_process_station": "ME 아마드론 처리 스테이션",
   "block.appliedpneumatics.me_amadron_extended_process_station": "확장 아마드론 처리 스테이션",
   "block.appliedpneumatics.me_temperature_interface": "ME 온도 인터페이스",
 
+  "menu.title.appliedpneumatics.amadron_wireless_terminal": "터미널",
   "menu.label.appliedpneumatics.me_pressure_interface.air_amount": "용적: %s\\%sL %sbar",
   "menu.label.appliedpneumatics.me_pressure_interface.max_pressure": "위험 압력 임계값: %s bar",
   "menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text": "목표 압력",

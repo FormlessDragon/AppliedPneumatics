@@ -1,22 +1,22 @@
 ---
 navigation:
   parent: index.md
-  title: ME温控接口
+  title: ME Temperature Interface
   icon: appliedpneumatics:me_temperature_interface
   position: 50
 item_ids:
   - appliedpneumatics:me_temperature_interface
 ---
 
-# ME温控接口
+# ME Temperature Interface
 
 <Row>
   <BlockImage id="me_temperature_interface" scale="4" />
 </Row>
 
-ME温控接口通过消耗ME网络中存储的空气和能量将自身温度调节到期望值。每改变1J热量，其会消耗约25AE能量以及19毫
-升空气。
+The ME Temperature Interface adjusts its internal temperature to the desired value by consuming air and energy stored in the **ME network**.  
+For each 1 J of heat changed, it consumes approximately **25 AE energy** and **19 mL of air**.
 
-## 可用升级卡
-- 加速卡：提高每tick最大温度改变量；
-- 容积卡：自高自身基础热容。
+## Available Upgrade Cards
+- **Acceleration Card**: Increases the maximum temperature change per tick.
+- **Volume Card**: Increases the base heat capacity of the interface.

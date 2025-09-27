@@ -1,22 +1,23 @@
 ---
 navigation:
   parent: index.md
-  title: 新增亚马龙交易
+  title: New Amadron Trades
   icon: pneumaticcraft:amadron_tablet
   position: 90
 ---
 
-# 亚马龙交易
+# Amadron Trades
 
-## 提供了一些无限可用的亚马龙交易
-- 1绿宝石 -> 8赛特斯石英水晶
-- 1绿宝石 -> 2福鲁伊克斯水晶
-- 1绿宝石 -> 2充能赛特斯石英水晶
-- 1绿宝石 -> 16陨石
-- 14绿宝石 -> 1ME物品存储元件外壳
-- 10绿宝石 -> 1ME流体存储元件外壳
-- 20绿宝石 -> 1ME空气存储元件外壳
-- 16赛特斯石英水晶 -> 1绿宝石
-- 4福鲁伊克斯水晶 -> 1绿宝石
-- 4充能赛特斯石英水晶 -> 1绿宝石
-- 32陨石 -> 1绿宝石
+## Provides several infinitely available Amadron trades
+- 1 Emerald -> 8 Certus Quartz Crystals
+- 1 Emerald -> 2 Fluix Crystals
+- 1 Emerald -> 2 Charged Certus Quartz Crystals
+- 1 Emerald -> 16 Meteorites
+- 14 Emeralds -> 1 ME Item Storage Cell Housing
+- 10 Emeralds -> 1 ME Fluid Storage Cell Housing
+- 20 Emeralds -> 1 ME Air Storage Cell Housing
+- 10 Emeralds -> 1 Blank Pattern
+- 16 Certus Quartz Crystals -> 1 Emerald
+- 4 Fluix Crystals -> 1 Emerald
+- 4 Charged Certus Quartz Crystals -> 1 Emerald
+- 32 Meteorites -> 1 Emerald

@@ -49,7 +49,7 @@
   "block.appliedpneumatics.me_amadron_extended_process_station": "扩展亚马龙处理站",
   "block.appliedpneumatics.me_temperature_interface": "ME温控接口",
 
-  "menu.label.appliedpneumatics.me_pressure_interface.air_amount": "容积使用:%s\\%sL %sbar",
+  "menu.label.appliedpneumatics.me_pressure_interface.air_amount": "容积:%s\\%sL %sbar",
   "menu.label.appliedpneumatics.me_pressure_interface.max_pressure": "危险气压阈值:%sbar",
   "menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text": "期望气压",
   "menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_change_mult_text": "按下shift以5倍调节",

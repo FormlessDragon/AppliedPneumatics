@@ -43,7 +43,7 @@ public class MEPressureInterfaceGUI extends UpgradeableScreen<MEPressureInterfac
     {
         super.drawFG(guiGraphics, offsetX, offsetY, mouseX, mouseY);
         String airStr = String.format(Locale.ROOT, "%.1f", (float) menu.latestAir / 1000f);
-        String maxStr = String.format(Locale.ROOT, "%.1f", (float) menu.latestVolume / 1000f);
+        String maxStr = String.format(Locale.ROOT, "%.0f", (float) menu.latestVolume / 1000f);
         String currentPressureStr = String.format(Locale.ROOT, "%.0f", (float)menu.latestAir / (float)menu.latestVolume);
         String pressureStr = String.format(Locale.ROOT, "%.1f", menu.latestExpectedPressure);
         GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.air_amount",airStr, maxStr, currentPressureStr), 13, 148, 22, 4210752, false);

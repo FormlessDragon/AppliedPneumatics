@@ -9,15 +9,14 @@ navigation:
 # Amadron Trades
 
 ## Provides several infinitely available Amadron trades
-- 1 Emerald -> 8 Certus Quartz Crystals
-- 1 Emerald -> 2 Fluix Crystals
-- 1 Emerald -> 2 Charged Certus Quartz Crystals
-- 1 Emerald -> 16 Meteorites
-- 14 Emeralds -> 1 ME Item Storage Cell Housing
-- 10 Emeralds -> 1 ME Fluid Storage Cell Housing
-- 20 Emeralds -> 1 ME Air Storage Cell Housing
-- 10 Emeralds -> 1 Blank Pattern
-- 16 Certus Quartz Crystals -> 1 Emerald
-- 4 Fluix Crystals -> 1 Emerald
-- 4 Charged Certus Quartz Crystals -> 1 Emerald
-- 32 Meteorites -> 1 Emerald
+- 8 Emeralds -> 8 Certus Quartz Crystals
+- 8 Emeralds -> 4 Fluix Crystals
+- 10 Emeralds -> 16 Meteorites
+- 32 Emeralds -> 1 ME Item Storage Cell Housing
+- 32 Emeralds -> 1 ME Fluid Storage Cell Housing
+- 32 Emeralds -> 1 ME Air Storage Cell Housing
+- 24 Emeralds -> 1 Blank Pattern
+- 16 Certus Quartz Crystals -> 8 Emeralds
+- 16 Fluix Crystals -> 4 Emeralds
+- 32 Meteorites -> 10 Emeralds
+- 1 Singularity -> 99 Emeralds

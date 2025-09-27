@@ -8,6 +8,7 @@ import appeng.items.parts.PartItem;
 import appeng.items.parts.PartModelsHelper;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.items.AirStorageCell;
+import com.wintercogs.appliedpneumatics.common.items.AmadronProcessUpgradeItem;
 import com.wintercogs.appliedpneumatics.common.items.AmadronWirelessTerminalItem;
 import com.wintercogs.appliedpneumatics.common.items.PortableAirStorageCell;
 import com.wintercogs.appliedpneumatics.common.me.crafting.AmadronPatternDetails;
@@ -193,6 +194,10 @@ public class APItems
     // 亚马龙样板
     public static final DeferredItem<Item> AMADRON_PATTERN = ITEMS.register("amadron_pattern",
             () -> PatternDetailsHelper.encodedPatternItemBuilder(AmadronPatternDetails::new).invalidPatternTooltip(AmadronPatternDetails::getInvalidPatternTooltip).build());
+
+    // 亚马龙处理站升级
+    public static final DeferredItem<Item> AMADRON_PROCESS_UPGRADE = ITEMS.register("amadron_process_upgrade",
+            () -> new AmadronProcessUpgradeItem(new Item.Properties()));
 
     public static void register(IEventBus eventBus)
     {

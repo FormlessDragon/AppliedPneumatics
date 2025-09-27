@@ -118,6 +118,7 @@ public class APCreativeModeTabs
                         if(AppliedPneumatics.EAE_LOADED || Config.alwaysShowExtendedContent)
                         {
                             output.accept(APBlocks.ME_AMADRON_EXTENDED_PROCESS_STATION.get());
+                            output.accept(APItems.AMADRON_PROCESS_UPGRADE.get());
                         }
                         output.accept(APItems.AMADRON_PATTERN.get());
                     })

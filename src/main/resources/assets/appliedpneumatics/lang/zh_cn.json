@@ -39,6 +39,7 @@
   "item.appliedpneumatics.charging_card": "充气卡",
   "item.appliedpneumatics.amadron_wireless_terminal": "亚马龙无线终端",
   "item.appliedpneumatics.amadron_pattern": "亚马龙处理样板",
+  "item.appliedpneumatics.amadron_process_upgrade": "亚马龙处理站升级",
 
   "block.appliedpneumatics.me_pressure_interface_block": "ME气压接口",
   "block.appliedpneumatics.me_amadron_process_station": "ME亚马龙处理站",
@@ -62,6 +63,7 @@
 
   "tooltip.appliedpneumatics.item.amadron.unlink": "未绑定到亚马龙处理站",
   "tooltip.appliedpneumatics.item.amadron.linked": "绑定到%s [%s, %s, %s]",
+  "tooltip.appliedpneumatics.amadron_upgrade.amadron_process_busy": "不能升级正在工作中或内部仍有除样板外物品的亚马龙处理站",
 
   "appliedpneumatics.gui.widget.amadron_offer_panel": "亚马龙面板",
   "appliedpneumatics.portable_air_cell.bar": "当前压力：%sbar",

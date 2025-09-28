@@ -2,7 +2,6 @@
   "$schema": "schema.json",
   "includes": [
     "common/common.json",
-    "common/player_inventory.json",
     "amadron_terminal_toolbox.json"
   ],
   "background": {
@@ -24,12 +23,31 @@
     "ENCODED_PATTERN": {
       "right": 84,
       "bottom": 122
+    },
+    "PLAYER_INVENTORY": {
+      "left": 8,
+      "bottom": 85,
+      "grid": "BREAK_AFTER_9COLS"
+    },
+    "PLAYER_HOTBAR": {
+      "left": 8,
+      "bottom": 27,
+      "grid": "HORIZONTAL"
     }
   },
   "text": {
     "title": {
       "text": { "translate": "menu.title.appliedpneumatics.amadron_wireless_terminal" },
       "position": { "left": 8, "top": 6 }
+    },
+    "player_inventory_title": {
+      "text": {
+        "translate": "container.inventory"
+      },
+      "position": {
+        "left": 8,
+        "bottom": 96
+      }
     }
   },
   "widgets": {

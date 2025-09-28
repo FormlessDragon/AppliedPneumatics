@@ -1,5 +1,7 @@
 # Applied Pneumatics
 
+![应用气动](https://i.imgur.com/ZUmdWWw.png)
+
 [中文版](../README.md)
 
 An add-on for **Applied Energistics 2** × **PneumaticCraft: Repressurized**.  

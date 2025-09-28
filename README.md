@@ -1,5 +1,7 @@
 # Applied Pneumatics（应用气动）
 
+![应用气动](https://i.imgur.com/ZUmdWWw.png)
+
 [English](docs/ENGLISH_README.md)
 
 AE2 × PneumaticCraft: Repressurized 的附属。  

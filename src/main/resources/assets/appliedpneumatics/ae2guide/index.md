@@ -12,27 +12,27 @@ navigation:
   <BlockImage id="me_temperature_interface" scale="4" />
 </Row>
 
-This addon provides a bridge between **Applied Energistics 2 (AE2)** and **PneumaticCraft: Repressurized (PNC:R)**.  
-It allows you to use the ME network to control **Compressed Air**, **Temperature**, and the **Amadron** system.
+This add-on provides a bridge between **Applied Energistics 2 (AE2)** and **PneumaticCraft: Repressurized (PNC:R)**.  
+It enables you to use the ME Network to control **compressed air**, **temperature**, and the **Amadron** system.
 
-## Overview
+## Feature Overview
 
-- **Air Storage Cells** (1k~256m) — Store compressed air directly in the ME network.
-- **Portable Air Storage Cells** — Carryable high-capacity air tanks, with a maximum pressure of 20 bar.
-- **ME Pressure Interface** — Interacts with the ME network to maintain pressure at your configured value.
-- **ME Temperature Interface** — Consumes compressed air and energy to maintain temperature at your configured value.
-- **P2P Tunnels** — Transfer temperature and compressed air through AE’s P2P tunnels.
-- **Amadron Processing Station** — Integrates the Amadron system into AE’s auto-crafting network.
-- **New Amadron Trades** — A set of trades providing some basic resources for AE.
+- **Air Storage Cells** (1k~256m) — Store compressed air directly in the ME Network.
+- **Portable Air Storage Cells** — High-capacity portable air tanks, with a maximum pressure of 20 bar.
+- **ME Pressure Interface** — Maintains a target pressure by interacting with the ME Network.
+- **ME Temperature Interface** — Consumes compressed air and AE energy to maintain a target temperature.
+- **P2P Tunnels** — Transfer temperature and compressed air through AE P2P channels.
+- **Amadron Processing Station** — Connects the Amadron system to the AE auto-crafting network.
+- **New Integrated Recipes** — Adds new recipes, including Amadron trades and Assembly Chamber recipes.
 
 ## See Also
 
 - [Basic Support](basic_support.md)
 - [Air Storage Cells](air_storage_cells.md)
-- [New P2P](air_heat_p2p.md)
+- [New P2P Types](air_heat_p2p.md)
 - [ME Pressure Interface](me_pressure_interface_block.md)
 - [ME Temperature Interface](me_temperature_interface_block.md)
 - [Amadron Wireless Terminal](amadron_wireless_terminal.md)
 - [Amadron Processing Station](me_amadron_process_block.md)
 - [New Upgrade Cards](upgrades.md)
-- [New Recipe](new_recipe.md)
+- [New Integrated Recipes](new_recipe.md)

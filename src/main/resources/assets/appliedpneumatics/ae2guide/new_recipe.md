@@ -26,7 +26,7 @@ navigation:
 - 16 Smart Cables -> 8 Dense Smart Cables
 - 1 Damaged Certus Quartz Monocrystal -> 1 Cracked Certus Quartz Monocrystal
 - 1 Cracked Certus Quartz Monocrystal -> 1 Flawed Certus Quartz Monocrystal
-- 1 Flawed Certus Quartz Monocrystal -> 1 Flawless Certus Quartz Monocrystal
+- 64 Flawed Certus Quartz Monocrystal -> 1 Flawless Certus Quartz Monocrystal
 - 8 Energy Cells -> 1 Dense Energy Cell
 - 1 Not-So-Mysterious Block -> 1 Mysterious Block
 - 1 TNT -> 8 Tiny TNT

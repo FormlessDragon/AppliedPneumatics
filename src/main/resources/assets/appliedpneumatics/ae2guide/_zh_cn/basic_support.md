@@ -20,8 +20,8 @@ AE现在能够存储空气，输入总线、输出总线、存储总线均能识
 </Row>
 
 详细介绍：
- - <ItemLink id="ae2:import_bus" />：向链接的空气容器中输出空气，自动限压，不会使对方爆炸；
- - <ItemLink id="ae2:export_bus" />：从链接的空气容器中抽取空气，最低抽到0bar，不能替代真空泵；
+ - <ItemLink id="ae2:export_bus" />：向链接的空气容器中输出空气，自动限压，不会使对方爆炸；
+ - <ItemLink id="ae2:import_bus" />：从链接的空气容器中抽取空气，最低抽到0bar，不能替代真空泵；
  - <ItemLink id="ae2:storage_bus" />：让ME网络识别其链接的空气容器，负压容器会被识别为0ml；
  - <ItemLink id="appliedpneumatics:air_p2p_tunel" />：接收输入的空气，分配到输出端。
  - <ItemLink id="appliedpneumatics:heat_p2p_tunel" />：接收输入的传递的热量，分配到输出端。

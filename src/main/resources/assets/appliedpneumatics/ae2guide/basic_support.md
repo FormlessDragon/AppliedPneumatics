@@ -21,8 +21,8 @@ Additionally, **Air P2P** and **Temperature P2P** have been added.
 </Row>
 
 Details:
-- <ItemLink id="ae2:import_bus" />: Outputs air into the linked air container. Automatically pressure-limited, will not cause the target to explode.
-- <ItemLink id="ae2:export_bus" />: Extracts air from the linked air container. Can reduce down to 0 bar, but cannot replace a vacuum pump.
+- <ItemLink id="ae2:export_bus" />: Outputs air into the linked air container. Automatically pressure-limited, will not cause the target to explode.
+- <ItemLink id="ae2:import_bus" />: Extracts air from the linked air container. Can reduce down to 0 bar, but cannot replace a vacuum pump.
 - <ItemLink id="ae2:storage_bus" />: Allows the ME network to recognize the linked air container. Negative-pressure containers are recognized as 0 mL.
 - <ItemLink id="appliedpneumatics:air_p2p_tunel" />: Receives input air and distributes it to the outputs.
 - <ItemLink id="appliedpneumatics:heat_p2p_tunel" />: Receives input heat and distributes it to the outputs.

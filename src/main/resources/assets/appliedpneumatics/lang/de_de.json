@@ -39,6 +39,7 @@
   "item.appliedpneumatics.charging_card": "Ladekarte",
   "item.appliedpneumatics.amadron_wireless_terminal": "Drahtloses Amadron-Terminal",
   "item.appliedpneumatics.amadron_pattern": "Amadron-Verarbeitungsmuster",
+  "item.appliedpneumatics.amadron_process_upgrade": "Upgrade für Amadron-Verarbeitungsstation",
 
   "block.appliedpneumatics.me_pressure_interface_block": "ME-Druckschnittstelle",
   "block.appliedpneumatics.me_amadron_process_station": "ME-Amadron-Verarbeitungsstation",
@@ -62,6 +63,7 @@
 
   "tooltip.appliedpneumatics.item.amadron.unlink": "Nicht mit einer Amadron-Verarbeitungsstation verknüpft",
   "tooltip.appliedpneumatics.item.amadron.linked": "Verknüpft mit %s [%s, %s, %s]",
+  "tooltip.appliedpneumatics.amadron_upgrade.amadron_process_busy": "Eine Amadron-Verarbeitungsstation kann nicht aufgerüstet werden, wenn sie gerade arbeitet oder wenn sich darin andere Gegenstände als Muster befinden.",
 
   "appliedpneumatics.gui.widget.amadron_offer_panel": "Amadron-Panel",
   "appliedpneumatics.portable_air_cell.bar": "Aktueller Druck: %s Bar",

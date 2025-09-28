@@ -39,6 +39,7 @@
   "item.appliedpneumatics.charging_card": "충전 카드",
   "item.appliedpneumatics.amadron_wireless_terminal": "아마드론 무선 터미널",
   "item.appliedpneumatics.amadron_pattern": "아마드론 처리 패턴",
+  "item.appliedpneumatics.amadron_process_upgrade": "아마드론 처리 스테이션 업그레이드",
 
   "block.appliedpneumatics.me_pressure_interface_block": "ME 압력 인터페이스",
   "block.appliedpneumatics.me_amadron_process_station": "ME 아마드론 처리 스테이션",
@@ -62,6 +63,7 @@
 
   "tooltip.appliedpneumatics.item.amadron.unlink": "아마드론 처리 스테이션에 연결되지 않음",
   "tooltip.appliedpneumatics.item.amadron.linked": "%s에 연결됨 [%s, %s, %s]",
+  "tooltip.appliedpneumatics.amadron_upgrade.amadron_process_busy": "작동 중이거나 내부에 패턴 외의 아이템이 있는 아마드론 처리 스테이션은 업그레이드할 수 없습니다.",
 
   "appliedpneumatics.gui.widget.amadron_offer_panel": "아마드론 패널",
   "appliedpneumatics.portable_air_cell.bar": "현재 압력: %s bar",

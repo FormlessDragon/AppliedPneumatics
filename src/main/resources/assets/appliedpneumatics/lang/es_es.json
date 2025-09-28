@@ -39,6 +39,7 @@
   "item.appliedpneumatics.charging_card": "Tarjeta de carga",
   "item.appliedpneumatics.amadron_wireless_terminal": "Terminal inalámbrico de Amadron",
   "item.appliedpneumatics.amadron_pattern": "Patrón de procesamiento de Amadron",
+  "item.appliedpneumatics.amadron_process_upgrade": "Mejora de estación de procesamiento de Amadron",
 
   "block.appliedpneumatics.me_pressure_interface_block": "Interfaz de presión ME",
   "block.appliedpneumatics.me_amadron_process_station": "Estación de procesamiento ME de Amadron",
@@ -62,6 +63,7 @@
 
   "tooltip.appliedpneumatics.item.amadron.unlink": "No vinculado a una estación de procesamiento de Amadron",
   "tooltip.appliedpneumatics.item.amadron.linked": "Vinculado a %s [%s, %s, %s]",
+  "tooltip.appliedpneumatics.amadron_upgrade.amadron_process_busy": "No se puede mejorar una estación de procesamiento de Amadron que esté trabajando o que contenga objetos distintos de patrones.",
 
   "appliedpneumatics.gui.widget.amadron_offer_panel": "Panel de Amadron",
   "appliedpneumatics.portable_air_cell.bar": "Presión actual: %s bar",

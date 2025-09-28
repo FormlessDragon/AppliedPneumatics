@@ -1,28 +1,39 @@
 package com.wintercogs.appliedpneumatics.datagen;
 
+import appeng.api.util.AEColor;
 import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
+import appeng.core.definitions.AEParts;
+import com.glodblock.github.extendedae.common.EAESingletons;
+import com.glodblock.github.extendedae.recipe.CrystalAssemblerRecipeBuilder;
+import com.google.common.collect.ImmutableList;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.init.APBlocks;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
 import com.wintercogs.appliedpneumatics.datagen.builder.CellDisassemblyRecipeBuilder;
 import gripe._90.megacells.definition.MEGAItems;
 import me.desht.pneumaticcraft.api.crafting.AmadronTradeResource;
+import me.desht.pneumaticcraft.api.crafting.recipe.AssemblyRecipe;
 import me.desht.pneumaticcraft.common.registry.ModBlocks;
 import me.desht.pneumaticcraft.common.registry.ModItems;
 import me.desht.pneumaticcraft.common.upgrades.ModUpgrades;
 import me.desht.pneumaticcraft.datagen.recipe.AmadronRecipeBuilder;
+import me.desht.pneumaticcraft.datagen.recipe.AssemblyRecipeBuilder;
+import me.desht.pneumaticcraft.datagen.recipe.PressureChamberRecipeBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ModRecipeProvider extends RecipeProvider implements IConditionBuilder
@@ -36,30 +47,16 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
     @Override
     protected void buildRecipes(@NotNull RecipeOutput recipeOutput)
     {
-        // 空气元件外壳
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_SHELL.get())
-                .pattern("ABA")
-                .pattern("B B")
-                .pattern("DED")
-                .define('A', AEBlocks.QUARTZ_GLASS)
-                .define('B', Items.REDSTONE)
-                .define('D', ModItems.COMPRESSED_IRON_INGOT)
-                .define('E', Items.COPPER_INGOT)
-                .unlockedBy("unlock_air_cell_shell", has(ModItems.COMPRESSED_IRON_INGOT))
-                .save(recipeOutput);
+        // 外壳
+        pressureChamber(ImmutableList.of(SizedIngredient.of(ModBlocks.PRESSURE_TUBE, 2),
+                        SizedIngredient.of(ModBlocks.PRESSURE_CHAMBER_GLASS, 3),
+                        SizedIngredient.of(ModItems.COMPRESSED_IRON_INGOT, 2),
+                        SizedIngredient.of(ModItems.PRESSURE_GAUGE, 1)),
+                4f,
+                new ItemStack(APItems.AIR_CELL_SHELL.get()))
+                .save(recipeOutput, AppliedPneumatics.makeId("pressure_chamber/air_cell_shell"));
 
         // 存储元件1k~256m
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_1K.get())
-                .pattern("ABA")
-                .pattern("BCB")
-                .pattern("DED")
-                .define('A', AEBlocks.QUARTZ_GLASS)
-                .define('B', Items.REDSTONE)
-                .define('C', AEItems.CELL_COMPONENT_1K)
-                .define('D', ModItems.COMPRESSED_IRON_INGOT)
-                .define('E', Items.COPPER_INGOT)
-                .unlockedBy("unlock_air_cell_1k", has(AEItems.CELL_COMPONENT_1K))
-                .save(recipeOutput);
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_1K.get())
                 .requires(APItems.AIR_CELL_SHELL)
                 .requires(AEItems.CELL_COMPONENT_1K)
@@ -70,17 +67,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .add(AEItems.CELL_COMPONENT_1K)
                 .save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_4K.get())
-                .pattern("ABA")
-                .pattern("BCB")
-                .pattern("DED")
-                .define('A', AEBlocks.QUARTZ_GLASS)
-                .define('B', Items.REDSTONE)
-                .define('C', AEItems.CELL_COMPONENT_4K)
-                .define('D', ModItems.COMPRESSED_IRON_INGOT)
-                .define('E', Items.COPPER_INGOT)
-                .unlockedBy("unlock_air_cell_4k", has(AEItems.CELL_COMPONENT_4K))
-                .save(recipeOutput);
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_4K.get())
                 .requires(APItems.AIR_CELL_SHELL)
                 .requires(AEItems.CELL_COMPONENT_4K)
@@ -91,17 +77,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .add(AEItems.CELL_COMPONENT_4K)
                 .save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_16K.get())
-                .pattern("ABA")
-                .pattern("BCB")
-                .pattern("DED")
-                .define('A', AEBlocks.QUARTZ_GLASS)
-                .define('B', Items.REDSTONE)
-                .define('C', AEItems.CELL_COMPONENT_16K)
-                .define('D', ModItems.COMPRESSED_IRON_INGOT)
-                .define('E', Items.COPPER_INGOT)
-                .unlockedBy("unlock_air_cell_16k", has(AEItems.CELL_COMPONENT_16K))
-                .save(recipeOutput);
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_16K.get())
                 .requires(APItems.AIR_CELL_SHELL)
                 .requires(AEItems.CELL_COMPONENT_16K)
@@ -112,17 +87,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .add(AEItems.CELL_COMPONENT_16K)
                 .save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_64K.get())
-                .pattern("ABA")
-                .pattern("BCB")
-                .pattern("DED")
-                .define('A', AEBlocks.QUARTZ_GLASS)
-                .define('B', Items.REDSTONE)
-                .define('C', AEItems.CELL_COMPONENT_64K)
-                .define('D', ModItems.COMPRESSED_IRON_INGOT)
-                .define('E', Items.COPPER_INGOT)
-                .unlockedBy("unlock_air_cell_64k", has(AEItems.CELL_COMPONENT_64K))
-                .save(recipeOutput);
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_64K.get())
                 .requires(APItems.AIR_CELL_SHELL)
                 .requires(AEItems.CELL_COMPONENT_64K)
@@ -133,17 +97,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .add(AEItems.CELL_COMPONENT_64K)
                 .save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_256K.get())
-                .pattern("ABA")
-                .pattern("BCB")
-                .pattern("DED")
-                .define('A', AEBlocks.QUARTZ_GLASS)
-                .define('B', Items.REDSTONE)
-                .define('C', AEItems.CELL_COMPONENT_256K)
-                .define('D', ModItems.COMPRESSED_IRON_INGOT)
-                .define('E', Items.COPPER_INGOT)
-                .unlockedBy("unlock_air_cell_256k", has(AEItems.CELL_COMPONENT_256K))
-                .save(recipeOutput);
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_256K.get())
                 .requires(APItems.AIR_CELL_SHELL)
                 .requires(AEItems.CELL_COMPONENT_256K)
@@ -156,29 +109,18 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
         if(AppliedPneumatics.MEGA_CELL_LOADED)
         {
-            // MEGA空气元件外壳
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.MEGA_AIR_CELL_SHELL.get())
-                    .pattern("ABA")
-                    .pattern("B B")
-                    .pattern("DCD")
-                    .define('A', AEItems.SKY_DUST)
-                    .define('B', AEBlocks.QUARTZ_VIBRANT_GLASS)
-                    .define('C', ModItems.PRINTED_CIRCUIT_BOARD)
-                    .define('D', ModItems.COMPRESSED_IRON_INGOT)
-                    .unlockedBy("unlock_mega_air_cell_shell", has(AEItems.SKY_DUST))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
+            // 外壳
+            pressureChamber(ImmutableList.of(SizedIngredient.of(ModBlocks.REINFORCED_PRESSURE_TUBE, 2),
+                            SizedIngredient.of(MEGAItems.SKY_STEEL_INGOT, 2),
+                            SizedIngredient.of(ModItems.COMPRESSED_IRON_GEAR, 2),
+                            SizedIngredient.of(ModItems.PRINTED_CIRCUIT_BOARD, 1),
+                            SizedIngredient.of(ModItems.NETWORK_DATA_STORAGE, 1),
+                            SizedIngredient.of(APItems.AIR_CELL_SHELL, 1)),
+                    5f,
+                    new ItemStack(APItems.MEGA_AIR_CELL_SHELL.get()))
+                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)),
+                            AppliedPneumatics.makeId("pressure_chamber/mega_air_cell_shell"));
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_1M.get())
-                    .pattern("ABA")
-                    .pattern("BCB")
-                    .pattern("DED")
-                    .define('A', AEItems.SKY_DUST)
-                    .define('B', AEBlocks.QUARTZ_VIBRANT_GLASS)
-                    .define('C', MEGAItems.CELL_COMPONENT_1M)
-                    .define('D', ModItems.COMPRESSED_IRON_INGOT)
-                    .define('E', ModItems.PRINTED_CIRCUIT_BOARD)
-                    .unlockedBy("unlock_air_cell_1m", has(MEGAItems.CELL_COMPONENT_1M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_1M.get())
                     .requires(APItems.MEGA_AIR_CELL_SHELL)
                     .requires(MEGAItems.CELL_COMPONENT_1M)
@@ -191,17 +133,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                     .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
                     .save(recipeOutput);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_4M.get())
-                    .pattern("ABA")
-                    .pattern("BCB")
-                    .pattern("DED")
-                    .define('A', AEItems.SKY_DUST)
-                    .define('B', AEBlocks.QUARTZ_VIBRANT_GLASS)
-                    .define('C', MEGAItems.CELL_COMPONENT_4M)
-                    .define('D', ModItems.COMPRESSED_IRON_INGOT)
-                    .define('E', ModItems.PRINTED_CIRCUIT_BOARD)
-                    .unlockedBy("unlock_air_cell_4m", has(MEGAItems.CELL_COMPONENT_4M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_4M.get())
                     .requires(APItems.MEGA_AIR_CELL_SHELL)
                     .requires(MEGAItems.CELL_COMPONENT_4M)
@@ -214,17 +145,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                     .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
                     .save(recipeOutput);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_16M.get())
-                    .pattern("ABA")
-                    .pattern("BCB")
-                    .pattern("DED")
-                    .define('A', AEItems.SKY_DUST)
-                    .define('B', AEBlocks.QUARTZ_VIBRANT_GLASS)
-                    .define('C', MEGAItems.CELL_COMPONENT_16M)
-                    .define('D', ModItems.COMPRESSED_IRON_INGOT)
-                    .define('E', ModItems.PRINTED_CIRCUIT_BOARD)
-                    .unlockedBy("unlock_air_cell_16m", has(MEGAItems.CELL_COMPONENT_16M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_16M.get())
                     .requires(APItems.MEGA_AIR_CELL_SHELL)
                     .requires(MEGAItems.CELL_COMPONENT_16M)
@@ -237,17 +157,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                     .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
                     .save(recipeOutput);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_64M.get())
-                    .pattern("ABA")
-                    .pattern("BCB")
-                    .pattern("DED")
-                    .define('A', AEItems.SKY_DUST)
-                    .define('B', AEBlocks.QUARTZ_VIBRANT_GLASS)
-                    .define('C', MEGAItems.CELL_COMPONENT_64M)
-                    .define('D', ModItems.COMPRESSED_IRON_INGOT)
-                    .define('E', ModItems.PRINTED_CIRCUIT_BOARD)
-                    .unlockedBy("unlock_air_cell_64m", has(MEGAItems.CELL_COMPONENT_64M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_64M.get())
                     .requires(APItems.MEGA_AIR_CELL_SHELL)
                     .requires(MEGAItems.CELL_COMPONENT_64M)
@@ -260,17 +169,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                     .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
                     .save(recipeOutput);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APItems.AIR_CELL_256M.get())
-                    .pattern("ABA")
-                    .pattern("BCB")
-                    .pattern("DED")
-                    .define('A', AEItems.SKY_DUST)
-                    .define('B', AEBlocks.QUARTZ_VIBRANT_GLASS)
-                    .define('C', MEGAItems.CELL_COMPONENT_256M)
-                    .define('D', ModItems.COMPRESSED_IRON_INGOT)
-                    .define('E', ModItems.PRINTED_CIRCUIT_BOARD)
-                    .unlockedBy("unlock_air_cell_256m", has(MEGAItems.CELL_COMPONENT_256M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
             ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_256M.get())
                     .requires(APItems.MEGA_AIR_CELL_SHELL)
                     .requires(MEGAItems.CELL_COMPONENT_256M)
@@ -484,9 +382,20 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .save(recipeOutput);
 
         // 扩展亚马龙处理站
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APBlocks.ME_AMADRON_EXTENDED_PROCESS_STATION)
-                .requires(APBlocks.ME_AMADRON_PROCESS_STATION, 4)
-                .unlockedBy("unlock_me_amadron_extended_process_station", has(APBlocks.ME_AMADRON_PROCESS_STATION))
+        CrystalAssemblerRecipeBuilder.assemble(APBlocks.ME_AMADRON_EXTENDED_PROCESS_STATION)
+                .input(APBlocks.ME_AMADRON_PROCESS_STATION)
+                .input(AEItems.CAPACITY_CARD, 3)
+                .input(Items.CRAFTING_TABLE, 3)
+                .input(EAESingletons.CONCURRENT_PROCESSOR)
+                .input(AEParts.GLASS_CABLE.item(AEColor.TRANSPARENT), 6)
+                .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.EAE_MODID)),
+                        AppliedPneumatics.makeId("assembler/me_amadron_extened_process_station"));
+
+        // 亚马龙处理站升级
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AMADRON_PROCESS_UPGRADE)
+                .requires(APBlocks.ME_AMADRON_EXTENDED_PROCESS_STATION)
+                .requires(Tags.Items.INGOTS)
+                .unlockedBy("unlock_amadron_process_upgrade", has(APBlocks.ME_AMADRON_EXTENDED_PROCESS_STATION))
                 .save(recipeOutput.withConditions(modLoaded(AppliedPneumatics.EAE_MODID)));
 
         // 安全卡
@@ -520,6 +429,8 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('C', AEItems.ADVANCED_CARD)
                 .unlockedBy("unlock_vacuum_card", has(AEItems.ADVANCED_CARD))
                 .save(recipeOutput);
+
+        // 联动配方------------------------------------------------------------------------------------------------------
 
         // 绿宝石到物品
         amadronStatic(AmadronTradeResource.of(new ItemStack(Items.EMERALD, 8)),
@@ -566,10 +477,107 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         amadronStatic(AmadronTradeResource.of(new ItemStack(AEItems.SINGULARITY, 1)),
                 AmadronTradeResource.of(new ItemStack(Items.EMERALD, 99)))
                 .save(recipeOutput, AppliedPneumatics.makeId("amadron/singularity_to_emerald"));
+
+        // 装配室联动配方
+        assembly(SizedIngredient.of(AEParts.SMART_CABLE.item(AEColor.TRANSPARENT), 16),
+                new ItemStack(AEParts.SMART_DENSE_CABLE.item(AEColor.TRANSPARENT), 8),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput, AppliedPneumatics.makeId("assembly/smart_cable_to_smart_dense_cable"));
+
+        assembly(SizedIngredient.of(AEParts.GLASS_CABLE.item(AEColor.TRANSPARENT), 16),
+                new ItemStack(AEParts.SMART_CABLE.item(AEColor.TRANSPARENT), 16),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput, AppliedPneumatics.makeId("assembly/glass_cable_to_smart_cable"));
+
+        assembly(SizedIngredient.of(AEBlocks.DAMAGED_BUDDING_QUARTZ, 1),
+                new ItemStack(AEBlocks.CHIPPED_BUDDING_QUARTZ, 1),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput, AppliedPneumatics.makeId("assembly/damage_budding_quartz_to_chipped_budding_quartz"));
+
+        assembly(SizedIngredient.of(AEBlocks.CHIPPED_BUDDING_QUARTZ, 1),
+                new ItemStack(AEBlocks.FLAWED_BUDDING_QUARTZ, 1),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput, AppliedPneumatics.makeId("assembly/chipped_budding_quartz_to_flaw_budding_quartz"));
+
+        assembly(SizedIngredient.of(AEBlocks.FLAWED_BUDDING_QUARTZ, 64),
+                new ItemStack(AEBlocks.FLAWLESS_BUDDING_QUARTZ, 1),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput, AppliedPneumatics.makeId("assembly/flaw_budding_quartz_to_flawless_budding_quartz"));
+
+        assembly(SizedIngredient.of(AEBlocks.ENERGY_CELL, 8),
+                new ItemStack(AEBlocks.DENSE_ENERGY_CELL, 1),
+                AssemblyRecipe.AssemblyProgramType.DRILL)
+                .save(recipeOutput, AppliedPneumatics.makeId("assembly/energy_cell_to_dense_energy_cell"));
+
+        assembly(SizedIngredient.of(AEBlocks.NOT_SO_MYSTERIOUS_CUBE, 1),
+                new ItemStack(AEBlocks.MYSTERIOUS_CUBE, 1),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput, AppliedPneumatics.makeId("assembly/not_so_mysterious_cube_to_mysterious_cube"));
+
+        assembly(SizedIngredient.of(Blocks.TNT, 1),
+                new ItemStack(AEBlocks.TINY_TNT, 8),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput, AppliedPneumatics.makeId("assembly/tnt_to_tiny_tnt"));
+
+        assembly(SizedIngredient.of(AEItems.MATTER_BALL, 64),
+                new ItemStack(AEItems.SINGULARITY, 1),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput, AppliedPneumatics.makeId("assembly/matter_ball_to_singularity"));
+
+        assembly(SizedIngredient.of(AEItems.CERTUS_QUARTZ_CRYSTAL, 1),
+                new ItemStack(AEItems.CALCULATION_PROCESSOR_PRINT, 1),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput, AppliedPneumatics.makeId("assembly/certus_quartz_crystal_to_calculation_processor_print"));
+
+        assembly(SizedIngredient.of(Items.DIAMOND, 1),
+                new ItemStack(AEItems.ENGINEERING_PROCESSOR_PRINT, 1),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput, AppliedPneumatics.makeId("assembly/diamond_to_engineering_processor_print"));
+
+        assembly(SizedIngredient.of(Items.GOLD_INGOT, 1),
+                new ItemStack(AEItems.LOGIC_PROCESSOR_PRINT, 1),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput, AppliedPneumatics.makeId("assembly/gold_ingot_to_logic_processor_print"));
+
+        assembly(SizedIngredient.of(AEItems.SILICON, 1),
+                new ItemStack(AEItems.SILICON_PRINT, 1),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput, AppliedPneumatics.makeId("assembly/silicon_to_silicon_print"));
+
+        // eae联动-恩特罗装配线
+        assembly(SizedIngredient.of(EAESingletons.HARDLY_ENTROIZED_FLUIX_BUDDING, 1),
+                new ItemStack(EAESingletons.HALF_ENTROIZED_FLUIX_BUDDING, 1),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.EAE_MODID)),
+                        AppliedPneumatics.makeId("assembly/hardly_entropized_fluix_budding_to_half_entropized_fluix_budding"));
+
+        assembly(SizedIngredient.of(EAESingletons.HALF_ENTROIZED_FLUIX_BUDDING, 1),
+                new ItemStack(EAESingletons.MOSTLY_ENTROIZED_FLUIX_BUDDING, 1),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.EAE_MODID)),
+                        AppliedPneumatics.makeId("assembly/half_entropized_fluix_budding_to_mostly_entropized_fluix_budding"));
+
+        assembly(SizedIngredient.of(EAESingletons.MOSTLY_ENTROIZED_FLUIX_BUDDING, 1),
+                new ItemStack(EAESingletons.FULLY_ENTROIZED_FLUIX_BUDDING, 1),
+                AssemblyRecipe.AssemblyProgramType.LASER)
+                .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.EAE_MODID)),
+                        AppliedPneumatics.makeId("assembly/mostly_entropized_fluix_budding_to_fully_entropized_fluix_budding"));
+
     }
 
     // 用于快速添加亚马龙交易
     private RecipeBuilder amadronStatic(AmadronTradeResource in, AmadronTradeResource out) {
         return (new AmadronRecipeBuilder(in, out, true, 0)).unlockedBy(getHasName((ItemLike)ModItems.AMADRON_TABLET.get()), has((ItemLike)ModItems.AMADRON_TABLET.get()));
     }
+
+    // 快速添加压力室配方
+    private RecipeBuilder pressureChamber(List<SizedIngredient> in, float pressure, ItemStack... out) {
+        return (new PressureChamberRecipeBuilder(in, pressure, out)).unlockedBy(getHasName((ItemLike)ModBlocks.PRESSURE_CHAMBER_VALVE.get()), has((ItemLike)ModBlocks.PRESSURE_CHAMBER_VALVE.get()));
+    }
+
+    // 快速添加装配室配方
+    private RecipeBuilder assembly(SizedIngredient input, ItemStack output, AssemblyRecipe.AssemblyProgramType programType) {
+        return (new AssemblyRecipeBuilder(input, output, programType)).unlockedBy(getHasName((ItemLike)ModBlocks.ASSEMBLY_CONTROLLER.get()), has((ItemLike)ModBlocks.ASSEMBLY_CONTROLLER.get()));
+    }
+
 }

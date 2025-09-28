@@ -39,6 +39,7 @@
   "item.appliedpneumatics.charging_card": "充填カード",
   "item.appliedpneumatics.amadron_wireless_terminal": "アマドロン無線端末",
   "item.appliedpneumatics.amadron_pattern": "アマドロン処理パターン",
+  "item.appliedpneumatics.amadron_process_upgrade": "アマドロン処理ステーションのアップグレード",
 
   "block.appliedpneumatics.me_pressure_interface_block": "ME圧力インターフェース",
   "block.appliedpneumatics.me_amadron_process_station": "MEアマドロン処理ステーション",
@@ -62,6 +63,7 @@
 
   "tooltip.appliedpneumatics.item.amadron.unlink": "アマドロン処理ステーションにリンクされていません",
   "tooltip.appliedpneumatics.item.amadron.linked": "%s にリンク済み［%s, %s, %s］",
+  "tooltip.appliedpneumatics.amadron_upgrade.amadron_process_busy": "稼働中、または内部にパターン以外のアイテムが入っているアマドロン処理ステーションはアップグレードできません。",
 
   "appliedpneumatics.gui.widget.amadron_offer_panel": "アマドロンパネル",
   "appliedpneumatics.portable_air_cell.bar": "現在の圧力：%s bar",

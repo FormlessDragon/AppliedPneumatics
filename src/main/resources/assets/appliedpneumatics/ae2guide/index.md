@@ -35,4 +35,4 @@ It allows you to use the ME network to control **Compressed Air**, **Temperature
 - [Amadron Wireless Terminal](amadron_wireless_terminal.md)
 - [Amadron Processing Station](me_amadron_process_block.md)
 - [New Upgrade Cards](upgrades.md)
-- [New Amadron Trades](amadron_trade.md)
+- [New Recipe](new_recipe.md)

@@ -8,6 +8,7 @@ item_ids:
   - appliedpneumatics:me_amadron_process_station
   - appliedpneumatics:me_amadron_extended_process_station
   - appliedpneumatics:amadron_pattern
+  - appliedpneumatics:amadron_process_upgrade
 ---
 
 # 亚马龙处理站
@@ -16,6 +17,7 @@ item_ids:
   <BlockImage id="me_amadron_process_station" scale="4" />
   <BlockImage id="me_amadron_extended_process_station" scale="4" />
   <ItemImage id="amadron_pattern" scale="4" />
+  <ItemImage id="amadron_process_upgrade" scale="4" />
 </Row>
 
 处理来自 **亚马龙无线终端** 和 **ME 网络自动合成** 的订单。  

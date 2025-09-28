@@ -39,6 +39,7 @@
   "item.appliedpneumatics.charging_card": "Карта накачки",
   "item.appliedpneumatics.amadron_wireless_terminal": "Беспроводной терминал Амадрона",
   "item.appliedpneumatics.amadron_pattern": "Шаблон обработки Амадрона",
+  "item.appliedpneumatics.amadron_process_upgrade": "Улучшение станции обработки Амадрона",
 
   "block.appliedpneumatics.me_pressure_interface_block": "МЭ интерфейс давления",
   "block.appliedpneumatics.me_amadron_process_station": "МЭ станция обработки Амадрона",
@@ -62,6 +63,7 @@
 
   "tooltip.appliedpneumatics.item.amadron.unlink": "Не привязано к станции обработки Амадрона",
   "tooltip.appliedpneumatics.item.amadron.linked": "Привязано к %s [%s, %s, %s]",
+  "tooltip.appliedpneumatics.amadron_upgrade.amadron_process_busy": "Нельзя улучшить станцию обработки Амадрона, если она работает или содержит предметы, отличные от шаблонов.",
 
   "appliedpneumatics.gui.widget.amadron_offer_panel": "Панель Амадрона",
   "appliedpneumatics.portable_air_cell.bar": "Текущее давление: %s бар",

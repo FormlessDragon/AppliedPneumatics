@@ -39,6 +39,7 @@
   "item.appliedpneumatics.charging_card": "Carte de gonflage",
   "item.appliedpneumatics.amadron_wireless_terminal": "Terminal sans fil Amadron",
   "item.appliedpneumatics.amadron_pattern": "Modèle de traitement Amadron",
+  "item.appliedpneumatics.amadron_process_upgrade": "Amélioration de station de traitement Amadron",
 
   "block.appliedpneumatics.me_pressure_interface_block": "Interface de pression ME",
   "block.appliedpneumatics.me_amadron_process_station": "Station de traitement Amadron ME",
@@ -62,6 +63,7 @@
 
   "tooltip.appliedpneumatics.item.amadron.unlink": "Non lié à une station de traitement Amadron",
   "tooltip.appliedpneumatics.item.amadron.linked": "Lié à %s [%s, %s, %s]",
+  "tooltip.appliedpneumatics.amadron_upgrade.amadron_process_busy": "Impossible d’améliorer une station de traitement Amadron en cours de fonctionnement ou contenant des objets autres que des modèles.",
 
   "appliedpneumatics.gui.widget.amadron_offer_panel": "Panneau Amadron",
   "appliedpneumatics.portable_air_cell.bar": "Pression actuelle : %s bar",

@@ -79,6 +79,7 @@
   "amadron.appliedpneumatics.order_fail.order_too_much": "リンクされた処理ステーションでは注文数が多すぎます。1台につき同時処理は最大512件です",
   "amadron.appliedpneumatics.order_success": "注文を送信しました（合計 %s 件）",
   "amadron.appliedpneumatics.process_fail": "%s → %s の取引に失敗：資源は返却済み／失敗数 %s",
+  "amadron.appliedpneumatics.process_fail.offer_invalid": "ID：%s の取引は無効になりました。資源は返却されました。失敗数：%s",
   "amadron.appliedpneumatics.process_fail.block_break": "%s のアマドロン取引ステーションが破壊されました。進行中の取引はすべて取り消され、資源はMEネットワークに返却またはドロップされました。",
   "amadron.appliedpneumatics.process_fail.order_cancel": "%s にて全取引が手動で取り消されました。資源はMEネットワークに返却またはドロップされました。",
   "tooltip.appliedpneumatics.amadron_trade.supplier": "供給元：",

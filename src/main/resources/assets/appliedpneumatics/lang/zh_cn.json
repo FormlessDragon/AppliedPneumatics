@@ -79,6 +79,7 @@
   "amadron.appliedpneumatics.order_fail.order_too_much": "绑定的亚马龙处理站无法接收这么多订单，一个亚马龙处理站最多同时处理512单",
   "amadron.appliedpneumatics.order_success": "已提交订单，共 %s 项",
   "amadron.appliedpneumatics.process_fail": "%s -> %s 的交易失败，资源已返还，失败数量 %s",
+  "amadron.appliedpneumatics.process_fail.offer_invalid": "ID为：%s的交易已经无效，资源已返还，失败数量 %s",
   "amadron.appliedpneumatics.process_fail.block_break": "位于 %s 的亚马龙交易站已被破坏，正在进行中的交易均已取消，资源已返还到ME网络或掉落。",
   "amadron.appliedpneumatics.process_fail.order_cancel": "位于 %s 的亚马龙交易站，被手动取消所有交易，资源已返还到ME网络或掉落。",
   "tooltip.appliedpneumatics.amadron_trade.supplier": "供货商：",

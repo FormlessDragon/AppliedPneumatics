@@ -79,6 +79,7 @@
   "amadron.appliedpneumatics.order_fail.order_too_much": "연결된 처리 스테이션이 처리할 수 있는 주문 수를 초과했습니다(스테이션 1대당 동시에 최대 512건)",
   "amadron.appliedpneumatics.order_success": "주문을 제출했습니다(총 %s건)",
   "amadron.appliedpneumatics.process_fail": "%s → %s 거래 실패: 자원 반환됨, 실패 수량 %s",
+  "amadron.appliedpneumatics.process_fail.offer_invalid": "ID: %s의 거래는 더 이상 유효하지 않습니다. 자원은 반환되었습니다. 실패 수: %s",
   "amadron.appliedpneumatics.process_fail.block_break": "%s의 아마드론 거래 스테이션이 파괴되었습니다. 진행 중인 모든 거래가 취소되었으며 자원은 ME 네트워크로 반환되거나 떨어졌습니다.",
   "amadron.appliedpneumatics.process_fail.order_cancel": "%s에서 모든 거래가 수동으로 취소되었습니다. 자원은 ME 네트워크로 반환되거나 떨어졌습니다.",
   "tooltip.appliedpneumatics.amadron_trade.supplier": "공급자:",

@@ -79,6 +79,7 @@
   "amadron.appliedpneumatics.order_fail.order_too_much": "La estación de procesamiento vinculada no puede aceptar tantos pedidos; una sola estación puede gestionar como máximo 512 pedidos simultáneos",
   "amadron.appliedpneumatics.order_success": "Pedidos enviados: %s en total",
   "amadron.appliedpneumatics.process_fail": "Intercambio %s → %s fallido; recursos devueltos; cantidad fallida %s",
+  "amadron.appliedpneumatics.process_fail.offer_invalid": "La oferta con ID: %s ya no es válida; los recursos han sido devueltos. Cantidad de fallos: %s",
   "amadron.appliedpneumatics.process_fail.block_break": "La Estación de comercio de Amadron en %s fue destruida; se han cancelado todas las transacciones en curso; los recursos se han devuelto a la red ME o se han soltado.",
   "amadron.appliedpneumatics.process_fail.order_cancel": "En %s se cancelaron manualmente todas las transacciones; los recursos se han devuelto a la red ME o se han soltado.",
   "tooltip.appliedpneumatics.amadron_trade.supplier": "Proveedor:",

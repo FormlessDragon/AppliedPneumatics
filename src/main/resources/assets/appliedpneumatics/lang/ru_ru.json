@@ -79,6 +79,7 @@
   "amadron.appliedpneumatics.order_fail.order_too_much": "Привязанная станция обработки Амадрона не может принять столько заказов; одна станция обрабатывает не более 512 одновременно",
   "amadron.appliedpneumatics.order_success": "Заказы отправлены: всего %s",
   "amadron.appliedpneumatics.process_fail": "Сделка %s → %s не удалась; ресурсы возвращены; количество сбоев: %s",
+  "amadron.appliedpneumatics.process_fail.offer_invalid": "Предложение с идентификатором: %s больше не действует; ресурсы возвращены. Число неудавшихся заказов: %s",
   "amadron.appliedpneumatics.process_fail.block_break": "Торговая станция Амадрона в точке %s уничтожена; все активные сделки отменены; ресурсы возвращены в сеть МЭ или выброшены.",
   "amadron.appliedpneumatics.process_fail.order_cancel": "В точке %s все сделки были отменены вручную; ресурсы возвращены в сеть МЭ или выброшены.",
   "tooltip.appliedpneumatics.amadron_trade.supplier": "Поставщик:",

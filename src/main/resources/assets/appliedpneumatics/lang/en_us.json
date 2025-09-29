@@ -79,6 +79,7 @@
   "amadron.appliedpneumatics.order_fail.order_too_much": "The bound Amadron Processing Station cannot accept that many orders; a single station can handle at most 512 orders concurrently",
   "amadron.appliedpneumatics.order_success": "Orders submitted: %s total",
   "amadron.appliedpneumatics.process_fail": "%s -> %s trade failed; resources returned; failed amount %s",
+  "amadron.appliedpneumatics.process_fail.offer_invalid": "The offer with ID: %s is no longer valid; resources have been returned. Failed count: %s",
   "amadron.appliedpneumatics.process_fail.block_break": "The Amadron Trading Station at %s was broken; all in-progress trades have been cancelled; resources have been returned to the ME network or dropped.",
   "amadron.appliedpneumatics.process_fail.order_cancel": "All trades at %s were manually cancelled; resources have been returned to the ME network or dropped.",
   "tooltip.appliedpneumatics.amadron_trade.supplier": "Supplier:",

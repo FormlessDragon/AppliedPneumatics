@@ -11,10 +11,7 @@ import appeng.api.networking.IGrid;
 import appeng.api.networking.crafting.ICraftingProvider;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IStorageService;
-import appeng.api.stacks.AEItemKey;
-import appeng.api.stacks.AEKey;
-import appeng.api.stacks.GenericStack;
-import appeng.api.stacks.KeyCounter;
+import appeng.api.stacks.*;
 import appeng.api.storage.MEStorage;
 import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableObject;
@@ -72,9 +69,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
+// 大量的失败回退处理有重复代码，后续可以统一处理
 public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity implements IUpgradeableObject,
         ICraftingProvider, PatternContainer, ServerTickingBlockEntity, IPriorityHost
 {
+
+    // === 每台无人机的输出负载上限（Item/Fluid） 遵循气动原版限制
+    private static final int MAX_ITEM_STACKS_PER_DRONE = 36;
+    private static final int MAX_FLUID_MB_PER_DRONE = 576000;
 
     /** 样板槽 - 只允许UI存取 */
     private final AppEngInternalInventory patternInventory;
@@ -112,6 +114,11 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
                 setChanged();
             }
         };
+
+        inputInv.useRegisteredCapacities();
+        inputInv.setCapacity(AEKeyType.fluids(), 64000);
+        outputInv.useRegisteredCapacities();
+        outputInv.setCapacity(AEKeyType.fluids(), 64000);
 
         getMainNode().setIdlePowerUsage(8.0) // 待机消耗
                 .setFlags(GridFlags.REQUIRE_CHANNEL) // 需要频道
@@ -523,17 +530,86 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
                 continue;
             }
 
+            // 列表为空或者本轮已经扫过
             if (list.isEmpty() || usedThisRound.contains(offerId))
             {
                 pending.addAll(list);
                 continue;
             }
 
+            // 报价失效，无法加入下一轮，直接送回资源并丢弃任务
             if (!AmadronOfferManager.getInstance().isActive(offerId))
             {
-                // 报价失效：本轮丢弃
+                // 报价失效：退款并丢弃
+                MEStorage me = getNetworkInventory();
+
+                // 合并失败消息：按玩家统计此次被退回的 job 数
+                Map<UUID, Integer> refundedByPlayer = new HashMap<>();
+
+                for (Job job : list)
+                {
+                    GenericStack res = job.selfResource();
+
+                    long remain = res.amount();
+                    if (me != null)
+                    {
+                        long inserted = me.insert(res.what(), remain, Actionable.MODULATE, src);
+                        remain -= inserted;
+                    }
+                    // 插不回的余量：仅对物品掉落，其他Key无法掉落
+                    if (remain > 0 && res.what() instanceof AEItemKey itemKey)
+                    {
+                        int drop = (int) Math.min(Integer.MAX_VALUE, remain);
+                        Block.popResource(level, worldPosition, itemKey.toStack(drop));
+                    }
+
+                    if (job.player() != null)
+                    {
+                        refundedByPlayer.merge(job.player(), 1, Integer::sum);
+                    }
+                }
+
+                // 告知相关玩家：该报价已失效，资源已返还
+                if (level.getServer() != null && !refundedByPlayer.isEmpty())
+                {
+                    var offer = AmadronOfferManager.getInstance().getOffer(offerId); // 可能为 null（已被移除）
+                    for (var playerEntry : refundedByPlayer.entrySet())
+                    {
+                        var player = level.getServer().getPlayerList().getPlayer(playerEntry.getKey());
+                        if (player != null)
+                        {
+                            if (offer != null)
+                            {
+                                player.sendSystemMessage(
+                                        Component.translatable("amadron.appliedpneumatics.process_fail",
+                                                offer.getInput().getName(), offer.getOutput().getName(), playerEntry.getValue())
+                                );
+                            }
+                            else
+                            {
+                                player.sendSystemMessage(
+                                        Component.translatable("amadron.appliedpneumatics.process_fail.offer_invalid",
+                                                offerId.toString(), playerEntry.getValue())
+                                );
+                            }
+                        }
+                    }
+                }
+
+                // 不加入 pending，直接跳过（相当于彻底移除这些 job）
                 continue;
             }
+
+
+            // 基于输出限制本次可派发的最大 units
+            AmadronOffer offer = AmadronOfferManager.getInstance().getOffer(offerId);
+            int payloadUnitsLimit = computeMaxUnitsPerDrone(offer);
+            if (payloadUnitsLimit <= 0) // 单订单超出可承载上限，此订单完全无法派发
+            {
+                pending.addAll(list);
+                continue;
+            }
+            final int allowedUnits = Math.min(maxUnitsPerOfferPerDispatch, payloadUnitsLimit);
 
             // 逐 job 尝试插入资源；成功的累到 selected
             List<Job> selected = new ArrayList<>();
@@ -542,7 +618,7 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
             // 记录访问了多少条，用于把“未访问尾部”补回 pending
             int visited = 0;
 
-            for (int i = 0; i < list.size() && selected.size() < maxUnitsPerOfferPerDispatch; i++)
+            for (int i = 0; i < list.size() && selected.size() < allowedUnits; i++)
             {
                 Job job = list.get(i);
                 visited++;
@@ -573,7 +649,6 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
 
             // 召唤无人机
             int units = selected.size();
-            AmadronOffer offer = AmadronOfferManager.getInstance().getOffer(offerId);
             GlobalPos here = new GlobalPos(this.level.dimension(), this.worldPosition);
 
             AmadroneEntity drone = retrieveOrder(AppliedPneumatics.MODID, offer, units, here, here);
@@ -702,6 +777,28 @@ public class MEAmadronProcessStationBlockEntity extends AENetworkedBlockEntity i
             return false;
         } else {
             return true;
+        }
+    }
+
+    /** 计算“仅由输出负载上限”允许的一次派发最大 units（与速度卡上限取 min） */
+    private static int computeMaxUnitsPerDrone(AmadronOffer offer)
+    {
+        ItemStack outItem = offer.getOutput().getItem();
+        if (!outItem.isEmpty())
+        {
+            int perUnitCount = Math.max(1, outItem.getCount());       // 单位产出的物品数量
+            int maxStackSize = Math.max(1, outItem.getMaxStackSize()); // 该物品的最大堆叠
+            long maxItemsCapacity = (long) MAX_ITEM_STACKS_PER_DRONE * (long) maxStackSize;
+            long byUnits = maxItemsCapacity / perUnitCount; // floor
+            return (int) Math.min(byUnits, Integer.MAX_VALUE);
+        }
+        else
+        {
+            // 流体：按 576,000 mB 的上限折算成 units
+            FluidStack perUnit = offer.getOutput().getFluid();
+            int mbPerUnit = Math.max(1, perUnit.getAmount());
+            long byUnits = MAX_FLUID_MB_PER_DRONE / (long) mbPerUnit; // floor
+            return (int) byUnits; // MAX_FLUID_MB_PER_DRONE仅576000，mbPerUnit最小为1，此处安全转换
         }
     }
 

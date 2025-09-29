@@ -79,6 +79,7 @@
   "amadron.appliedpneumatics.order_fail.order_too_much": "Die verknüpfte Amadron-Verarbeitungsstation kann nicht so viele Aufträge annehmen; eine einzelne Station kann höchstens 512 Aufträge gleichzeitig bearbeiten",
   "amadron.appliedpneumatics.order_success": "Aufträge übermittelt: insgesamt %s",
   "amadron.appliedpneumatics.process_fail": "Handel %s → %s fehlgeschlagen; Ressourcen zurückgegeben; Fehlmenge %s",
+  "amadron.appliedpneumatics.process_fail.offer_invalid": "Das Angebot mit der ID: %s ist nicht mehr gültig; Ressourcen wurden zurückgegeben. Fehlgeschlagene Menge: %s",
   "amadron.appliedpneumatics.process_fail.block_break": "Die Amadron-Handelsstation bei %s wurde zerstört; alle laufenden Handelsvorgänge wurden abgebrochen, Ressourcen zum ME-Netzwerk zurückgegeben oder fallen gelassen.",
   "amadron.appliedpneumatics.process_fail.order_cancel": "An der Position %s wurden alle Handelsvorgänge manuell abgebrochen; Ressourcen wurden ins ME-Netzwerk zurückgegeben oder fallen gelassen.",
   "tooltip.appliedpneumatics.amadron_trade.supplier": "Anbieter:",

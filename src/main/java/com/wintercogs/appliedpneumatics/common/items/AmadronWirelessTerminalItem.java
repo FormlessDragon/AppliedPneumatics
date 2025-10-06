@@ -6,6 +6,7 @@ import appeng.api.config.Settings;
 import appeng.api.config.TerminalStyle;
 import appeng.api.implementations.items.IAEItemPowerStorage;
 import appeng.api.util.IConfigManager;
+import appeng.core.localization.GuiText;
 import appeng.core.localization.PlayerMessages;
 import appeng.helpers.WirelessTerminalMenuHost;
 import appeng.items.tools.powered.WirelessTerminalItem;
@@ -129,11 +130,20 @@ public class AmadronWirelessTerminalItem extends WirelessTerminalItem implements
         AmadronWirelessTerminalMenuHost menuHost = new AmadronWirelessTerminalMenuHost(this, player, locator,
                 (p, sm) -> openFromInventory(p, locator, true));
 
-        // 服务端先验检查，如果host处于未连接状态，则拒绝打开菜单
-        if(!player.level().isClientSide() && !menuHost.getLinkStatus().connected())
+        // 服务端先验检查，如果host处于未连接状态，或者无电，则拒绝打开菜单
+        if(!player.level().isClientSide())
         {
-            player.sendSystemMessage(PlayerMessages.LinkedNetworkNotFound.text());
-            return null;
+            if(getAECurrentPower(locator.locateItem(player)) <= 0)
+            {
+                player.sendSystemMessage(GuiText.OutOfPower.text());
+                return null;
+            }
+
+            if(!menuHost.getLinkStatus().connected())
+            {
+                player.sendSystemMessage(PlayerMessages.LinkedNetworkNotFound.text());
+                return null;
+            }
         }
 
         return menuHost;

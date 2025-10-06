@@ -61,6 +61,6 @@ public class AmadronWirelessTerminalMenuHost extends WirelessTerminalMenuHost<Am
     @Override
     public boolean isValid()
     {
-        return super.isValid() && getLinkStatus().connected();
+        return super.isValid() && getLinkStatus().connected() && getItem().getAECurrentPower(getItemStack()) > 0;
     }
 }

@@ -8,10 +8,11 @@ import appeng.api.implementations.items.IAEItemPowerStorage;
 import appeng.api.util.IConfigManager;
 import appeng.core.localization.GuiText;
 import appeng.core.localization.PlayerMessages;
-import appeng.helpers.WirelessTerminalMenuHost;
 import appeng.items.tools.powered.WirelessTerminalItem;
 import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
+import appeng.menu.MenuOpener;
 import appeng.menu.locator.ItemMenuHostLocator;
+import appeng.menu.locator.MenuLocators;
 import com.wintercogs.appliedpneumatics.common.blocks.entitis.MEAmadronProcessStationBlockEntity;
 import com.wintercogs.appliedpneumatics.common.init.APDataComponents;
 import com.wintercogs.appliedpneumatics.common.init.APItems;
@@ -25,7 +26,9 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
@@ -63,6 +66,44 @@ public class AmadronWirelessTerminalItem extends WirelessTerminalItem implements
         event.registerItem(Capabilities.EnergyStorage.ITEM,
                 (o, unused) -> new PoweredItemCapabilities(o, powerStorage),
                 APItems.AMADRON_WIRELESS_TERMINAL);
+    }
+
+    /**
+     * 打开无线终端界面——我们把先验逻辑迁移到这里，防止某些蠢货疯狂调用getMenuHost
+     */
+    @Override
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
+    {
+        ItemStack is = player.getItemInHand(hand);
+
+        if (!player.level().isClientSide() && checkPreconditions(is))
+        {
+            // 我们进行先验检查
+            ItemMenuHostLocator locator = MenuLocators.forHand(player, hand);
+            AmadronWirelessTerminalMenuHost menuHost = getMenuHost(player, locator, null);
+
+            // 无能量拒绝打开
+            if(getAECurrentPower(locator.locateItem(player)) <= 0)
+            {
+                player.sendSystemMessage(GuiText.OutOfPower.text());
+                return new InteractionResultHolder<>(InteractionResult.PASS, is);
+            }
+
+            // 未链接拒绝打开
+            if(!menuHost.getLinkStatus().connected())
+            {
+                player.sendSystemMessage(PlayerMessages.LinkedNetworkNotFound.text());
+                return new InteractionResultHolder<>(InteractionResult.PASS, is);
+            }
+
+            // 如果成功打开，我们返回成功
+            if (MenuOpener.open(getMenuType(), player, locator))
+            {
+                return new InteractionResultHolder<>(InteractionResult.sidedSuccess(level.isClientSide()), is);
+            }
+        }
+
+        return new InteractionResultHolder<>(InteractionResult.FAIL, is);
     }
 
     @Override
@@ -124,29 +165,10 @@ public class AmadronWirelessTerminalItem extends WirelessTerminalItem implements
     }
 
     @Override
-    public @Nullable WirelessTerminalMenuHost<?> getMenuHost(Player player, ItemMenuHostLocator locator, @Nullable BlockHitResult hitResult)
+    public @Nullable AmadronWirelessTerminalMenuHost getMenuHost(Player player, ItemMenuHostLocator locator, @Nullable BlockHitResult hitResult)
     {
-        // 我们进行先验检查
-        AmadronWirelessTerminalMenuHost menuHost = new AmadronWirelessTerminalMenuHost(this, player, locator,
+        return new AmadronWirelessTerminalMenuHost(this, player, locator,
                 (p, sm) -> openFromInventory(p, locator, true));
-
-        // 服务端先验检查，如果host处于未连接状态，或者无电，则拒绝打开菜单
-        if(!player.level().isClientSide())
-        {
-            if(getAECurrentPower(locator.locateItem(player)) <= 0)
-            {
-                player.sendSystemMessage(GuiText.OutOfPower.text());
-                return null;
-            }
-
-            if(!menuHost.getLinkStatus().connected())
-            {
-                player.sendSystemMessage(PlayerMessages.LinkedNetworkNotFound.text());
-                return null;
-            }
-        }
-
-        return menuHost;
     }
 
     // 快速绑定、取消绑定方块

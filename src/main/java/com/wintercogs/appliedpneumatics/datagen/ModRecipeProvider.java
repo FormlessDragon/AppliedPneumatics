@@ -21,8 +21,10 @@ import me.desht.pneumaticcraft.datagen.recipe.AmadronRecipeBuilder;
 import me.desht.pneumaticcraft.datagen.recipe.AssemblyRecipeBuilder;
 import me.desht.pneumaticcraft.datagen.recipe.PressureChamberRecipeBuilder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
@@ -33,6 +35,7 @@ import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -54,282 +57,21 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                         SizedIngredient.of(ModItems.PRESSURE_GAUGE, 1)),
                 4f,
                 new ItemStack(APItems.AIR_CELL_SHELL.get()))
-                .save(recipeOutput, AppliedPneumatics.makeId("pressure_chamber/air_cell_shell"));
+                .save(recipeOutput, housingShapedId(APItems.AIR_CELL_SHELL.get()));
 
-        // 存储元件1k~256m
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_1K.get())
-                .requires(APItems.AIR_CELL_SHELL)
-                .requires(AEItems.CELL_COMPONENT_1K)
-                .unlockedBy("unlock_air_cell_1k", has(AEItems.CELL_COMPONENT_1K))
-                .save(recipeOutput, AppliedPneumatics.makeId("air_cell_1k_from_shell"));
-        CellDisassemblyRecipeBuilder.cell(APItems.AIR_CELL_1K.get())
-                .add(APItems.AIR_CELL_SHELL)
-                .add(AEItems.CELL_COMPONENT_1K)
-                .save(recipeOutput);
+        pressureChamber(ImmutableList.of(SizedIngredient.of(ModBlocks.REINFORCED_PRESSURE_TUBE, 2),
+                        SizedIngredient.of(MEGAItems.SKY_STEEL_INGOT, 2),
+                        SizedIngredient.of(ModItems.COMPRESSED_IRON_GEAR, 2),
+                        SizedIngredient.of(ModItems.PRINTED_CIRCUIT_BOARD, 1),
+                        SizedIngredient.of(ModItems.NETWORK_DATA_STORAGE, 1),
+                        SizedIngredient.of(APItems.AIR_CELL_SHELL, 1)),
+                5f,
+                new ItemStack(APItems.MEGA_AIR_CELL_SHELL.get()))
+                .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)),
+                        housingShapedId(APItems.MEGA_AIR_CELL_SHELL.get()));
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_4K.get())
-                .requires(APItems.AIR_CELL_SHELL)
-                .requires(AEItems.CELL_COMPONENT_4K)
-                .unlockedBy("unlock_air_cell_4k", has(AEItems.CELL_COMPONENT_4K))
-                .save(recipeOutput, AppliedPneumatics.makeId("air_cell_4k_from_shell"));
-        CellDisassemblyRecipeBuilder.cell(APItems.AIR_CELL_4K.get())
-                .add(APItems.AIR_CELL_SHELL)
-                .add(AEItems.CELL_COMPONENT_4K)
-                .save(recipeOutput);
-
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_16K.get())
-                .requires(APItems.AIR_CELL_SHELL)
-                .requires(AEItems.CELL_COMPONENT_16K)
-                .unlockedBy("unlock_air_cell_4k", has(AEItems.CELL_COMPONENT_16K))
-                .save(recipeOutput, AppliedPneumatics.makeId("air_cell_16k_from_shell"));
-        CellDisassemblyRecipeBuilder.cell(APItems.AIR_CELL_16K.get())
-                .add(APItems.AIR_CELL_SHELL)
-                .add(AEItems.CELL_COMPONENT_16K)
-                .save(recipeOutput);
-
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_64K.get())
-                .requires(APItems.AIR_CELL_SHELL)
-                .requires(AEItems.CELL_COMPONENT_64K)
-                .unlockedBy("unlock_air_cell_4k", has(AEItems.CELL_COMPONENT_64K))
-                .save(recipeOutput, AppliedPneumatics.makeId("air_cell_64k_from_shell"));
-        CellDisassemblyRecipeBuilder.cell(APItems.AIR_CELL_64K.get())
-                .add(APItems.AIR_CELL_SHELL)
-                .add(AEItems.CELL_COMPONENT_64K)
-                .save(recipeOutput);
-
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_256K.get())
-                .requires(APItems.AIR_CELL_SHELL)
-                .requires(AEItems.CELL_COMPONENT_256K)
-                .unlockedBy("unlock_air_cell_4k", has(AEItems.CELL_COMPONENT_256K))
-                .save(recipeOutput, AppliedPneumatics.makeId("air_cell_256k_from_shell"));
-        CellDisassemblyRecipeBuilder.cell(APItems.AIR_CELL_256K.get())
-                .add(APItems.AIR_CELL_SHELL)
-                .add(AEItems.CELL_COMPONENT_256K)
-                .save(recipeOutput);
-
-        if(AppliedPneumatics.MEGA_CELL_LOADED)
-        {
-            // 外壳
-            pressureChamber(ImmutableList.of(SizedIngredient.of(ModBlocks.REINFORCED_PRESSURE_TUBE, 2),
-                            SizedIngredient.of(MEGAItems.SKY_STEEL_INGOT, 2),
-                            SizedIngredient.of(ModItems.COMPRESSED_IRON_GEAR, 2),
-                            SizedIngredient.of(ModItems.PRINTED_CIRCUIT_BOARD, 1),
-                            SizedIngredient.of(ModItems.NETWORK_DATA_STORAGE, 1),
-                            SizedIngredient.of(APItems.AIR_CELL_SHELL, 1)),
-                    5f,
-                    new ItemStack(APItems.MEGA_AIR_CELL_SHELL.get()))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)),
-                            AppliedPneumatics.makeId("pressure_chamber/mega_air_cell_shell"));
-
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_1M.get())
-                    .requires(APItems.MEGA_AIR_CELL_SHELL)
-                    .requires(MEGAItems.CELL_COMPONENT_1M)
-                    .unlockedBy("unlock_air_cell_4k", has(MEGAItems.CELL_COMPONENT_1M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)),
-                            AppliedPneumatics.makeId("air_cell_1m_from_shell"));
-            CellDisassemblyRecipeBuilder.cell(APItems.AIR_CELL_1M.get())
-                    .add(APItems.MEGA_AIR_CELL_SHELL)
-                    .add(MEGAItems.CELL_COMPONENT_1M)
-                    .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
-                    .save(recipeOutput);
-
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_4M.get())
-                    .requires(APItems.MEGA_AIR_CELL_SHELL)
-                    .requires(MEGAItems.CELL_COMPONENT_4M)
-                    .unlockedBy("unlock_air_cell_4k", has(MEGAItems.CELL_COMPONENT_4M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)),
-                            AppliedPneumatics.makeId("air_cell_4m_from_shell"));
-            CellDisassemblyRecipeBuilder.cell(APItems.AIR_CELL_4M.get())
-                    .add(APItems.MEGA_AIR_CELL_SHELL)
-                    .add(MEGAItems.CELL_COMPONENT_4M)
-                    .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
-                    .save(recipeOutput);
-
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_16M.get())
-                    .requires(APItems.MEGA_AIR_CELL_SHELL)
-                    .requires(MEGAItems.CELL_COMPONENT_16M)
-                    .unlockedBy("unlock_air_cell_4k", has(MEGAItems.CELL_COMPONENT_16M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)),
-                            AppliedPneumatics.makeId("air_cell_16m_from_shell"));
-            CellDisassemblyRecipeBuilder.cell(APItems.AIR_CELL_16M.get())
-                    .add(APItems.MEGA_AIR_CELL_SHELL)
-                    .add(MEGAItems.CELL_COMPONENT_16M)
-                    .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
-                    .save(recipeOutput);
-
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_64M.get())
-                    .requires(APItems.MEGA_AIR_CELL_SHELL)
-                    .requires(MEGAItems.CELL_COMPONENT_64M)
-                    .unlockedBy("unlock_air_cell_4k", has(MEGAItems.CELL_COMPONENT_64M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)),
-                            AppliedPneumatics.makeId("air_cell_64m_from_shell"));
-            CellDisassemblyRecipeBuilder.cell(APItems.AIR_CELL_64M.get())
-                    .add(APItems.MEGA_AIR_CELL_SHELL)
-                    .add(MEGAItems.CELL_COMPONENT_64M)
-                    .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
-                    .save(recipeOutput);
-
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.AIR_CELL_256M.get())
-                    .requires(APItems.MEGA_AIR_CELL_SHELL)
-                    .requires(MEGAItems.CELL_COMPONENT_256M)
-                    .unlockedBy("unlock_air_cell_4k", has(MEGAItems.CELL_COMPONENT_256M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)),
-                            AppliedPneumatics.makeId("air_cell_256m_from_shell"));
-            CellDisassemblyRecipeBuilder.cell(APItems.AIR_CELL_256M.get())
-                    .add(APItems.MEGA_AIR_CELL_SHELL)
-                    .add(MEGAItems.CELL_COMPONENT_256M)
-                    .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
-                    .save(recipeOutput);
-        }
-
-        // 便携1k~256m
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.PORTABLE_AIR_CELL_1K.get())
-                .requires(AEItems.CELL_COMPONENT_1K)
-                .requires(AEBlocks.ME_CHEST)
-                .requires(AEBlocks.ENERGY_CELL)
-                .requires(APItems.AIR_CELL_SHELL)
-                .unlockedBy("unlock_portable_air_cell_1k", has(AEItems.CELL_COMPONENT_1K))
-                .save(recipeOutput);
-        CellDisassemblyRecipeBuilder.cell(APItems.PORTABLE_AIR_CELL_1K.get())
-                .add(AEItems.CELL_COMPONENT_1K)
-                .add(AEBlocks.ME_CHEST)
-                .add(AEBlocks.ENERGY_CELL)
-                .add(APItems.AIR_CELL_SHELL)
-                .save(recipeOutput);
-
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.PORTABLE_AIR_CELL_4K.get())
-                .requires(AEItems.CELL_COMPONENT_4K)
-                .requires(AEBlocks.ME_CHEST)
-                .requires(AEBlocks.ENERGY_CELL)
-                .requires(APItems.AIR_CELL_SHELL)
-                .unlockedBy("unlock_portable_air_cell_4k", has(AEItems.CELL_COMPONENT_4K))
-                .save(recipeOutput);
-        CellDisassemblyRecipeBuilder.cell(APItems.PORTABLE_AIR_CELL_4K.get())
-                .add(AEItems.CELL_COMPONENT_4K)
-                .add(AEBlocks.ME_CHEST)
-                .add(AEBlocks.ENERGY_CELL)
-                .add(APItems.AIR_CELL_SHELL)
-                .save(recipeOutput);
-
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.PORTABLE_AIR_CELL_16K.get())
-                .requires(AEItems.CELL_COMPONENT_16K)
-                .requires(AEBlocks.ME_CHEST)
-                .requires(AEBlocks.ENERGY_CELL)
-                .requires(APItems.AIR_CELL_SHELL)
-                .unlockedBy("unlock_portable_air_cell_16k", has(AEItems.CELL_COMPONENT_16K))
-                .save(recipeOutput);
-        CellDisassemblyRecipeBuilder.cell(APItems.PORTABLE_AIR_CELL_16K.get())
-                .add(AEItems.CELL_COMPONENT_16K)
-                .add(AEBlocks.ME_CHEST)
-                .add(AEBlocks.ENERGY_CELL)
-                .add(APItems.AIR_CELL_SHELL)
-                .save(recipeOutput);
-
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.PORTABLE_AIR_CELL_64K.get())
-                .requires(AEItems.CELL_COMPONENT_64K)
-                .requires(AEBlocks.ME_CHEST)
-                .requires(AEBlocks.ENERGY_CELL)
-                .requires(APItems.AIR_CELL_SHELL)
-                .unlockedBy("unlock_portable_air_cell_64k", has(AEItems.CELL_COMPONENT_64K))
-                .save(recipeOutput);
-        CellDisassemblyRecipeBuilder.cell(APItems.PORTABLE_AIR_CELL_64K.get())
-                .add(AEItems.CELL_COMPONENT_64K)
-                .add(AEBlocks.ME_CHEST)
-                .add(AEBlocks.ENERGY_CELL)
-                .add(APItems.AIR_CELL_SHELL)
-                .save(recipeOutput);
-
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.PORTABLE_AIR_CELL_256K.get())
-                .requires(AEItems.CELL_COMPONENT_256K)
-                .requires(AEBlocks.ME_CHEST)
-                .requires(AEBlocks.ENERGY_CELL)
-                .requires(APItems.AIR_CELL_SHELL)
-                .unlockedBy("unlock_portable_air_cell_256k", has(AEItems.CELL_COMPONENT_256K))
-                .save(recipeOutput);
-        CellDisassemblyRecipeBuilder.cell(APItems.PORTABLE_AIR_CELL_256K.get())
-                .add(AEItems.CELL_COMPONENT_256K)
-                .add(AEBlocks.ME_CHEST)
-                .add(AEBlocks.ENERGY_CELL)
-                .add(APItems.AIR_CELL_SHELL)
-                .save(recipeOutput);
-
-        if (AppliedPneumatics.MEGA_CELL_LOADED)
-        {
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.PORTABLE_AIR_CELL_1M.get())
-                    .requires(MEGAItems.CELL_COMPONENT_1M)
-                    .requires(AEBlocks.ME_CHEST)
-                    .requires(AEBlocks.ENERGY_CELL)
-                    .requires(APItems.MEGA_AIR_CELL_SHELL)
-                    .unlockedBy("unlock_portable_air_cell_1m", has(MEGAItems.CELL_COMPONENT_1M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
-            CellDisassemblyRecipeBuilder.cell(APItems.PORTABLE_AIR_CELL_1M.get())
-                    .add(MEGAItems.CELL_COMPONENT_1M)
-                    .add(AEBlocks.ME_CHEST)
-                    .add(AEBlocks.ENERGY_CELL)
-                    .add(APItems.MEGA_AIR_CELL_SHELL)
-                    .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
-                    .save(recipeOutput);
-
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.PORTABLE_AIR_CELL_4M.get())
-                    .requires(MEGAItems.CELL_COMPONENT_4M)
-                    .requires(AEBlocks.ME_CHEST)
-                    .requires(AEBlocks.ENERGY_CELL)
-                    .requires(APItems.MEGA_AIR_CELL_SHELL)
-                    .unlockedBy("unlock_portable_air_cell_4m", has(MEGAItems.CELL_COMPONENT_4M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
-            CellDisassemblyRecipeBuilder.cell(APItems.PORTABLE_AIR_CELL_4M.get())
-                    .add(MEGAItems.CELL_COMPONENT_4M)
-                    .add(AEBlocks.ME_CHEST)
-                    .add(AEBlocks.ENERGY_CELL)
-                    .add(APItems.MEGA_AIR_CELL_SHELL)
-                    .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
-                    .save(recipeOutput);
-
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.PORTABLE_AIR_CELL_16M.get())
-                    .requires(MEGAItems.CELL_COMPONENT_16M)
-                    .requires(AEBlocks.ME_CHEST)
-                    .requires(AEBlocks.ENERGY_CELL)
-                    .requires(APItems.MEGA_AIR_CELL_SHELL)
-                    .unlockedBy("unlock_portable_air_cell_16m", has(MEGAItems.CELL_COMPONENT_16M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
-            CellDisassemblyRecipeBuilder.cell(APItems.PORTABLE_AIR_CELL_16M.get())
-                    .add(MEGAItems.CELL_COMPONENT_16M)
-                    .add(AEBlocks.ME_CHEST)
-                    .add(AEBlocks.ENERGY_CELL)
-                    .add(APItems.MEGA_AIR_CELL_SHELL)
-                    .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
-                    .save(recipeOutput);
-
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.PORTABLE_AIR_CELL_64M.get())
-                    .requires(MEGAItems.CELL_COMPONENT_64M)
-                    .requires(AEBlocks.ME_CHEST)
-                    .requires(AEBlocks.ENERGY_CELL)
-                    .requires(APItems.MEGA_AIR_CELL_SHELL)
-                    .unlockedBy("unlock_portable_air_cell_64m", has(MEGAItems.CELL_COMPONENT_64M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
-            CellDisassemblyRecipeBuilder.cell(APItems.PORTABLE_AIR_CELL_64M.get())
-                    .add(MEGAItems.CELL_COMPONENT_64M)
-                    .add(AEBlocks.ME_CHEST)
-                    .add(AEBlocks.ENERGY_CELL)
-                    .add(APItems.MEGA_AIR_CELL_SHELL)
-                    .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
-                    .save(recipeOutput);
-
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, APItems.PORTABLE_AIR_CELL_256M.get())
-                    .requires(MEGAItems.CELL_COMPONENT_256M)
-                    .requires(AEBlocks.ME_CHEST)
-                    .requires(AEBlocks.ENERGY_CELL)
-                    .requires(APItems.MEGA_AIR_CELL_SHELL)
-                    .unlockedBy("unlock_portable_air_cell_256m", has(MEGAItems.CELL_COMPONENT_256M))
-                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)));
-            CellDisassemblyRecipeBuilder.cell(APItems.PORTABLE_AIR_CELL_256M.get())
-                    .add(MEGAItems.CELL_COMPONENT_256M)
-                    .add(AEBlocks.ME_CHEST)
-                    .add(AEBlocks.ENERGY_CELL)
-                    .add(APItems.MEGA_AIR_CELL_SHELL)
-                    .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
-                    .save(recipeOutput);
-        }
+        // 所有元件
+        buildAllCellRecipe(recipeOutput);
 
         // ME气压接口
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, APBlocks.ME_PRESSURE_INTERFACE_BLOCK)
@@ -565,6 +307,97 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
     }
 
+    // 添加所有元件
+    private static void buildAllCellRecipe(RecipeOutput recipeOutput)
+    {
+        List<TierRow> commonTierRows = new ArrayList<>(5);
+        List<TierRow> megaTierRows = new ArrayList<>(5);
+        commonTierRows.add(new TierRow(AEItems.CELL_COMPONENT_1K, APItems.AIR_CELL_1K.get(), APItems.PORTABLE_AIR_CELL_1K.get()));
+        commonTierRows.add(new TierRow(AEItems.CELL_COMPONENT_4K, APItems.AIR_CELL_4K.get(), APItems.PORTABLE_AIR_CELL_4K.get()));
+        commonTierRows.add(new TierRow(AEItems.CELL_COMPONENT_16K, APItems.AIR_CELL_16K.get(), APItems.PORTABLE_AIR_CELL_16K.get()));
+        commonTierRows.add(new TierRow(AEItems.CELL_COMPONENT_64K, APItems.AIR_CELL_64K.get(), APItems.PORTABLE_AIR_CELL_64K.get()));
+        commonTierRows.add(new TierRow(AEItems.CELL_COMPONENT_256K, APItems.AIR_CELL_256K.get(), APItems.PORTABLE_AIR_CELL_256K.get()));
+        megaTierRows.add(new TierRow(MEGAItems.CELL_COMPONENT_1M, APItems.AIR_CELL_1M.get(), APItems.PORTABLE_AIR_CELL_1M.get()));
+        megaTierRows.add(new TierRow(MEGAItems.CELL_COMPONENT_4M, APItems.AIR_CELL_4M.get(), APItems.PORTABLE_AIR_CELL_4M.get()));
+        megaTierRows.add(new TierRow(MEGAItems.CELL_COMPONENT_16M, APItems.AIR_CELL_16M.get(), APItems.PORTABLE_AIR_CELL_16M.get()));
+        megaTierRows.add(new TierRow(MEGAItems.CELL_COMPONENT_64M, APItems.AIR_CELL_64M.get(), APItems.PORTABLE_AIR_CELL_64M.get()));
+        megaTierRows.add(new TierRow(MEGAItems.CELL_COMPONENT_256M, APItems.AIR_CELL_256M.get(), APItems.PORTABLE_AIR_CELL_256M.get()));
+
+        // k系列
+        for(TierRow tierRow : commonTierRows)
+        {
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, tierRow.cell)
+                    .requires(APItems.AIR_CELL_SHELL.get())
+                    .requires(tierRow.component)
+                    .unlockedBy("has_correct_component", has(tierRow.component))
+                    .save(recipeOutput, cellShapelessId(tierRow.cell));
+            CellDisassemblyRecipeBuilder.cell(tierRow.cell)
+                    .add(APItems.AIR_CELL_SHELL)
+                    .add(tierRow.component)
+                    .save(recipeOutput, disassemblyId("air_cell", tierRow.cell, false));
+
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, tierRow.portableCell)
+                    .requires(tierRow.component)
+                    .requires(AEBlocks.ME_CHEST)
+                    .requires(AEBlocks.ENERGY_CELL)
+                    .requires(APItems.AIR_CELL_SHELL.get())
+                    .unlockedBy("has_correct_component", has(tierRow.component))
+                    .save(recipeOutput, cellShapelessId(tierRow.portableCell));
+            CellDisassemblyRecipeBuilder.cell(tierRow.portableCell)
+                    .add(tierRow.component)
+                    .add(AEBlocks.ME_CHEST)
+                    .add(AEBlocks.ENERGY_CELL)
+                    .add(APItems.AIR_CELL_SHELL)
+                    .save(recipeOutput, disassemblyId("air_cell", tierRow.portableCell, true));
+        }
+        // m系列
+        for(TierRow tierRow : megaTierRows)
+        {
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, tierRow.cell)
+                    .requires(APItems.MEGA_AIR_CELL_SHELL.get())
+                    .requires(tierRow.component)
+                    .unlockedBy("has_correct_component", has(tierRow.component))
+                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)),
+                            cellShapelessId(tierRow.cell));
+            CellDisassemblyRecipeBuilder.cell(tierRow.cell)
+                    .add(APItems.MEGA_AIR_CELL_SHELL)
+                    .add(tierRow.component)
+                    .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
+                    .save(recipeOutput, disassemblyId("air_cell", tierRow.cell, false));
+
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, tierRow.portableCell)
+                    .requires(tierRow.component)
+                    .requires(AEBlocks.ME_CHEST)
+                    .requires(AEBlocks.ENERGY_CELL)
+                    .requires(APItems.MEGA_AIR_CELL_SHELL.get())
+                    .unlockedBy("has_correct_component", has(tierRow.component))
+                    .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)),
+                            cellShapelessId(tierRow.portableCell));
+            CellDisassemblyRecipeBuilder.cell(tierRow.portableCell)
+                    .add(tierRow.component)
+                    .add(AEBlocks.ME_CHEST)
+                    .add(AEBlocks.ENERGY_CELL)
+                    .add(APItems.MEGA_AIR_CELL_SHELL)
+                    .whenModLoaded(AppliedPneumatics.MEGA_CELL_MODID)
+                    .save(recipeOutput, disassemblyId("air_cell", tierRow.portableCell, true));
+        }
+    }
+
+    // 统一配方id
+    private static ResourceLocation housingShapedId(ItemLike housing)
+    {
+        return AppliedPneumatics.makeId("cells/housing/" + BuiltInRegistries.ITEM.getKey(housing.asItem()).getPath());
+    }
+    private static ResourceLocation cellShapelessId(ItemLike cell)
+    {
+        return AppliedPneumatics.makeId("cells/shapeless/" + BuiltInRegistries.ITEM.getKey(cell.asItem()).getPath());
+    }
+    private static ResourceLocation disassemblyId(String series, ItemLike idLike, boolean portable)
+    {
+        String base = (portable ? "disassembly/portable/" : "disassembly/") + series + "/" + BuiltInRegistries.ITEM.getKey(idLike.asItem()).getPath();
+        return AppliedPneumatics.makeId(base);
+    }
+
     // 用于快速添加亚马龙交易
     private RecipeBuilder amadronStatic(AmadronTradeResource in, AmadronTradeResource out) {
         return (new AmadronRecipeBuilder(in, out, true, 0)).unlockedBy(getHasName((ItemLike)ModItems.AMADRON_TABLET.get()), has((ItemLike)ModItems.AMADRON_TABLET.get()));
@@ -579,5 +412,12 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
     private RecipeBuilder assembly(SizedIngredient input, ItemStack output, AssemblyRecipe.AssemblyProgramType programType) {
         return (new AssemblyRecipeBuilder(input, output, programType)).unlockedBy(getHasName((ItemLike)ModBlocks.ASSEMBLY_CONTROLLER.get()), has((ItemLike)ModBlocks.ASSEMBLY_CONTROLLER.get()));
     }
+
+    /** 用于描述元件与组件之间的对应关系 */
+    private record TierRow(
+            ItemLike component,
+            ItemLike cell,
+            ItemLike portableCell
+    ) {}
 
 }

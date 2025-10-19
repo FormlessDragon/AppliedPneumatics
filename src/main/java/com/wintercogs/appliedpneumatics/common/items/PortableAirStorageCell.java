@@ -146,7 +146,7 @@ public class PortableAirStorageCell extends AbstractPortableCell implements IAir
 
     public static int getColor(ItemStack stack, int tintIndex)
     {
-        if (tintIndex == 1)
+        if (tintIndex == 1) //led
         {
             if(stack.getItem() instanceof PoweredContainerItem poweredContainer)
             {
@@ -157,7 +157,7 @@ public class PortableAirStorageCell extends AbstractPortableCell implements IAir
             CellState state = IAirStorageCell.calcState(((IAirStorageCell) stack.getItem()).getTotalBytes(), stored);
             return state.getStateColor();
         }
-        else if (tintIndex == 2 && stack.getItem() instanceof AbstractPortableCell portableCell)
+        else if (tintIndex == 0 && stack.getItem() instanceof AbstractPortableCell portableCell) // screen
         {
             return portableCell.getColor(stack); // 实际上是获取之前传入的默认颜色
         }

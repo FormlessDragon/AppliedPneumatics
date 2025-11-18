@@ -13,7 +13,7 @@ import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.client.gui.widgets.AE2TinyButton;
 import com.wintercogs.appliedpneumatics.client.gui.widgets.AmadronOfferPanel;
 import com.wintercogs.appliedpneumatics.common.menu.AmadronWirelessTerminalMenu;
-import me.desht.pneumaticcraft.common.amadron.AmadronOfferManager;
+import com.wintercogs.appliedpneumatics.util.AmadronOfferHelper;
 import me.desht.pneumaticcraft.common.amadron.MutableBasket;
 import me.desht.pneumaticcraft.common.amadron.ShoppingBasket;
 import me.desht.pneumaticcraft.common.recipes.amadron.AmadronOffer;
@@ -323,7 +323,7 @@ public class AmadronWirelessTerminalGUI extends UpgradeableScreen<AmadronWireles
         String needle = q.toLowerCase(Locale.ROOT);
         if (id.toString().toLowerCase(Locale.ROOT).contains(needle)) return true;
 
-        AmadronOffer offer = AmadronOfferManager.getInstance().getOffer(id);
+        AmadronOffer offer = AmadronOfferHelper.getActiveOffer(id);
         if (offer == null) return false;
 
         String inName = safeNameLower(offer, true);

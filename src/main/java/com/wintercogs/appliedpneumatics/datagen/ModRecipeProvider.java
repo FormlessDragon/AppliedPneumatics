@@ -65,7 +65,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                         SizedIngredient.of(ModItems.PRINTED_CIRCUIT_BOARD, 1),
                         SizedIngredient.of(ModItems.NETWORK_DATA_STORAGE, 1),
                         SizedIngredient.of(APItems.AIR_CELL_SHELL, 1)),
-                5f,
+                4.95f,
                 new ItemStack(APItems.MEGA_AIR_CELL_SHELL.get()))
                 .save(recipeOutput.withConditions(new ModLoadedCondition(AppliedPneumatics.MEGA_CELL_MODID)),
                         housingShapedId(APItems.MEGA_AIR_CELL_SHELL.get()));

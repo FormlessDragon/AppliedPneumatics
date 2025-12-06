@@ -247,4 +247,11 @@ public class METemperatureInterfaceBlockEntity extends AENetworkedBlockEntity im
             drops.add(slotContent.copy());
         }
     }
+
+    @Override
+    public void clearContent()
+    {
+        super.clearContent();
+        upgrades.clear();
+    }
 }

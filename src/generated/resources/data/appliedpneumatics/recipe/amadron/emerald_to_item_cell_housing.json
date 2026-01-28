@@ -1,0 +1,17 @@
+{
+  "type": "pneumaticcraft:amadron",
+  "input": {
+    "resource": {
+      "count": 32,
+      "id": "minecraft:emerald"
+    }
+  },
+  "level": 0,
+  "offer_id": "appliedpneumatics:amadron/emerald_to_item_cell_housing",
+  "output": {
+    "resource": {
+      "count": 1,
+      "id": "ae2:item_cell_housing"
+    }
+  }
+}

@@ -23,6 +23,26 @@
     "title": {
       "text": { "translate": "block.appliedpneumatics.me_pressure_interface_block" },
       "position": { "left": 8, "top": 6 }
+    },
+    "air_amount": {
+      "position": { "left": 80, "top": 22 },
+      "align": "CENTER"
+    },
+    "max_pressure": {
+      "position": { "left": 80, "top": 38 },
+      "align": "CENTER"
+    },
+    "current_pressure": {
+      "position": { "left": 90, "top": 82 },
+      "align": "CENTER"
+    },
+    "expected_pressure_text": {
+      "position": { "left": 90, "top": 60 },
+      "align": "CENTER"
+    },
+    "expected_pressure_change_mult_text": {
+      "position": { "left": 90, "top": 100 },
+      "align": "CENTER"
     }
   },
   "widgets": {

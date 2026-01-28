@@ -3,8 +3,6 @@ package com.wintercogs.appliedpneumatics.client.gui;
 import appeng.client.gui.implementations.UpgradeableScreen;
 import appeng.client.gui.style.StyleManager;
 import com.wintercogs.appliedpneumatics.common.menu.METemperatureInterfaceMenu;
-import com.wintercogs.appliedpneumatics.util.GuiRenderHelper;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -35,17 +33,18 @@ public class METemperatureInterfaceGUI extends UpgradeableScreen<METemperatureIn
     }
 
     @Override
-    public void drawFG(GuiGraphics guiGraphics, int offsetX, int offsetY, int mouseX, int mouseY)
+    protected void updateBeforeRender()
     {
-        /** 有关温度的部分，减去273，转为摄氏度 */
-        super.drawFG(guiGraphics, offsetX, offsetY, mouseX, mouseY);
+        super.updateBeforeRender();
+
         String temperatureStr = String.format(Locale.ROOT, "%.1f", menu.latestTemperature - 273) + "℃";
         String heatCapStr = String.format(Locale.ROOT, "%.0f", menu.latestHeatCap);
         String expectedTemperatureStr = String.format(Locale.ROOT, "%.1f", menu.latestExpectedTemperature - 273);
-        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_temperature_interface.temperature",temperatureStr), 13, 168, 22, 4210752, false);
-        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_temperature_interface.heat_cap", heatCapStr), 13, 168, 38, 4210752, false);
-        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.literal(expectedTemperatureStr), 13, 168, 82, 4210752, false);
-        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_temperature_interface.expected_temperature_text"), 13, 168, 60, 4210752, false);
-        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_temperature_interface.expected_temperature_change_mult_text"), 13, 168, 100, 4210752, false);
+
+        setTextContent("temperature", Component.translatable("menu.label.appliedpneumatics.me_temperature_interface.temperature", temperatureStr));
+        setTextContent("heat_cap", Component.translatable("menu.label.appliedpneumatics.me_temperature_interface.heat_cap", heatCapStr));
+        setTextContent("expected_temperature", Component.literal(expectedTemperatureStr));
+        setTextContent("expected_temperature_text", Component.translatable("menu.label.appliedpneumatics.me_temperature_interface.expected_temperature_text"));
+        setTextContent("expected_temperature_change_mult_text", Component.translatable("menu.label.appliedpneumatics.me_temperature_interface.expected_temperature_change_mult_text"));
     }
 }

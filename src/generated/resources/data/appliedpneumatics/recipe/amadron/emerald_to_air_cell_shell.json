@@ -1,0 +1,17 @@
+{
+  "type": "pneumaticcraft:amadron",
+  "input": {
+    "resource": {
+      "count": 32,
+      "id": "minecraft:emerald"
+    }
+  },
+  "level": 0,
+  "offer_id": "appliedpneumatics:amadron/emerald_to_air_cell_shell",
+  "output": {
+    "resource": {
+      "count": 1,
+      "id": "appliedpneumatics:air_cell_shell"
+    }
+  }
+}

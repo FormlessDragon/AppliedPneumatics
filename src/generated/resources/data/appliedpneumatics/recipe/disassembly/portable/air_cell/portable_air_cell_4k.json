@@ -1,0 +1,22 @@
+{
+  "type": "ae2:storage_cell_disassembly",
+  "cell": "appliedpneumatics:portable_air_cell_4k",
+  "cell_disassembly_items": [
+    {
+      "count": 1,
+      "id": "ae2:cell_component_4k"
+    },
+    {
+      "count": 1,
+      "id": "ae2:chest"
+    },
+    {
+      "count": 1,
+      "id": "ae2:energy_cell"
+    },
+    {
+      "count": 1,
+      "id": "appliedpneumatics:air_cell_shell"
+    }
+  ]
+}

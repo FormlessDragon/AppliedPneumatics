@@ -1,0 +1,12 @@
+{
+  "type": "pneumaticcraft:assembly_laser",
+  "input": {
+    "count": 16,
+    "item": "ae2:fluix_glass_cable"
+  },
+  "program": "laser",
+  "result": {
+    "count": 16,
+    "id": "ae2:fluix_smart_cable"
+  }
+}

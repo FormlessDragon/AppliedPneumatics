@@ -3,8 +3,6 @@ package com.wintercogs.appliedpneumatics.client.gui;
 import appeng.client.gui.implementations.UpgradeableScreen;
 import appeng.client.gui.style.StyleManager;
 import com.wintercogs.appliedpneumatics.common.menu.MEPressureInterfaceMenu;
-import com.wintercogs.appliedpneumatics.util.GuiRenderHelper;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -36,20 +34,20 @@ public class MEPressureInterfaceGUI extends UpgradeableScreen<MEPressureInterfac
         });
     }
 
-    // 代码中写一些文本绘制
-    // AE的json中似乎无法传入动态数据
     @Override
-    public void drawFG(GuiGraphics guiGraphics, int offsetX, int offsetY, int mouseX, int mouseY)
+    protected void updateBeforeRender()
     {
-        super.drawFG(guiGraphics, offsetX, offsetY, mouseX, mouseY);
+        super.updateBeforeRender();
+
         String airStr = String.format(Locale.ROOT, "%.1f", (float) menu.latestAir / 1000f);
         String maxStr = String.format(Locale.ROOT, "%.0f", (float) menu.latestVolume / 1000f);
-        String currentPressureStr = String.format(Locale.ROOT, "%.0f", (float)menu.latestAir / (float)menu.latestVolume);
+        String currentPressureStr = String.format(Locale.ROOT, "%.0f", (float) menu.latestAir / (float) menu.latestVolume);
         String pressureStr = String.format(Locale.ROOT, "%.1f", menu.latestExpectedPressure);
-        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.air_amount",airStr, maxStr, currentPressureStr), 13, 148, 22, 4210752, false);
-        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.max_pressure", menu.latestDangerPressure), 13, 148, 38, 4210752, false);
-        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.literal(pressureStr), 13, 168, 82, 4210752, false);
-        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text"), 13, 168, 60, 4210752, false);
-        GuiRenderHelper.drawCenteredInRegion(guiGraphics, this.font, Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_change_mult_text"), 13, 168, 100, 4210752, false);
+
+        setTextContent("air_amount", Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.air_amount", airStr, maxStr, currentPressureStr));
+        setTextContent("max_pressure", Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.max_pressure", menu.latestDangerPressure));
+        setTextContent("current_pressure", Component.literal(pressureStr));
+        setTextContent("expected_pressure_text", Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text"));
+        setTextContent("expected_pressure_change_mult_text", Component.translatable("menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_change_mult_text"));
     }
 }

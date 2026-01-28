@@ -1,0 +1,17 @@
+{
+  "type": "pneumaticcraft:amadron",
+  "input": {
+    "resource": {
+      "count": 1,
+      "id": "ae2:singularity"
+    }
+  },
+  "level": 0,
+  "offer_id": "appliedpneumatics:amadron/singularity_to_emerald",
+  "output": {
+    "resource": {
+      "count": 99,
+      "id": "minecraft:emerald"
+    }
+  }
+}

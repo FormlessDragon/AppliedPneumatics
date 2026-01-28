@@ -22,6 +22,26 @@
     "title": {
       "text": { "translate": "block.appliedpneumatics.me_temperature_interface" },
       "position": { "left": 8, "top": 6 }
+    },
+    "temperature": {
+      "position": { "left": 90, "top": 22 },
+      "align": "CENTER"
+    },
+    "heat_cap": {
+      "position": { "left": 90, "top": 38 },
+      "align": "CENTER"
+    },
+    "expected_temperature": {
+      "position": { "left": 90, "top": 82 },
+      "align": "CENTER"
+    },
+    "expected_temperature_text": {
+      "position": { "left": 90, "top": 60 },
+      "align": "CENTER"
+    },
+    "expected_temperature_change_mult_text": {
+      "position": { "left": 90, "top": 100 },
+      "align": "CENTER"
     }
   },
   "widgets": {

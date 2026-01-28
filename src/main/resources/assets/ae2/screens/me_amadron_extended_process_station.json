@@ -25,6 +25,12 @@
     "title": {
       "text": { "translate": "block.appliedpneumatics.me_amadron_extended_process_station" },
       "position": { "left": 8, "top": 6 }
+    },
+    "job_amount": {
+      "position": {
+        "left": 8,
+        "top": 75
+      }
     }
   },
   "widgets": {

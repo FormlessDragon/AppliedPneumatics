@@ -1,0 +1,12 @@
+{
+  "type": "pneumaticcraft:assembly_laser",
+  "input": {
+    "count": 64,
+    "item": "ae2:matter_ball"
+  },
+  "program": "laser",
+  "result": {
+    "count": 1,
+    "id": "ae2:singularity"
+  }
+}

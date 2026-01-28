@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ae2:advanced_card"
+    },
+    {
+      "item": "pneumaticcraft:security_upgrade"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "appliedpneumatics:security_card"
+  }
+}

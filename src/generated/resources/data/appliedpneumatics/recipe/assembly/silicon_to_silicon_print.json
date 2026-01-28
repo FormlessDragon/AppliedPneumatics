@@ -1,0 +1,12 @@
+{
+  "type": "pneumaticcraft:assembly_laser",
+  "input": {
+    "count": 1,
+    "item": "ae2:silicon"
+  },
+  "program": "laser",
+  "result": {
+    "count": 1,
+    "id": "ae2:printed_silicon"
+  }
+}

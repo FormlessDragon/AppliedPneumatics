@@ -12,7 +12,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
-@EventBusSubscriber(modid = AppliedPneumatics.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = AppliedPneumatics.MODID, value = Dist.CLIENT)
 public class AirStroageModels
 {
     public static final ResourceLocation AIR_CELL_MODEL_1K = ResourceLocation.tryBuild(AppliedPneumatics.MODID, "block/drive/cells/air_cell_1k");

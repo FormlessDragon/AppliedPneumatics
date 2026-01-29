@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-@EventBusSubscriber(modid = AppliedPneumatics.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = AppliedPneumatics.MODID)
 public class APPartCapabilities
 {
     @SubscribeEvent

@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 当我们需要模拟驱动器的气压爆炸时，通过此类来延迟一个tick爆炸
  */
-@EventBusSubscriber(modid = AppliedPneumatics.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = AppliedPneumatics.MODID)
 public class APDelayedBreaker
 {
     private static final Set<BlockKey> QUEUE = ConcurrentHashMap.newKeySet();

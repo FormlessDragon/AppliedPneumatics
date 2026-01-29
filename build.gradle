@@ -133,37 +133,14 @@ dependencies {
     // JEI仅运行，方便看配方
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:19.22.1.316"
     // AE依赖
-    implementation "org.appliedenergistics:appliedenergistics2:${ae_version}"
+    implementation "org.appliedenergistics:appliedenergistics2:${ae2_version}"
     // 气动工艺
     implementation "curse.maven:pneumaticcraft-repressurized-281849:6817362"
     // Mage存储元件
-    compileOnly "maven.modrinth:mega:4.10.1"
-    runtimeOnly "maven.modrinth:mega:4.10.1"
+    implementation "curse.maven:mega-cells-622112:6853076"
     // EAE联动
-    compileOnly "maven.modrinth:extended-ae:1.21-2.2.12-neoforge"
-    runtimeOnly "maven.modrinth:extended-ae:1.21-2.2.12-neoforge"
-
-    // Example optional mod dependency with JEI
-    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
-    // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
-    // compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
-    // We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it
-    // localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
-
-    // Example mod dependency using a mod jar from ./libs with a flat dir repository
-    // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
-    // The group id is ignored when searching -- in this case, it is "blank"
-    // implementation "blank:coolmod-${mc_version}:${coolmod_version}"
-
-    // Example mod dependency using a file as dependency
-    // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
-
-    // Example project dependency using a sister or child project:
-    // implementation project(":myproject")
-
-    // For more info:
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    implementation "curse.maven:ex-pattern-provider-892005:7356474"
+    implementation "curse.maven:glodium-957920:5821676"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -173,6 +150,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
             neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
             loader_version_range   : loader_version_range,
             mod_id                 : mod_id,
             mod_name               : mod_name,

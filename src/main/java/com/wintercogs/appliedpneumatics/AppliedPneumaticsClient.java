@@ -17,7 +17,7 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 
 @Mod(value = AppliedPneumatics.MODID, dist = Dist.CLIENT)
-@EventBusSubscriber(modid = AppliedPneumatics.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = AppliedPneumatics.MODID, value = Dist.CLIENT)
 public class AppliedPneumaticsClient
 {
     public AppliedPneumaticsClient(ModContainer container)

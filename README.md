@@ -1,25 +1,23 @@
-# Applied Pneumatics（应用气动）
+# Applied Pneumatics
 
-![应用气动](https://i.imgur.com/ZUmdWWw.png)
+<p align="center">
+  <img src="https://i.imgur.com/ZUmdWWw.png" alt="Applied Pneumatics banner" width="92%">
+</p>
 
-[English](docs/ENGLISH_README.md)
+An add-on for **Applied Energistics 2** × **PneumaticCraft: Repressurized**.  
+Brings **compressed air storage**, convenient **temperature control**, and **automated Amadron trading** into the ME Network.
 
-AE2 × PneumaticCraft: Repressurized 的附属。  
-允许 ME 网络中存储**压缩空气**，并支持更方便的**温度控制**以及**亚马龙交易的自动化**。
+## Features Overview
 
-## 功能预览
+* **Air Storage**: Adds ME Air Storage Cells. The portable version can also function as an air tank.
+* **ME Pressure Interface**: Maintains a target pressure by inserting/extracting air from the ME Network. Externally follows PneumaticCraft’s high-to-low pressure diffusion.
+* **ME Temperature Interface**: Consumes AE energy and compressed air to maintain a set temperature. Externally follows PneumaticCraft’s natural heat diffusion.
+* **P2P Tunnels**: Two new tunnel types (Air / Temperature) for cross-area distribution and balancing.
+* **Amadron Integration**: Wireless Terminal + Processing Station. Supports saving “infinite supply trades” as patterns for AE automation.
+* **AE Bus Compatibility**: Import/Export/Storage buses can interact with air containers.
+* **New Amadron Trades**: Adds new trades for buying and selling basic resources.
 
-* **空气存储**：新增 ME 空气存储元件，便携版元件可作为气罐使用。
-* **ME气压接口**：可自行设定压强，通过与 ME网络 进行空气存取，从而维持压强设定值。对外遵循气动工艺高压向低压扩散的传输。
-* **ME温控接口**：消耗 ME网络 内的AE能量与压缩空气，将温度维持在设定值。对外遵循气动工艺原本的温度扩散。
-* **P2P隧道**：空气/温度两类 P2P，用于跨区域分配与均衡。
-* **亚马龙集成**：无线终端 + 处理站，支持把“无限供货商品”保存为样板接入 AE 自动化。
-* **AE总线兼容**：输入/输出/存储总线可与空气容器交互。
-* **新的亚马龙交易**：添加了新的亚马龙交易，用于购买和出售基础资源。
+## License
 
-## 许可证
-
-- **代码**： [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html)
-- **材质与美术资源**： [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/)
-
-> 代码与材质分别遵循各自许可；再分发时请保留原始版权与许可声明。
+- **Code**: [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html)
+- **Art & Assets**: [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/)

@@ -1,1 +1,1 @@
-* Adjusted the color of some UI text to support dark-mode resource pack.
+* Fix the mod version number so it can be used for version comparison.

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "normal": {
+      "model": "appliedpneumatics:me_pressure_interface_block"
+    }
+  }
+}

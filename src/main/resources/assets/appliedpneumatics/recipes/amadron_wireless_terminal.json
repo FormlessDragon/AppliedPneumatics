@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " A ",
+    " B ",
+    " C "
+  ],
+  "key": {
+    "A": {
+      "item": "ae2:wireless_receiver"
+    },
+    "B": {
+      "item": "pneumaticcraft:amadron_tablet"
+    },
+    "C": {
+      "item": "ae2:dense_energy_cell"
+    }
+  },
+  "result": {
+    "item": "appliedpneumatics:amadron_wireless_terminal",
+    "count": 1
+  }
+}

@@ -1,0 +1,98 @@
+﻿appliedpneumatics.me.key.air=空気
+appliedpneumatics.me.externalstorage.air=外部空気ストレージ
+appliedpneumatics.cur.tooltip.p2p_input=P2P入力：%s bar
+appliedpneumatics.cur.tooltip.p2p_output=P2P出力：%s bar
+appliedpneumatics.group.cell_upgrade=ME空気ストレージセル
+appliedpneumatics.group.portable_cell_upgrade=携帯型ME空気ストレージセル
+
+itemGroup.appliedpneumatics=Applied Pneumatics
+
+item.appliedpneumatics.air_cell_shell.name=空気ストレージセル筐体
+item.appliedpneumatics.mega_air_cell_shell.name=MEGA空気ストレージセル筐体
+item.appliedpneumatics.air_cell_1k.name=1k ME空気ストレージセル
+item.appliedpneumatics.air_cell_4k.name=4k ME空気ストレージセル
+item.appliedpneumatics.air_cell_16k.name=16k ME空気ストレージセル
+item.appliedpneumatics.air_cell_64k.name=64k ME空気ストレージセル
+item.appliedpneumatics.air_cell_256k.name=256k ME空気ストレージセル
+item.appliedpneumatics.air_cell_1m.name=1M ME空気ストレージセル
+item.appliedpneumatics.air_cell_4m.name=4M ME空気ストレージセル
+item.appliedpneumatics.air_cell_16m.name=16M ME空気ストレージセル
+item.appliedpneumatics.air_cell_64m.name=64M ME空気ストレージセル
+item.appliedpneumatics.air_cell_256m.name=256M ME空気ストレージセル
+item.appliedpneumatics.portable_air_cell_1k.name=1k 携帯型空気ストレージセル
+item.appliedpneumatics.portable_air_cell_4k.name=4k 携帯型空気ストレージセル
+item.appliedpneumatics.portable_air_cell_16k.name=16k 携帯型空気ストレージセル
+item.appliedpneumatics.portable_air_cell_64k.name=64k 携帯型空気ストレージセル
+item.appliedpneumatics.portable_air_cell_256k.name=256k 携帯型空気ストレージセル
+item.appliedpneumatics.portable_air_cell_1m.name=1M 携帯型空気ストレージセル
+item.appliedpneumatics.portable_air_cell_4m.name=4M 携帯型空気ストレージセル
+item.appliedpneumatics.portable_air_cell_16m.name=16M 携帯型空気ストレージセル
+item.appliedpneumatics.portable_air_cell_64m.name=64M 携帯型空気ストレージセル
+item.appliedpneumatics.portable_air_cell_256m.name=256M 携帯型空気ストレージセル
+item.appliedpneumatics.air_p2p_tunel.name=空気P2Pトンネル
+item.appliedpneumatics.heat_p2p_tunel.name=温度P2Pトンネル
+item.appliedpneumatics.volume_card.name=容量カード
+item.appliedpneumatics.security_card.name=セキュリティカード
+item.appliedpneumatics.vacuum_card.name=真空カード
+item.appliedpneumatics.charging_card.name=充填カード
+item.appliedpneumatics.amadron_wireless_terminal.name=アマドロン無線端末
+item.appliedpneumatics.amadron_pattern.name=アマドロン処理パターン
+item.appliedpneumatics.amadron_process_upgrade.name=アマドロン処理ステーションのアップグレード
+
+tile.appliedpneumatics.me_pressure_interface_block.name=ME圧力インターフェース
+tile.appliedpneumatics.me_amadron_process_station.name=MEアマドロン処理ステーション
+tile.appliedpneumatics.me_amadron_extended_process_station.name=拡張アマドロン処理ステーション
+tile.appliedpneumatics.me_temperature_interface.name=ME温度インターフェース
+
+menu.title.appliedpneumatics.amadron_wireless_terminal=無線端末
+menu.label.appliedpneumatics.me_pressure_interface.air_amount=体積：%s\\%sL %sbar
+menu.label.appliedpneumatics.me_pressure_interface.max_pressure=危険圧力しきい値：%s bar
+menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text=目標圧力
+menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_change_mult_text=Shiftを押しながらで×5調整
+menu.label.appliedpneumatics.me_amadron_process_station.job_amount=処理中の注文：%s
+menu.label.appliedpneumatics.me_temperature_interface.temperature=現在の温度：%s
+menu.label.appliedpneumatics.me_temperature_interface.heat_cap=現在の熱容量：%s
+menu.label.appliedpneumatics.me_temperature_interface.expected_temperature_text=目標温度
+menu.label.appliedpneumatics.me_temperature_interface.expected_temperature_change_mult_text=Shiftを押しながらで×10調整
+menu.appliedpneumatics.button.submit=注文を送信
+menu.appliedpneumatics.button.cancel_jobs=注文を取り消す
+menu.appliedpneumatics.button.cancel_jobs.tooltip=以下を実行します：\n1. 端末からでも自動クラフトからでも、すべての注文を取り消す\n2. 注文で使用中の資源をすべてMEネットワークに返却、またはアイテムとしてドロップする\n3. すでに入力スロットに入っている資源は自動返却しない\n4. 自動クラフト由来の場合でも、クラフトタスク自体は取り消さない
+
+tooltip.appliedpneumatics.item.amadron.unlink=アマドロン処理ステーションにリンクされていません
+tooltip.appliedpneumatics.item.amadron.linked=%s にリンク済み［%s, %s, %s］
+tooltip.appliedpneumatics.amadron_upgrade.amadron_process_busy=稼働中、または内部にパターン以外のアイテムが入っているアマドロン処理ステーションはアップグレードできません。
+
+appliedpneumatics.gui.widget.amadron_offer_panel=アマドロンパネル
+appliedpneumatics.portable_air_cell.bar=現在の圧力：%s bar
+
+amadron.appliedpneumatics.order_fail.me_disconnected=現在のMEネットワークに接続できません
+amadron.appliedpneumatics.order_fail.cant_find_process_station=アマドロン処理ステーションが見つからないか、リンクされていません
+amadron.appliedpneumatics.order_fail.basket_empty=カートが空です
+amadron.appliedpneumatics.order_fail.order_invaild=利用できないオファー：%s
+amadron.appliedpneumatics.order_fail.have_not_vaild_order=有効な注文項目がありません
+amadron.appliedpneumatics.order_fail.missing_materials=素材が不足しています：必要数 %s × %s
+amadron.appliedpneumatics.order_fail.for_details=注文送信中に例外が発生しました。すべての資源は返却済みです。報告する場合は最新のログを本ModのGitHub Issueに添付してください
+amadron.appliedpneumatics.order_fail.process_station_not_active=リンクされたアマドロン処理ステーションがMEネットワークに接続されていないか、チャンネル未割り当てです
+amadron.appliedpneumatics.order_fail.order_too_much=リンクされた処理ステーションでは注文数が多すぎます。1台につき同時処理は最大512件です
+amadron.appliedpneumatics.order_success=注文を送信しました（合計 %s 件）
+amadron.appliedpneumatics.process_fail=%s → %s の取引に失敗：資源は返却済み／失敗数 %s
+amadron.appliedpneumatics.process_fail.offer_invalid=ID：%s の取引は無効になりました。資源は返却されました。失敗数：%s
+amadron.appliedpneumatics.process_fail.block_break=%s のアマドロン取引ステーションが破壊されました。進行中の取引はすべて取り消され、資源はMEネットワークに返却またはドロップされました。
+amadron.appliedpneumatics.process_fail.order_cancel=%s にて全取引が手動で取り消されました。資源はMEネットワークに返却またはドロップされました。
+
+tooltip.appliedpneumatics.amadron_trade.supplier=供給元：
+tooltip.appliedpneumatics.amadron_trade.output=販売品：
+tooltip.appliedpneumatics.amadron_trade.input=価格：
+tooltip.appliedpneumatics.amadron_trade.in_basket=カート内：
+
+pack.appliedpneumatics.optional_textures.title=Applied Pneumatics：オプショナルリソースパック
+pack.appliedpneumatics.optional_textures=クラシックスタイルとモダンスタイルを切り替えます。リソースパックメニューでModリソースの上に配置して有効にしてください。
+
+appliedpneumatics.group.temperature_interface_upgrade=ME Temperature Interface
+appliedpneumatics.group.pressure_interface_upgrade=ME Pressure Interface
+appliedpneumatics.group.amadron_process_station_upgrade=ME Amadron Processing Station
+
+menu.appliedpneumatics.button.submit_units=Submit x%s
+
+tooltip.appliedpneumatics.item.amadron.linked_status=Linked Amadron Wireless Terminal
+tooltip.appliedpneumatics.item.amadron.unlinked_status=Unlinked Amadron Wireless Terminal

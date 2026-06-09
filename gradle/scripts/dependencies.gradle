@@ -1,0 +1,44 @@
+apply from: 'gradle/scripts/helpers.gradle'
+
+def ae2SupergiantDevJar = rootProject.file(propertyString('ae2_supergiant_dev_jar'))
+def ae2SupergiantJarName = 'AppliedEnergistics2-Supergiant'
+def ae2SupergiantDevJarVersion = ae2SupergiantDevJar.name
+    .substring(0, ae2SupergiantDevJar.name.length() - '.jar'.length())
+    .substring(ae2SupergiantJarName.length() + 1)
+
+repositories {
+    flatDir {
+        dirs ae2SupergiantDevJar.parentFile
+    }
+    maven {
+        name = 'CleanroomMC'
+        url = 'https://maven.cleanroommc.com'
+    }
+    maven {
+        name = 'CurseMaven'
+        url = 'https://cursemaven.com'
+    }
+    maven {
+        name = 'CleanroomCurseMaven'
+        url = 'https://curse.cleanroommc.com'
+    }
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+    }
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compileOnly 'com.cleanroommc:sponge-mixin:0.20.13+mixin.0.8.7'
+    if (propertyBool('enable_lwjglx')) {
+        compileOnly 'com.cleanroommc:lwjglx:1.0.0'
+    }
+
+    modImplementation "local.ae2:AppliedEnergistics2-Supergiant:${ae2SupergiantDevJarVersion}"
+    modCompileOnly "curse.maven:baubles-227083:2518667"
+    testRuntimeOnly "curse.maven:baubles-227083:2518667"
+    modImplementation "curse.maven:pneumaticcraft-repressurized-281849:${propertyString('pneumaticcraft_file_id')}"
+    modImplementation "curse.maven:mouse-tweaks-unofficial-461660:5876158"
+}

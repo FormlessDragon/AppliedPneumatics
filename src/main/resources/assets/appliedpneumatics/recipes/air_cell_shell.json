@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TGT",
+    "GIG",
+    "IPI"
+  ],
+  "key": {
+    "T": {
+      "item": "pneumaticcraft:pressure_tube"
+    },
+    "G": {
+      "item": "pneumaticcraft:pressure_chamber_glass"
+    },
+    "I": {
+      "item": "pneumaticcraft:ingot_iron_compressed"
+    },
+    "P": {
+      "item": "pneumaticcraft:pressure_gauge"
+    }
+  },
+  "result": {
+    "item": "appliedpneumatics:air_cell_shell",
+    "count": 1
+  }
+}

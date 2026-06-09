@@ -1,8 +1,6 @@
 {
   "pack": {
-    "description": {
-      "translate": "pack.appliedpneumatics.optional_textures"
-    },
-    "pack_format": 34
+    "description": "Applied Pneumatics optional textures",
+    "pack_format": 3
   }
 }

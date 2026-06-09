@@ -1,0 +1,98 @@
+﻿appliedpneumatics.me.key.air=Luft
+appliedpneumatics.me.externalstorage.air=Externer Luftspeicher
+appliedpneumatics.cur.tooltip.p2p_input=P2P-Eingang: %s Bar
+appliedpneumatics.cur.tooltip.p2p_output=P2P-Ausgang: %s Bar
+appliedpneumatics.group.cell_upgrade=ME-Luftspeicherzellen
+appliedpneumatics.group.portable_cell_upgrade=Tragbare ME-Luftspeicherzellen
+
+itemGroup.appliedpneumatics=Applied Pneumatics
+
+item.appliedpneumatics.air_cell_shell.name=Luft-Speicherzellengehäuse
+item.appliedpneumatics.mega_air_cell_shell.name=MEGA-Luft-Speicherzellengehäuse
+item.appliedpneumatics.air_cell_1k.name=1k ME-Luftspeicherzelle
+item.appliedpneumatics.air_cell_4k.name=4k ME-Luftspeicherzelle
+item.appliedpneumatics.air_cell_16k.name=16k ME-Luftspeicherzelle
+item.appliedpneumatics.air_cell_64k.name=64k ME-Luftspeicherzelle
+item.appliedpneumatics.air_cell_256k.name=256k ME-Luftspeicherzelle
+item.appliedpneumatics.air_cell_1m.name=1M ME-Luftspeicherzelle
+item.appliedpneumatics.air_cell_4m.name=4M ME-Luftspeicherzelle
+item.appliedpneumatics.air_cell_16m.name=16M ME-Luftspeicherzelle
+item.appliedpneumatics.air_cell_64m.name=64M ME-Luftspeicherzelle
+item.appliedpneumatics.air_cell_256m.name=256M ME-Luftspeicherzelle
+item.appliedpneumatics.portable_air_cell_1k.name=1k Tragbare Luftspeicherzelle
+item.appliedpneumatics.portable_air_cell_4k.name=4k Tragbare Luftspeicherzelle
+item.appliedpneumatics.portable_air_cell_16k.name=16k Tragbare Luftspeicherzelle
+item.appliedpneumatics.portable_air_cell_64k.name=64k Tragbare Luftspeicherzelle
+item.appliedpneumatics.portable_air_cell_256k.name=256k Tragbare Luftspeicherzelle
+item.appliedpneumatics.portable_air_cell_1m.name=1M Tragbare Luftspeicherzelle
+item.appliedpneumatics.portable_air_cell_4m.name=4M Tragbare Luftspeicherzelle
+item.appliedpneumatics.portable_air_cell_16m.name=16M Tragbare Luftspeicherzelle
+item.appliedpneumatics.portable_air_cell_64m.name=64M Tragbare Luftspeicherzelle
+item.appliedpneumatics.portable_air_cell_256m.name=256M Tragbare Luftspeicherzelle
+item.appliedpneumatics.air_p2p_tunel.name=Luft-P2P-Tunnel
+item.appliedpneumatics.heat_p2p_tunel.name=Temperatur-P2P-Tunnel
+item.appliedpneumatics.volume_card.name=Volumenkarte
+item.appliedpneumatics.security_card.name=Sicherheitskarte
+item.appliedpneumatics.vacuum_card.name=Vakuumkarte
+item.appliedpneumatics.charging_card.name=Ladekarte
+item.appliedpneumatics.amadron_wireless_terminal.name=Drahtloses Amadron-Terminal
+item.appliedpneumatics.amadron_pattern.name=Amadron-Verarbeitungsmuster
+item.appliedpneumatics.amadron_process_upgrade.name=Upgrade für Amadron-Verarbeitungsstation
+
+tile.appliedpneumatics.me_pressure_interface_block.name=ME-Druckschnittstelle
+tile.appliedpneumatics.me_amadron_process_station.name=ME-Amadron-Verarbeitungsstation
+tile.appliedpneumatics.me_amadron_extended_process_station.name=Erweiterte Amadron-Verarbeitungsstation
+tile.appliedpneumatics.me_temperature_interface.name=ME-Temperaturschnittstelle
+
+menu.title.appliedpneumatics.amadron_wireless_terminal=Terminal
+menu.label.appliedpneumatics.me_pressure_interface.air_amount=Volumen: %s\\%sL %sBar
+menu.label.appliedpneumatics.me_pressure_interface.max_pressure=Gefahren-Druckgrenzwert: %s Bar
+menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text=Zieldruck
+menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_change_mult_text=Halte Umschalt zum ×5-Anpassen
+menu.label.appliedpneumatics.me_amadron_process_station.job_amount=Laufende Aufträge: %s
+menu.label.appliedpneumatics.me_temperature_interface.temperature=Aktuelle Temperatur: %s
+menu.label.appliedpneumatics.me_temperature_interface.heat_cap=Aktuelle Wärmekapazität: %s
+menu.label.appliedpneumatics.me_temperature_interface.expected_temperature_text=Zieltemperatur
+menu.label.appliedpneumatics.me_temperature_interface.expected_temperature_change_mult_text=Halte Umschalt zum ×10-Anpassen
+menu.appliedpneumatics.button.submit=Auftrag übermitteln
+menu.appliedpneumatics.button.cancel_jobs=Aufträge abbrechen
+menu.appliedpneumatics.button.cancel_jobs.tooltip=Dies wird:\n1. Alle Aufträge abbrechen, egal ob über Terminal oder Autocrafting aufgegeben\n2. Alle Auftragsressourcen ins ME-Netzwerk zurückgeben oder als Dropps auswerfen\n3. Bereits in den Eingabefächern liegende Ressourcen nicht automatisch zurückgeben\n4. Bei über Autocrafting aufgegebenen Aufträgen die Crafting-Aufgaben nicht abbrechen
+
+tooltip.appliedpneumatics.item.amadron.unlink=Nicht mit einer Amadron-Verarbeitungsstation verknüpft
+tooltip.appliedpneumatics.item.amadron.linked=Verknüpft mit %s [%s, %s, %s]
+tooltip.appliedpneumatics.amadron_upgrade.amadron_process_busy=Eine Amadron-Verarbeitungsstation kann nicht aufgerüstet werden, wenn sie gerade arbeitet oder wenn sich darin andere Gegenstände als Muster befinden.
+
+appliedpneumatics.gui.widget.amadron_offer_panel=Amadron-Panel
+appliedpneumatics.portable_air_cell.bar=Aktueller Druck: %s Bar
+
+amadron.appliedpneumatics.order_fail.me_disconnected=Verbindung zum aktuellen ME-Netzwerk nicht möglich
+amadron.appliedpneumatics.order_fail.cant_find_process_station=Amadron-Verarbeitungsstation nicht gefunden oder nicht verknüpft
+amadron.appliedpneumatics.order_fail.basket_empty=Warenkorb ist leer
+amadron.appliedpneumatics.order_fail.order_invaild=Angebot nicht verfügbar: %s
+amadron.appliedpneumatics.order_fail.have_not_vaild_order=Keine gültigen Auftragseinträge
+amadron.appliedpneumatics.order_fail.missing_materials=Unzureichende Materialien: benötigt %s × %s
+amadron.appliedpneumatics.order_fail.for_details=Beim Übermitteln des Auftrags ist eine Ausnahme aufgetreten; alle Ressourcen wurden zurückgegeben. Bitte reiche für einen Bericht das neueste Log im GitHub-Issue dieses Mods ein
+amadron.appliedpneumatics.order_fail.process_station_not_active=Verknüpfte Amadron-Verarbeitungsstation ist nicht mit dem ME-Netzwerk verbunden oder hat keine Kanäle zugewiesen
+amadron.appliedpneumatics.order_fail.order_too_much=Die verknüpfte Amadron-Verarbeitungsstation kann nicht so viele Aufträge annehmen; eine einzelne Station kann höchstens 512 Aufträge gleichzeitig bearbeiten
+amadron.appliedpneumatics.order_success=Aufträge übermittelt: insgesamt %s
+amadron.appliedpneumatics.process_fail=Handel %s → %s fehlgeschlagen; Ressourcen zurückgegeben; Fehlmenge %s
+amadron.appliedpneumatics.process_fail.offer_invalid=Das Angebot mit der ID: %s ist nicht mehr gültig; Ressourcen wurden zurückgegeben. Fehlgeschlagene Menge: %s
+amadron.appliedpneumatics.process_fail.block_break=Die Amadron-Handelsstation bei %s wurde zerstört; alle laufenden Handelsvorgänge wurden abgebrochen, Ressourcen zum ME-Netzwerk zurückgegeben oder fallen gelassen.
+amadron.appliedpneumatics.process_fail.order_cancel=An der Position %s wurden alle Handelsvorgänge manuell abgebrochen; Ressourcen wurden ins ME-Netzwerk zurückgegeben oder fallen gelassen.
+
+tooltip.appliedpneumatics.amadron_trade.supplier=Anbieter:
+tooltip.appliedpneumatics.amadron_trade.output=Verkauft:
+tooltip.appliedpneumatics.amadron_trade.input=Preis:
+tooltip.appliedpneumatics.amadron_trade.in_basket=Im Warenkorb:
+
+pack.appliedpneumatics.optional_textures.title=Applied Pneumatics: Optionales Ressourcenpaket
+pack.appliedpneumatics.optional_textures=Wechsle zwischen klassischem und modernem Stil. Aktiviere es, indem du es im Ressourcenpaket-Menü über dem Mod-Ressourcenpaket platzierst.
+
+appliedpneumatics.group.temperature_interface_upgrade=ME Temperature Interface
+appliedpneumatics.group.pressure_interface_upgrade=ME Pressure Interface
+appliedpneumatics.group.amadron_process_station_upgrade=ME Amadron Processing Station
+
+menu.appliedpneumatics.button.submit_units=Submit x%s
+
+tooltip.appliedpneumatics.item.amadron.linked_status=Linked Amadron Wireless Terminal
+tooltip.appliedpneumatics.item.amadron.unlinked_status=Unlinked Amadron Wireless Terminal

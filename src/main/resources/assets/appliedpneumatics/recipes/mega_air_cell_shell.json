@@ -1,0 +1,36 @@
+﻿{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "megacells"
+    },
+    {
+      "type": "forge:item_exists",
+      "item": "megacells:sky_steel_ingot"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SGS",
+    "PAP",
+    "SGS"
+  ],
+  "key": {
+    "S": {
+      "item": "megacells:sky_steel_ingot"
+    },
+    "G": {
+      "item": "pneumaticcraft:compressed_iron_gear"
+    },
+    "P": {
+      "item": "pneumaticcraft:printed_circuit_board"
+    },
+    "A": {
+      "item": "appliedpneumatics:air_cell_shell"
+    }
+  },
+  "result": {
+    "item": "appliedpneumatics:mega_air_cell_shell",
+    "count": 1
+  }
+}

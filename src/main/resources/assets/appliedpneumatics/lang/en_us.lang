@@ -1,0 +1,96 @@
+appliedpneumatics.me.key.air=Air
+appliedpneumatics.me.externalstorage.air=External Air Storage
+appliedpneumatics.cur.tooltip.p2p_input=P2P Input: %s bar
+appliedpneumatics.cur.tooltip.p2p_output=P2P Output: %s bar
+
+appliedpneumatics.group.cell_upgrade=ME Air Storage Cells
+appliedpneumatics.group.portable_cell_upgrade=Portable ME Air Storage Cells
+appliedpneumatics.group.pressure_interface_upgrade=ME Pressure Interface
+appliedpneumatics.group.temperature_interface_upgrade=ME Temperature Interface
+appliedpneumatics.group.amadron_process_station_upgrade=ME Amadron Processing Station
+
+itemGroup.appliedpneumatics=Applied Pneumatics
+
+item.appliedpneumatics.air_cell_shell.name=Air Storage Cell Housing
+item.appliedpneumatics.mega_air_cell_shell.name=MEGA Air Storage Cell Housing
+item.appliedpneumatics.air_cell_1k.name=1k ME Air Storage Cell
+item.appliedpneumatics.air_cell_4k.name=4k ME Air Storage Cell
+item.appliedpneumatics.air_cell_16k.name=16k ME Air Storage Cell
+item.appliedpneumatics.air_cell_64k.name=64k ME Air Storage Cell
+item.appliedpneumatics.air_cell_256k.name=256k ME Air Storage Cell
+item.appliedpneumatics.air_cell_1m.name=1M ME Air Storage Cell
+item.appliedpneumatics.air_cell_4m.name=4M ME Air Storage Cell
+item.appliedpneumatics.air_cell_16m.name=16M ME Air Storage Cell
+item.appliedpneumatics.air_cell_64m.name=64M ME Air Storage Cell
+item.appliedpneumatics.air_cell_256m.name=256M ME Air Storage Cell
+item.appliedpneumatics.portable_air_cell_1k.name=1k Portable Air Storage Cell
+item.appliedpneumatics.portable_air_cell_4k.name=4k Portable Air Storage Cell
+item.appliedpneumatics.portable_air_cell_16k.name=16k Portable Air Storage Cell
+item.appliedpneumatics.portable_air_cell_64k.name=64k Portable Air Storage Cell
+item.appliedpneumatics.portable_air_cell_256k.name=256k Portable Air Storage Cell
+item.appliedpneumatics.portable_air_cell_1m.name=1M Portable Air Storage Cell
+item.appliedpneumatics.portable_air_cell_4m.name=4M Portable Air Storage Cell
+item.appliedpneumatics.portable_air_cell_16m.name=16M Portable Air Storage Cell
+item.appliedpneumatics.portable_air_cell_64m.name=64M Portable Air Storage Cell
+item.appliedpneumatics.portable_air_cell_256m.name=256M Portable Air Storage Cell
+item.appliedpneumatics.air_p2p_tunel.name=Air P2P Tunnel
+item.appliedpneumatics.heat_p2p_tunel.name=Heat P2P Tunnel
+item.appliedpneumatics.volume_card.name=Volume Card
+item.appliedpneumatics.security_card.name=Security Card
+item.appliedpneumatics.vacuum_card.name=Vacuum Card
+item.appliedpneumatics.charging_card.name=Charging Card
+item.appliedpneumatics.amadron_wireless_terminal.name=Amadron Wireless Terminal
+item.appliedpneumatics.amadron_pattern.name=Amadron Processing Pattern
+item.appliedpneumatics.amadron_process_upgrade.name=Amadron Processing Station Upgrade
+
+tile.appliedpneumatics.me_pressure_interface_block.name=ME Pressure Interface
+tile.appliedpneumatics.me_temperature_interface.name=ME Temperature Interface
+tile.appliedpneumatics.me_amadron_process_station.name=Amadron Processing Station
+tile.appliedpneumatics.me_amadron_extended_process_station.name=Extended Amadron Processing Station
+
+menu.title.appliedpneumatics.amadron_wireless_terminal=Amadron Wireless Terminal
+menu.label.appliedpneumatics.me_pressure_interface.air_amount=Volume: %s/%s L %s bar
+menu.label.appliedpneumatics.me_pressure_interface.max_pressure=Danger Pressure: %s bar
+menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text=Target Pressure
+menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_change_mult_text=Hold Shift to adjust x5
+menu.label.appliedpneumatics.me_amadron_process_station.job_amount=In progress: %s
+menu.label.appliedpneumatics.me_temperature_interface.temperature=Current Temperature: %s
+menu.label.appliedpneumatics.me_temperature_interface.heat_cap=Current Heat Capacity: %s
+menu.label.appliedpneumatics.me_temperature_interface.expected_temperature_text=Target Temperature
+menu.label.appliedpneumatics.me_temperature_interface.expected_temperature_change_mult_text=Hold Shift to adjust x10
+menu.appliedpneumatics.button.submit=Submit Order
+menu.appliedpneumatics.button.submit_units=Submit x%s
+menu.appliedpneumatics.button.save_pattern=Save Pattern
+menu.appliedpneumatics.button.cancel_jobs=Cancel Orders
+menu.appliedpneumatics.button.cancel_jobs.tooltip=This will:\n1. Cancel all orders, whether placed via terminal or auto-crafting\n2. Return all order resources to the ME network, or drop them as items\n3. Resources already in the input slots will not be auto-returned\n4. If placed via auto-crafting, this will not cancel the crafting tasks
+tooltip.appliedpneumatics.item.amadron.unlink=Not linked to an Amadron Processing Station
+tooltip.appliedpneumatics.item.amadron.linked=Linked to dimension %s [%s, %s, %s]
+tooltip.appliedpneumatics.item.amadron.linked_status=Linked Amadron Wireless Terminal
+tooltip.appliedpneumatics.item.amadron.unlinked_status=Unlinked Amadron Wireless Terminal
+tooltip.appliedpneumatics.amadron_upgrade.amadron_process_busy=Cannot upgrade an Amadron Processing Station that is currently working or that contains items other than patterns.
+
+appliedpneumatics.gui.widget.amadron_offer_panel=Amadron Panel
+appliedpneumatics.portable_air_cell.bar=Current Pressure: %s bar
+
+amadron.appliedpneumatics.order_fail.me_disconnected=Cannot connect to the current ME network
+amadron.appliedpneumatics.order_fail.cant_find_process_station=Cannot find or not linked to an Amadron Processing Station
+amadron.appliedpneumatics.order_fail.basket_empty=Shopping cart is empty
+amadron.appliedpneumatics.order_fail.order_invaild=Offer unavailable: %s
+amadron.appliedpneumatics.order_fail.have_not_vaild_order=No valid order entries
+amadron.appliedpneumatics.order_fail.missing_materials=Insufficient materials: need %s x %s
+amadron.appliedpneumatics.order_fail.for_details=An exception occurred while submitting the order; all resources have been returned. To report this, please submit the latest log to this mod's GitHub issues
+amadron.appliedpneumatics.order_fail.process_station_not_active=The bound Amadron Processing Station is not linked to the ME network or has no channels allocated
+amadron.appliedpneumatics.order_fail.order_too_much=The bound Amadron Processing Station cannot accept that many orders; a single station can handle at most 512 orders concurrently
+amadron.appliedpneumatics.order_success=Orders submitted: %s total
+amadron.appliedpneumatics.process_fail=%s -> %s trade failed; resources returned; failed amount %s
+amadron.appliedpneumatics.process_fail.offer_invalid=The offer with ID: %s is no longer valid; resources have been returned. Failed count: %s
+amadron.appliedpneumatics.process_fail.block_break=The Amadron Trading Station at %s was broken; all in-progress trades have been cancelled; resources have been returned to the ME network or dropped.
+amadron.appliedpneumatics.process_fail.order_cancel=All trades at %s were manually cancelled; resources have been returned to the ME network or dropped.
+
+tooltip.appliedpneumatics.amadron_trade.supplier=Supplier:
+tooltip.appliedpneumatics.amadron_trade.output=Sells:
+tooltip.appliedpneumatics.amadron_trade.input=Price:
+tooltip.appliedpneumatics.amadron_trade.in_basket=In basket:
+
+pack.appliedpneumatics.optional_textures.title=Applied Pneumatics: Optional Resource Pack
+pack.appliedpneumatics.optional_textures=Switch between classic and modern styles. Enable by placing it above the Mod Resource Pack in the resource packs menu.

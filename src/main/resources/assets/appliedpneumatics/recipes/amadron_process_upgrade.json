@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "appliedpneumatics:me_amadron_extended_process_station"
+    },
+    {
+      "item": "pneumaticcraft:ingot_iron_compressed"
+    }
+  ],
+  "result": {
+    "item": "appliedpneumatics:amadron_process_upgrade",
+    "count": 1
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "ae2:me_p2p_tunnel"
+    },
+    {
+      "item": "pneumaticcraft:heat_sink"
+    },
+    {
+      "item": "pneumaticcraft:vortex_tube"
+    }
+  ],
+  "result": {
+    "item": "appliedpneumatics:heat_p2p_tunel",
+    "count": 1
+  }
+}

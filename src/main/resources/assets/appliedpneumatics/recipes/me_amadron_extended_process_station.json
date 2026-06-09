@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "BCB",
+    "ADA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:glass"
+    },
+    "B": {
+      "item": "minecraft:crafting_table"
+    },
+    "C": {
+      "item": "appliedpneumatics:me_amadron_process_station"
+    },
+    "D": {
+      "item": "ae2:speed_card"
+    }
+  },
+  "result": {
+    "item": "appliedpneumatics:me_amadron_extended_process_station",
+    "count": 1
+  }
+}

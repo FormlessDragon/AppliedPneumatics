@@ -1,6 +1,7 @@
 {
   "$schema": "schema.json",
   "includes": [
+    "terminals/base_terminal.json",
     "common/common.json",
     "amadron_terminal_toolbox.json"
   ],
@@ -33,6 +34,10 @@
       "left": 8,
       "bottom": 27,
       "grid": "HORIZONTAL"
+    },
+    "WIRELESS_SINGULARITY": {
+      "right": 43,
+      "bottom": 155
     }
   },
   "text": {

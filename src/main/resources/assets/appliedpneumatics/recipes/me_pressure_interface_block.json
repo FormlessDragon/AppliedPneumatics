@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABA",
+    "CED",
+    "ABA"
+  ],
+  "key": {
+    "A": {
+      "item": "pneumaticcraft:ingot_iron_compressed"
+    },
+    "B": {
+      "item": "minecraft:glass"
+    },
+    "C": {
+      "item": "ae2:annihilation_core"
+    },
+    "D": {
+      "item": "ae2:formation_core"
+    },
+    "E": {
+      "item": "pneumaticcraft:air_compressor"
+    }
+  },
+  "result": {
+    "item": "appliedpneumatics:me_pressure_interface_block",
+    "count": 1
+  }
+}

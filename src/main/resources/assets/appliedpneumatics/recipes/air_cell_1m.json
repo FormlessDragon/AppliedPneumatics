@@ -1,0 +1,25 @@
+﻿{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "megacells"
+    },
+    {
+      "type": "forge:item_exists",
+      "item": "megacells:cell_component_1m"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "appliedpneumatics:mega_air_cell_shell"
+    },
+    {
+      "item": "megacells:cell_component_1m"
+    }
+  ],
+  "result": {
+    "item": "appliedpneumatics:air_cell_1m",
+    "count": 1
+  }
+}

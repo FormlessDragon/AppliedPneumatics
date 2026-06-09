@@ -1,0 +1,31 @@
+﻿{
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "megacells"
+    },
+    {
+      "type": "forge:item_exists",
+      "item": "megacells:cell_component_64m"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "megacells:cell_component_64m"
+    },
+    {
+      "item": "ae2:chest"
+    },
+    {
+      "item": "ae2:energy_cell"
+    },
+    {
+      "item": "appliedpneumatics:mega_air_cell_shell"
+    }
+  ],
+  "result": {
+    "item": "appliedpneumatics:portable_air_cell_64m",
+    "count": 1
+  }
+}

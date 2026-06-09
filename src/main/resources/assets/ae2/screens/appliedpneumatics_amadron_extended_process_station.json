@@ -1,0 +1,90 @@
+{
+  "$schema": "schema.json",
+  "includes": [
+    "common/common.json",
+    "common/player_inventory.json",
+    "common/toolbox.json"
+  ],
+  "background": {
+    "texture": "appliedpneumatics:textures/gui/me_amadron_extended_process_station_menu.png",
+    "textureWidth": 256,
+    "textureHeight": 256,
+    "srcRect": [0, 0, 176, 251]
+  },
+  "slots": {
+    "ENCODED_PATTERN": {
+      "left": 8,
+      "top": 19,
+      "grid": "BREAK_AFTER_9COLS"
+    },
+    "MACHINE_INPUT": {
+      "left": 10,
+      "top": 93,
+      "grid": "BREAK_AFTER_3COLS"
+    },
+    "MACHINE_OUTPUT": {
+      "left": 114,
+      "top": 93,
+      "grid": "BREAK_AFTER_3COLS"
+    },
+    "PLAYER_INVENTORY": {
+      "left": 8,
+      "top": 156,
+      "grid": "BREAK_AFTER_9COLS"
+    },
+    "PLAYER_HOTBAR": {
+      "left": 8,
+      "top": 214,
+      "grid": "HORIZONTAL"
+    },
+    "UPGRADE": {
+      "right": 0,
+      "top": 0,
+      "grid": "VERTICAL"
+    }
+  },
+  "text": {
+    "dialog_title": {
+      "text": {
+        "translate": "tile.appliedpneumatics.me_amadron_extended_process_station.name"
+      },
+      "position": {
+        "left": 8,
+        "top": 6
+      }
+    },
+    "job_amount": {
+      "position": {
+        "left": 8,
+        "top": 75
+      }
+    }
+  },
+  "tooltips": {
+    "cancel_jobs_button": {
+      "left": 72,
+      "top": 72,
+      "width": 96,
+      "height": 20,
+      "tooltip": [
+        {
+          "translate": "menu.appliedpneumatics.button.cancel_jobs.tooltip"
+        }
+      ]
+    }
+  },
+  "widgets": {
+    "cancel_jobs_button": {
+      "left": 72,
+      "top": 72,
+      "width": 96,
+      "height": 20
+    },
+    "openPriority": {
+      "left": 152,
+      "top": -5,
+      "width": 20,
+      "height": 20
+    }
+  }
+}

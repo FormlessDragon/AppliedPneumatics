@@ -24,3 +24,8 @@ runs
 run-data
 
 repo
+
+AGENTS.md
+logs/
+docs/
+src/test

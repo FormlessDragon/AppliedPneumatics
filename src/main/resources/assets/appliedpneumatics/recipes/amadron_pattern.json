@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "ae2:blank_pattern"
+    },
+    {
+      "item": "pneumaticcraft:printed_circuit_board"
+    },
+    {
+      "item": "minecraft:emerald"
+    }
+  ],
+  "result": {
+    "item": "appliedpneumatics:amadron_pattern",
+    "count": 1
+  }
+}

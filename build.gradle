@@ -140,7 +140,7 @@ processResources {
 sourceSets {
     main {
         java {
-            setSrcDirs(['src/main/java12'])
+            setSrcDirs(['src/main/java'])
         }
         resources {
             setSrcDirs(['src/main/resources'])

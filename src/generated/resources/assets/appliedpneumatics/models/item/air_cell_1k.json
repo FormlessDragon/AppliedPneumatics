@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "appliedpneumatics:item/air_cell_1k",
-    "layer1": "appliedpneumatics:item/led/storage_cell_led"
-  }
-}

@@ -1,27 +1,30 @@
 package com.wintercogs.appliedpneumatics.common.me.storage;
 
-import appeng.api.storage.cells.ICellHandler;
-import appeng.api.storage.cells.ISaveProvider;
-import appeng.api.storage.cells.StorageCell;
-import com.wintercogs.appliedpneumatics.common.items.IAirStorageCell;
-import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import ae2.api.storage.cells.ICellHandler;
+import ae2.api.storage.cells.ISaveProvider;
+import ae2.api.storage.cells.StorageCell;
+import com.wintercogs.appliedpneumatics.common.item.AirStorageCell;
+import net.minecraft.item.ItemStack;
 
-public class AirCellHandler implements ICellHandler
-{
-    @Override
-    public boolean isCell(ItemStack is)
-    {
-        return is.getItem() instanceof IAirStorageCell;
+import javax.annotation.Nullable;
+
+public final class AirCellHandler implements ICellHandler {
+    public static final AirCellHandler INSTANCE = new AirCellHandler();
+
+    private AirCellHandler() {
     }
 
     @Override
-    public @Nullable StorageCell getCellInventory(ItemStack is, @Nullable ISaveProvider host)
-    {
-        if(is.getItem() instanceof IAirStorageCell cell)
-        {
-            return new AirCellInventory(is, cell, host);
+    public boolean isCell(ItemStack stack) {
+        return !stack.isEmpty() && stack.getItem() instanceof AirStorageCell;
+    }
+
+    @Nullable
+    @Override
+    public StorageCell getCellInventory(ItemStack stack, @Nullable ISaveProvider host) {
+        if (!(stack.getItem() instanceof AirStorageCell cellType)) {
+            return null;
         }
-        return null;
+        return new AirCellInventory(stack, cellType, host);
     }
 }

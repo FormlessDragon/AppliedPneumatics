@@ -1,82 +1,61 @@
 package com.wintercogs.appliedpneumatics;
 
-import com.mojang.logging.LogUtils;
-import com.wintercogs.appliedpneumatics.common.init.*;
-import com.wintercogs.appliedpneumatics.common.me.AEPlugin;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.registries.RegisterEvent;
-import org.slf4j.Logger;
+import com.wintercogs.appliedpneumatics.common.APCommonProxy;
+import com.wintercogs.appliedpneumatics.common.gui.APGuiHandler;
+import com.wintercogs.appliedpneumatics.common.init.APBlocks;
+import com.wintercogs.appliedpneumatics.common.init.APItems;
+import com.wintercogs.appliedpneumatics.common.me.APAERegistration;
+import com.wintercogs.appliedpneumatics.common.me.p2p.APP2PAttunements;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+@Mod(
+    modid = Reference.MOD_ID,
+    name = Reference.MOD_NAME,
+    version = Reference.VERSION,
+    acceptedMinecraftVersions = "[1.12.2]",
+    dependencies = "required-after:ae2;required-after:pneumaticcraft"
+)
+public final class AppliedPneumatics {
+    private static final String CLIENT_PROXY = "com.wintercogs.appliedpneumatics.client.APClientProxy";
+    private static final String COMMON_PROXY = "com.wintercogs.appliedpneumatics.common.APCommonProxy";
+    public static final Logger LOGGER = LogManager.getLogger(Reference.MOD_NAME);
 
-@Mod(AppliedPneumatics.MODID)
-public class AppliedPneumatics
-{
-    public static final String MODID = "appliedpneumatics";
-    public static final Logger LOGGER = LogUtils.getLogger();
+    @Mod.Instance(Reference.MOD_ID)
+    public static AppliedPneumatics INSTANCE;
 
-    public static final String MEGA_CELL_MODID = "megacells";
-    public static boolean MEGA_CELL_LOADED = false;
+    @SidedProxy(clientSide = CLIENT_PROXY, serverSide = COMMON_PROXY)
+    private static APCommonProxy proxy;
 
-    public static final String EAE_MODID = "extendedae";
-    public static boolean EAE_LOADED = false;
-
-
-    public AppliedPneumatics(IEventBus modEventBus, ModContainer modContainer)
-    {
-        modEventBus.addListener(this::constructMod);
-        modEventBus.addListener(this::commonSetup);
-        NeoForge.EVENT_BUS.register(this);
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-
-        modEventBus.addListener((RegisterEvent event) -> {
-            if(event.getRegistryKey().equals(Registries.BLOCK))
-                AEPlugin.init();
-        });
-
-        APMenus.registerMenus(modEventBus);
-        APCreativeModeTabs.register(modEventBus);
-        APItems.register(modEventBus);
-        APBlocks.register(modEventBus);
-        APBlockEntities.register(modEventBus);
-        APDataComponents.register(modEventBus);
+    public static APCommonProxy proxy() {
+        return proxy;
     }
 
-    private void constructMod(final FMLConstructModEvent event)
-    {
-        if(ModList.get().isLoaded(MEGA_CELL_MODID))
-        {
-            MEGA_CELL_LOADED = true;
-        }
-        if(ModList.get().isLoaded(EAE_MODID))
-        {
-            EAE_LOADED = true;
-        }
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        APAERegistration.registerEarly();
+        APBlocks.preInit();
+        proxy.preInit(event);
+        LOGGER.info("{} loading for Cleanroom 1.12.2", Reference.MOD_NAME);
     }
 
-    private void commonSetup(FMLCommonSetupEvent event)
-    {
-        AEPlugin.register();
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
+        APAERegistration.registerCommon();
+        APItems.init();
+        APP2PAttunements.register();
+        NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, new APGuiHandler());
+        proxy.init(event);
+        LOGGER.info("{} common setup complete", Reference.MOD_NAME);
     }
 
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event)
-    {
-        LOGGER.info("AppliedPneumatics server side setup");
-    }
-
-    public static ResourceLocation makeId(String path)
-    {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    public static ResourceLocation makeId(String path) {
+        return new ResourceLocation(Reference.MOD_ID, path);
     }
 }

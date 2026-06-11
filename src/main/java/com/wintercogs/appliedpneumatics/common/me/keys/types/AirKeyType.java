@@ -1,62 +1,53 @@
 package com.wintercogs.appliedpneumatics.common.me.keys.types;
 
-import appeng.api.stacks.AEKey;
-import appeng.api.stacks.AEKeyType;
-import com.mojang.serialization.MapCodec;
+import ae2.api.stacks.AEKey;
+import ae2.api.stacks.AEKeyType;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.me.keys.AirKey;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.TextComponentTranslation;
 
-public class AirKeyType extends AEKeyType
-{
-    public static final Component NAME = Component.translatable("appliedpneumatics.me.key.air");
-    private static final ResourceLocation ID = ResourceLocation.tryBuild(AppliedPneumatics.MODID,"air_type");
+import javax.annotation.Nullable;
 
+public final class AirKeyType extends AEKeyType {
     public static final AirKeyType INSTANCE = new AirKeyType();
 
-    private AirKeyType()
-    {
-        super(ID, AirKey.class, NAME);
+    private AirKeyType() {
+        super(AppliedPneumatics.makeId("air_type"), AirKey.class,
+            new TextComponentTranslation("appliedpneumatics.me.key.air"));
     }
 
+    @Nullable
     @Override
-    public MapCodec<? extends AEKey> codec()
-    {
-        return AirKey.MAP_CODEC;
-    }
-
-    @Override
-    public @Nullable AEKey readFromPacket(RegistryFriendlyByteBuf input)
-    {
+    public AEKey readFromPacket(PacketBuffer input) {
         return AirKey.INSTANCE;
     }
 
-    // IO端口以1000ml为一次操作标准进行传输
+    @Nullable
     @Override
-    public int getAmountPerOperation()
-    {
+    public AEKey loadKeyFromTag(NBTTagCompound tag) {
+        return AirKey.INSTANCE;
+    }
+
+    @Override
+    public int getAmountPerOperation() {
         return 1000;
     }
 
     @Override
-    public int getAmountPerUnit()
-    {
-        return 1000;
-    }
-
-    // 每字节250ml空气
-    @Override
-    public int getAmountPerByte()
-    {
+    public int getAmountPerByte() {
         return 250;
     }
 
     @Override
-    public @Nullable String getUnitSymbol()
-    {
+    public int getAmountPerUnit() {
+        return 1000;
+    }
+
+    @Nullable
+    @Override
+    public String getUnitSymbol() {
         return "L";
     }
 }

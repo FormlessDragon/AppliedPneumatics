@@ -1,97 +1,97 @@
 package com.wintercogs.appliedpneumatics.common.me.keys;
 
-import appeng.api.stacks.AEKey;
-import appeng.api.stacks.AEKeyType;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
+import ae2.api.stacks.AEKey;
+import ae2.api.stacks.AEKeyType;
 import com.wintercogs.appliedpneumatics.AppliedPneumatics;
 import com.wintercogs.appliedpneumatics.common.me.keys.types.AirKeyType;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
-/**
- * 气动工艺的空气所代表的AEKey
- */
-public class AirKey extends AEKey
-{
-    private static final ResourceLocation ID = ResourceLocation.tryBuild(AppliedPneumatics.MODID,"air_key");
-
+public final class AirKey extends AEKey {
     public static final AirKey INSTANCE = new AirKey();
-    // 没有实际数据要存储，AE会在外部帮忙写入类型
-    public static final MapCodec<AirKey> MAP_CODEC = MapCodec.unit(() -> INSTANCE);
-    public static final Codec<AirKey> CODEC = MAP_CODEC.codec();
 
-    private AirKey() {}
+    private static final ResourceLocation ID = AppliedPneumatics.makeId("air_key");
+
+    private AirKey() {
+    }
 
     @Override
-    public AEKeyType getType()
-    {
+    public AEKeyType getType() {
         return AirKeyType.INSTANCE;
     }
 
     @Override
-    public AEKey dropSecondary()
-    {
-        return this;
-    }
-
-    // 无内部数据
-    @Override
-    public CompoundTag toTag(HolderLookup.Provider registries)
-    {
-        return new CompoundTag();
-    }
-
-    // 按每字节一
-    @Override
-    public Object getPrimaryKey()
-    {
+    public AEKey dropSecondary() {
         return this;
     }
 
     @Override
-    public ResourceLocation getId()
-    {
+    public NBTTagCompound toTag() {
+        return new NBTTagCompound();
+    }
+
+    @Override
+    public Object getPrimaryKey() {
+        return this;
+    }
+
+    @Override
+    public ResourceLocation getId() {
         return ID;
     }
 
-    // 无内部数据
     @Override
-    public void writeToPacket(RegistryFriendlyByteBuf data) {}
-
-    @Override
-    protected Component computeDisplayName()
-    {
-        return AirKeyType.NAME;
+    public void writeToPacket(PacketBuffer data) {
     }
 
-    // 无掉落物
+    @Nullable
     @Override
-    public void addDrops(long amount, List<ItemStack> drops, Level level, BlockPos pos) {}
+    public Object getReadOnlyStack() {
+        return null;
+    }
 
     @Override
-    public boolean hasComponents()
-    {
+    protected ITextComponent computeDisplayName() {
+        return new TextComponentTranslation("appliedpneumatics.me.key.air");
+    }
+
+    @Override
+    public void addDrops(long amount, List<ItemStack> drops, World level, BlockPos pos) {
+    }
+
+    @Override
+    public boolean isTagged(String tag) {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public NBTBase get(String componentId) {
+        return null;
+    }
+
+    @Override
+    public boolean hasComponents() {
         return false;
     }
 
     @Override
-    public int hashCode()
-    {
-        return AirKey.class.hashCode();
+    public boolean equals(Object other) {
+        return other instanceof AirKey;
     }
 
     @Override
-    public boolean equals(Object other)
-    {
-        return other instanceof AirKey;
+    public int hashCode() {
+        return AirKey.class.hashCode();
     }
 }

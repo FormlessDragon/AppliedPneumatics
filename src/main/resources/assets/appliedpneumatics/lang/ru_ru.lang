@@ -93,6 +93,7 @@ appliedpneumatics.group.pressure_interface_upgrade=ME Pressure Interface
 appliedpneumatics.group.amadron_process_station_upgrade=ME Amadron Processing Station
 
 menu.appliedpneumatics.button.submit_units=Submit x%s
+menu.appliedpneumatics.button.save_pattern=Save Pattern
 
 tooltip.appliedpneumatics.item.amadron.linked_status=Linked Amadron Wireless Terminal
 tooltip.appliedpneumatics.item.amadron.unlinked_status=Unlinked Amadron Wireless Terminal

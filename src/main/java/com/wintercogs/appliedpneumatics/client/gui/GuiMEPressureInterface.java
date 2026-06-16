@@ -53,6 +53,7 @@ public class GuiMEPressureInterface extends GuiUpgradeable<ContainerMEPressureIn
         setTextContent("max_pressure", new TextComponentTranslation(
             "menu.label.appliedpneumatics.me_pressure_interface.max_pressure", container.latestDangerPressure));
         setTextContent("current_pressure", new TextComponentString(currentPressure));
+        setTextContent("expected_pressure", new TextComponentString(expectedPressure));
         setTextContent("expected_pressure_text", new TextComponentTranslation(
             "menu.label.appliedpneumatics.me_pressure_interface.expected_pressure_text"));
         setTextContent("expected_pressure_change_mult_text", new TextComponentTranslation(

@@ -55,7 +55,7 @@ public final class AirImportStrategy implements StackImportStrategy {
         if (inserted > 0) {
             context.reduceOperationsRemaining(Math.max(1, inserted / AirKeyType.INSTANCE.getAmountPerOperation()));
         }
-        return false;
+        return inserted > 0;
     }
 }
 

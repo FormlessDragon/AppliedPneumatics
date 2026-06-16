@@ -54,6 +54,10 @@
       "position": { "left": 90, "top": 82 },
       "align": "CENTER"
     },
+    "expected_pressure": {
+      "position": { "left": 90, "top": 66 },
+      "align": "CENTER"
+    },
     "expected_pressure_text": {
       "position": { "left": 90, "top": 60 },
       "align": "CENTER"
